@@ -237,8 +237,18 @@ function Optional_Alias {
             echo -e "\n## Alias for headless-host-alias.bash" >> ~/.bashrc.temp
             echo "alias hh=\"bash $headlesshostPath\"" >> ~/.bashrc.temp
 
+            echo "## hh alias autocomplete" >> ~/.bashrc.temp
+            echo "complete -W \"up down restart mount umount off edit alsamixer nvlc\" hh" >> ~/.bashrc.temp
+
+
             sudo mv ~/.bashrc.temp ~/.bashrc
             sleep 1
+
+            ## alias autocomplete
+            complete -W 'up down restart mount umount off edit alsamixer nvlc' hh
+
+            source ~/.bashrc
+
             ;;
     esac
 }

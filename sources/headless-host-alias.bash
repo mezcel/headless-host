@@ -102,6 +102,9 @@ function about {
         \n\t\t\t\t${FG_MAGENTA}$aliasPath \
         \n\t${boldLetter2}hh ${boldLetter1}off${boldLetter2}\t\t${brightDesc}shutdown computer"
     echo -e "${STYLES_OFF}"
+
+    ## make an auto complete list in case one doesn't exist
+    complete -W 'up down restart mount umount off edit alsamixer nvlc' hh
 }
 
 function streaming_radio {
@@ -239,11 +242,15 @@ function bashrc_fix {
 
         echo -e "\n## Alias for headless-host-alias.bash" >> ~/.bashrc.temp
         echo "alias hh=\"bash $headlesshostPath\"" >> ~/.bashrc.temp
+        echo "complete -W \"up down restart mount umount off edit alsamixer nvlc\" hh" >> ~/.bashrc.temp
 
         sudo mv ~/.bashrc.temp ~/.bashrc
         sleep 1
 
         source ~/.bashrc
+
+        ## alias autocomplete
+        complete -W 'up down restart mount umount off edit alsamixer nvlc' hh
     fi
 }
 

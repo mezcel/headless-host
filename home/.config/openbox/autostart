@@ -1,0 +1,4 @@
+# Set wallpaper
+
+## feh wallpaper
+feh --bg-scale ~/.config/openbox/wcrr.png &

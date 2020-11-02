@@ -1,0 +1,37 @@
+## man nanorc, for more guidance
+## These work for the default Arch, default Debian is a bit different
+
+#
+# Decorative Visual and Layout Format
+#
+
+include /usr/share/nano/*
+set linenumbers
+set mouse
+set smooth
+set softwrap
+set tabsize 4
+set autoindent
+set breaklonglines
+set softwrap
+set unix
+set trimblanks
+set showcursor
+set constantshow
+set guidestripe 80
+
+#
+# Keybindings
+# Note:
+# 	^ = ctrl
+# 	M- = alt (meta)
+#
+
+bind ^H help main
+bind ^Q exit main
+bind ^S savefile main
+bind ^C copy main
+bind ^X cut main
+bind ^V paste main
+bind ^Z undo main
+bind ^Y redo main

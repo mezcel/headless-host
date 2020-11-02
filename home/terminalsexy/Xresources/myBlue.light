@@ -1,0 +1,43 @@
+!! Activate using:
+!! xrdb -merge ~/.Xresources
+xterm*geometry: 120x25
+xterm*faceName: Ubuntu Mono Regular
+xterm*faceSize: 10
+xterm*renderFont: true
+
+! special
+*.foreground:   #ffffff
+*.background:   #035199
+*.cursorColor:  #ffffff
+
+! black
+*.color0:       #286911
+*.color8:       #2ee2dd
+
+! red
+*.color1:       #25e0b4
+*.color9:       #382e57
+
+! green
+*.color2:       #83a9fc
+*.color10:      #83a9fc
+
+! yellow
+*.color3:       #fded02
+*.color11:      #fded02
+
+! blue
+*.color4:       #3190a1
+*.color12:      #91deff
+
+! magenta
+*.color5:       #e581cd
+*.color13:      #31a178
+
+! cyan
+*.color6:       #68d8fe
+*.color14:      #68d8fe
+
+! white
+*.color7:       #ffcece
+*.color15:      #eef5ff

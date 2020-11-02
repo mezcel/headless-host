@@ -1,0 +1,181 @@
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" ~/.vimrc
+""
+"" Vim on Git Bash ( Win10 )
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+"" Get default settings.
+
+source $VIMRUNTIME/defaults.vim
+if has( "vms" )
+    set nobackup    "do not keep a backup file, use versions instead
+endif
+
+if &t_Co > 2 || has( "gui_running" )
+    "" Switch on highlighting the last used search pattern.
+    set hlsearch
+endif
+
+"" Add optional packages.
+"" The matchit plugin makes the % command work better,
+""  but it is not backwards compatible.
+if has( 'syntax' ) && has( 'eval' )
+    packadd matchit
+endif
+
+syntax on
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" set temp swap files in a custom dir
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+"" set swapfile wls
+"set backupdir=.backup/,~/.backup/,/tmp//
+"set directory=.swp/,~/.swp/,/tmp//
+"set undodir=.undo/,~/.undo/,/tmp//
+
+"" .vimrc file paths for gitbash
+set backupdir=~/AppData/Roaming/vim/backup/
+set directory=~/AppData/Roaming/vim/swp/
+set undodir=~/AppData/Roaming/vim/undo/
+
+"" .vimrc file paths for cmd
+"set backupdir=%APPDATA%\vim\backup\
+"set directory=%APPDATA%\vim\swp\
+"set undodir=%APPDATA%\vim\undo\
+
+"" prevent automatic backup files
+" set nobackup
+if v:progname =~? "evim"
+    finish
+endif
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" automatically display line numbers
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+set number
+set linebreak
+set autoindent
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" Indent fold presets
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" za   toggles fold
+"" zM   fold all
+"" zR   unfold all
+"" xo   open fold
+
+set foldmethod=manual
+"set foldmethod=indent
+"set foldmethod=syntax
+"set foldnestmax=10
+"set foldlevel=2
+
+"set nofoldenable
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" Tabs
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" use 4 spaces for tabs
+set tabstop=4
+set shiftwidth=4
+set expandtab
+set smarttab
+
+"" Unicode Decoration
+"" Ctrl+v u2002 for a "blank space"
+"" u21D2  ⇒  Rightwards Double Arrow
+"" u21E2  ⇢  Rightwards Dashed Arrow
+"" u21A6  ↦  Rightwards Arrow From Bar
+"" u2192  →  Rightwards Arrow
+"" u21E5  ⇥  Rightwards Arrow To Bar
+"" u21E8  ⇨  Rightwards White Arrow
+"" u21F0  ⇰  Rightwards White Arrow From Wall
+"" u21FE  ⇾  Rightwards Open-Headed Arrow
+"" u21F6  ⇶  Three Rightwards Arrows
+"" u25B6  ▶  BLACK RIGHT-POINTING TRIANGLE
+"" u2506  ┆  Box Drawings Light Triple Dash Vertical
+"" u2507  ┇  Box Drawings Heavy Triple Dash Vertical
+"" u250A  ┊  Box Drawings Light Quadruple Dash Vertical
+"" u250B  ┋  Box Drawings Heavy Quadruple Dash Vertical
+"" u00B7  ·  Middle Dot
+
+""set listchars=tab:\|\
+"set listchars=tab:\┊ 
+set listchars=tab:\┊·
+set list
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" Long line markers
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+set colorcolumn=80,120
+highlight ColorColumn guibg=red
+
+"set cursorcolumn
+set cursorline
+
+"" Center cursor line by 100 visible lines
+set scrolloff=100
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" copy and paste into vim terminal
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+set paste
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" split divide char to nothing
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+set fillchars+=vert:\ 
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""" Word processing
+"" activate :WP
+"" goto misspelled word ]s or [s
+"" list spelling options z=
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+function! WordProcessor()
+    "" movement changes
+    map j gj
+    map k gk
+
+    "" formatting text
+    setlocal formatoptions=1
+    setlocal noexpandtab
+    setlocal wrap
+    setlocal linebreak
+
+    "" spelling and thesaurus
+    setlocal spell spelllang=en_us
+
+    "" Download and Use a Pre-defined Thesaurus
+    "" wget http://www.gutenberg.org/dirs/etext02/mthes10.zip
+    "set thesaurus+=/home/test/.vim/thesaurus/mthesaur.txt
+    " complete+=s makes autocompletion search the thesaurus
+    "set complete+=s
+endfunction
+com! WP call WordProcessor()
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" My macros
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+let @h="iHello World!\<CR>bye\<Esc>"
+let @f="\<esc>o\<esc>ifor ( int i = 0; i < 10; i++ ) {\<esc>o    // do stuff\<esc>o}\<esc>o \<esc>"
+let @i="\<esc>o\<esc>iif ( 1 ) {\<esc>o    \<esc>o}\<esc>o \<esc>"
+let @c="\<esc>o\<esc>i/* \<esc>76i*\<esc>o *\<esc>o\<esc>i * \<esc>76i*\<esc>i*/ \<esc>D\<esc>o\<esc>"
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" Decorative Status Line
+"" help: statusline
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+"set ruler
+set laststatus=2
+set statusline=%f%m%r%h%w\ [%Y]\ [0x%02.2B]%<\ %F\ %=(col:%4v,\ row:%4l/%4L)\ %3p%%\ 

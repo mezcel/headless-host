@@ -1,0 +1,32 @@
+## #####################
+## Win10 EOL
+## #####################
+
+*.bat eol=crlf
+*.ps1 eol=crlf
+
+.editorconfig eol=crlf
+
+## #####################
+## Linux/Posix EOL
+## #####################
+
+home/* eol=lf
+scripts/* eol=lf
+suckless/* eol=lf
+sources/* eol=lf
+
+*.sh eol=lf
+*.bash eol=lf
+*.vimrc eol=lf
+*.profile eol=lf
+*.bashrc eol=lf
+*.nanorc eol=lf
+*.toprc eol=lf
+*.tmux.conf eol=lf
+*.source eol=lf
+*.conf eol=lf
+*.list eol=lf
+
+*.md eol=lf
+Makefile eol=lf

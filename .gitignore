@@ -1,0 +1,18 @@
+## ignore vs2019 & vscode settings
+
+.vscode
+.vs
+
+## ignore suckless's builds
+
+suckless/dwm/*.o
+suckless/dwm/dwm
+
+suckless/st/*.o
+suckless/st/st
+
+suckless/dmenu/*.o
+suckless/dmenu/dmenu
+
+suckless/slstatus/*.o
+suckless/slstatus/slstatus

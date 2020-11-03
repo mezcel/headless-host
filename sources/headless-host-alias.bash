@@ -98,6 +98,7 @@ function about {
         \n\t${boldLetter2}hh ${boldLetter1}n${boldLetter2}vlc\t\t${brightDesc}launch nvlc playlst \
         \n\t\t\t\t${FG_MAGENTA}$musicPlaylist\
         \n\t${boldLetter2}hh ${boldLetter1}a${boldLetter2}lsa\t\t${brightDesc}launch alsamixer \
+        \n\t${boldLetter2}hh ${boldLetter1}b${boldLetter2}attery\t${brightDesc}view tlp battery state \
         \n\t${boldLetter2}hh ${boldLetter1}e${boldLetter2}dit\t\t${brightDesc}edit the hh controls \
         \n\t\t\t\t${FG_MAGENTA}$aliasPath \
         \n\t${boldLetter2}hh ${boldLetter1}off${boldLetter2}\t\t${brightDesc}shutdown computer"
@@ -224,6 +225,22 @@ function unmountSDB1 {
     sudo umount /dev/sdb1
 }
 
+function tlp_battery {
+    echo -e "${MODE_BOLD}${BG_BLUE}${FG_WHITE}\ntlp-stat | grep \"+++ Battery\" -A 11  ...${STYLES_OFF}"
+    sleep 1
+
+    command -v tlp-stat &>/dev/null
+    isTlp=$?
+
+    if [ $isTlp -eq 0 ]; then
+        echo "${STYLES_OFF}${FG_MAGENTA}"
+        sudo tlp-stat | grep "+++ Battery" -A 11
+        echo "${STYLES_OFF}"
+    else
+        echo -e "${FG_YELLOW}\nTLP is not installed.\n$STYLES_OFF"
+    fi
+}
+
 function bashrc_fix {
     ## Add ~/.bashrc alias if it is does not exist
 
@@ -238,11 +255,13 @@ function bashrc_fix {
         ## Make a temporary .bashrc file to edit
         ## Delete previous reference to headless-host-alias.bash
         sed '/headless-host-alias.bash/c\' ~/.bashrc > ~/.bashrc.temp
+        sleep 1s
+        sed 'alsamixer battery down edit mount nvlc off restart unmount up/c\' ~/.bashrc > ~/.bashrc.temp
         sleep 1
 
         echo -e "\n## Alias for headless-host-alias.bash" >> ~/.bashrc.temp
         echo "alias hh=\"bash $headlesshostPath\"" >> ~/.bashrc.temp
-        echo "complete -W \"up down restart mount umount off edit alsamixer nvlc\" hh" >> ~/.bashrc.temp
+        echo "complete -W \"alsamixer battery down edit mount nvlc off restart unmount up\" hh" >> ~/.bashrc.temp
 
         sudo mv ~/.bashrc.temp ~/.bashrc
         sleep 1
@@ -250,7 +269,8 @@ function bashrc_fix {
         source ~/.bashrc
 
         ## alias autocomplete
-        complete -W 'up down restart mount umount off edit alsamixer nvlc' hh
+        ## alsamixer battery down edit mount nvlc off restart unmount up 
+        complete -W "alsamixer battery down edit mount nvlc off restart unmount up" hh
     fi
 }
 
@@ -298,6 +318,11 @@ case "$1" in
     e* ) ## edit
         echo -e "${MODE_BOLD}${BG_BLUE}${FG_WHITE}\nEdit alias script ...${STYLES_OFF}"
         edit_hh_alias
+        ;;
+    
+    b* ) ## battery
+        echo -e "${MODE_BOLD}${BG_BLUE}${FG_WHITE}\nView tlp battery status ...${STYLES_OFF}"
+        tlp_battery
         ;;
 
     off* ) ## off

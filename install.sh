@@ -122,6 +122,7 @@ function Set_Sudo_User {
 }
 
 function Decorate_MotdIssue {
+    ## ANSI Escape Sequence: Terminal Color Codes
 
     txtblk='\e[0;30m' # Black - Regular
     txtred='\e[0;31m' # Red
@@ -232,20 +233,22 @@ function Optional_Alias {
             ## Make a temporary .bashrc file to edit
             ## Delete previous reference to headless-host-alias.bash
             sed '/headless-host-alias.bash/c\' ~/.bashrc > ~/.bashrc.temp
+            sleep 1s
+            sed 'alsamixer battery down edit mount nvlc off restart unmount up/c\' ~/.bashrc > ~/.bashrc.temp
             sleep 1
 
             echo -e "\n## Alias for headless-host-alias.bash" >> ~/.bashrc.temp
             echo "alias hh=\"bash $headlesshostPath\"" >> ~/.bashrc.temp
 
             echo "## hh alias autocomplete" >> ~/.bashrc.temp
-            echo "complete -W \"up down restart mount umount off edit alsamixer nvlc\" hh" >> ~/.bashrc.temp
+            echo "complete -W \"alsamixer battery down edit mount nvlc off restart unmount up\" hh" >> ~/.bashrc.temp
 
 
             sudo mv ~/.bashrc.temp ~/.bashrc
             sleep 1
 
             ## alias autocomplete
-            complete -W 'up down restart mount umount off edit alsamixer nvlc' hh
+            complete -W "alsamixer battery down edit mount nvlc off restart unmount up" hh
 
             source ~/.bashrc
 

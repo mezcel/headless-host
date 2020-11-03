@@ -221,36 +221,49 @@ function Optional_Alias {
             ## path of the ctodo.bash file
             headlesshostPath=$(pwd)/sources/headless-host-alias.bash
 
+            origianlBashrc=~/.bashrc
+            backupBashrc=$origianlBashrc.backup_$(date +%d%b%Y%H%S)
+            tempBashrc=$origianlBashrc.temp
+
+            ## copy headless-host-alias.bash to home dir
             sudo cp $headlesshostPath ~/
             sleep 1
+
+            ## update permission and executablity
+            sudo chmod 777 ~/headless-host-alias.bash
             sudo chmod +x ~/headless-host-alias.bash
 
             headlesshostPath=~/headless-host-alias.bash
 
             ## make a safety backup of ~/.bashrc
-            cp ~/.bashrc ~/.bashrc.backup_$(date +%d%b%Y%H%S)
+            cp $origianlBashrc $backupBashrc
+            cp $origianlBashrc $tempBashrc
 
             ## Make a temporary .bashrc file to edit
-            ## Delete previous reference to headless-host-alias.bash
-            sed '/headless-host-alias.bash/c\' ~/.bashrc > ~/.bashrc.temp
+            ## Delete previous line reference to headless-host-alias.bash
+            sed -i "/headless-host-alias.bash/d" $tempBashrc
             sleep 1s
-            sed 'alsamixer battery down edit mount nvlc off restart unmount up/c\' ~/.bashrc > ~/.bashrc.temp
+
+            ## Delete previous line reference to headless-host-alias autocomplete
+            autocompleteString='alsamixer battery down edit mount nvlc off restart unmount up'
+            sed -i "/$autocompleteString/d" $tempBashrc
+            sleep 1s
+
+            aliasautoString="\
+            \n## Alias for $headlesshostPath \
+            \nalias hh=\"bash $headlesshostPath\" \
+            \n## hh alias autocomplete \
+            \ncomplete -W \"$autocompleteString\" hh \
+            \n"
+
+            echo -e "$aliasautoString" $tempBashrc
+
+            ## Make the temp file the ~/.bashrc file
+            sudo mv $tempBashrc $origianlBashrc
             sleep 1
 
-            echo -e "\n## Alias for headless-host-alias.bash" >> ~/.bashrc.temp
-            echo "alias hh=\"bash $headlesshostPath\"" >> ~/.bashrc.temp
-
-            echo "## hh alias autocomplete" >> ~/.bashrc.temp
-            echo "complete -W \"alsamixer battery down edit mount nvlc off restart unmount up\" hh" >> ~/.bashrc.temp
-
-
-            sudo mv ~/.bashrc.temp ~/.bashrc
-            sleep 1
-
-            ## alias autocomplete
-            complete -W "alsamixer battery down edit mount nvlc off restart unmount up" hh
-
-            source ~/.bashrc
+            ## apply the new ~/.bashrc
+            source $origianlBashrc
 
             ;;
     esac

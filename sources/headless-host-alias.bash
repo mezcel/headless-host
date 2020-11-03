@@ -245,6 +245,7 @@ function bashrc_fix {
     ## Add ~/.bashrc alias if it is does not exist
 
     aliasPath=$(cat ~/.bashrc | grep "alias hh=\"bash " | awk '{print $3}' | sed 's/"//g')
+
     if [ -z $aliasPath ]; then
         thisFile=`basename $0`
         headlesshostPath=$(pwd)/$thisFile
@@ -269,7 +270,7 @@ function bashrc_fix {
         source ~/.bashrc
 
         ## alias autocomplete
-        ## alsamixer battery down edit mount nvlc off restart unmount up 
+        ## alsamixer battery down edit mount nvlc off restart unmount up
         complete -W "alsamixer battery down edit mount nvlc off restart unmount up" hh
     fi
 }
@@ -319,7 +320,7 @@ case "$1" in
         echo -e "${MODE_BOLD}${BG_BLUE}${FG_WHITE}\nEdit alias script ...${STYLES_OFF}"
         edit_hh_alias
         ;;
-    
+
     b* ) ## battery
         echo -e "${MODE_BOLD}${BG_BLUE}${FG_WHITE}\nView tlp battery status ...${STYLES_OFF}"
         tlp_battery

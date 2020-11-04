@@ -74,6 +74,15 @@ function wifi_restart {
     fi
 }
 
+function show_additional_alias {
+    ## get a list of pre-existing aliases in ~/.bashrc
+    ## alias vars exist between " " and = after the ^alias string
+    aliasList=$(cat ~/.bashrc | grep "^alias " | awk -F[\ =] '{print $2}')
+
+    echo -e " ${FG_YELLOW}\
+    \n\tList of aliases set from the ~/.bashrc :\n\t\t${MODE_BOLD}$aliasList${STYLES_OFF}"
+}
+
 function about {
     clear
     echo -e "${BG_BLUE}${FG_WHITE}headless-host${STYLES_OFF}\n"
@@ -103,6 +112,8 @@ function about {
         \n\t\t\t\t${FG_MAGENTA}$aliasPath \
         \n\t${boldLetter2}hh ${boldLetter1}off${boldLetter2}\t\t${brightDesc}shutdown computer"
     echo -e "${STYLES_OFF}"
+
+    show_additional_alias
 
     ## make an auto complete list in case one doesn't exist
     complete -W 'up down restart mount umount off edit alsamixer nvlc' hh
@@ -145,6 +156,7 @@ function edit_hh_alias {
         fi
     fi
 }
+
 
 function computer_off {
     sleep 1
@@ -198,7 +210,6 @@ function mountSDB1 {
             echo "${STYLES_OFF}"
         fi
     fi
-
 }
 
 function unmountSDB1 {
@@ -226,14 +237,14 @@ function unmountSDB1 {
 }
 
 function tlp_battery {
-    echo -e "${MODE_BOLD}${BG_BLUE}${FG_WHITE}\ntlp-stat | grep \"+++ Battery\" -A 11  ...${STYLES_OFF}"
+    echo -e "${MODE_BOLD}${FG_MAGENTA}${FG_WHITE}\ntlp-stat | grep \"+++ Battery\" -A 11  ... ${STYLES_OFF}"
     sleep 1
 
     command -v tlp-stat &>/dev/null
     isTlp=$?
 
     if [ $isTlp -eq 0 ]; then
-        echo "${STYLES_OFF}${FG_MAGENTA}"
+        echo "${STYLES_OFF}${FG_MAGENTA}${MODE_BOLD}"
         sudo tlp-stat | grep "+++ Battery" -A 11
         echo "${STYLES_OFF}"
     else

@@ -76,11 +76,11 @@ function wifi_restart {
 
 function show_additional_alias {
     ## get a list of pre-existing aliases in ~/.bashrc
-    ## alias vars exist between " " and = after the ^alias string
-    aliasList=$(cat ~/.bashrc | grep "^alias " | awk -F[\ =] '{print $2}')
+    ## alias vars exist between "\ " and "=" after the "^alias " string
+    aliasArray=($(cat ~/.bashrc | grep "^alias " | awk -F[\ =] '{print $2}'))
 
     echo -e " ${FG_YELLOW}\
-    \n\tList of aliases set from the ~/.bashrc :\n\t\t${MODE_BOLD}$aliasList${STYLES_OFF}"
+    \n\tList of aliases set from the ~/.bashrc :\n\t\t${FG_CYAN}${MODE_BOLD}${aliasArray[*]}${STYLES_OFF}\n"
 }
 
 function about {
@@ -98,7 +98,7 @@ function about {
 
     musicPlaylist=~/Music/myRadio.pls
 
-    echo -e "\t${FG_CYAN}${MODE_BEGIN_UNDERLINE}Alias input:${MODE_EXIT_UNDERLINE}${STYLES_OFF}\n \
+    echo -e "\t${FG_BLUE}${MODE_BEGIN_UNDERLINE}Alias input:${MODE_EXIT_UNDERLINE}${STYLES_OFF}\n \
         \n\t${boldLetter2}hh ${boldLetter1}m${boldLetter2}ount\t${brightDesc}mount\t/dev/sdb1 \
         \n\t${boldLetter2}hh ${boldLetter1}um${boldLetter2}ount\t${brightDesc}umount\t/dev/sdb1 \
         \n\t${boldLetter2}hh ${boldLetter1}u${boldLetter2}p\t\t${brightDesc}connect to wifi \n\t\t\t\t${FG_MAGENTA}$defaultWifi\

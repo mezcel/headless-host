@@ -201,6 +201,53 @@ function Decorate_MotdIssue {
     sudo mv $motdTemp $motdFile
 }
 
+function make_bashrc_alias {
+    aliasVar=$1
+    autocompleteString=$2
+    bashFile=$3
+    bashFilePath=$4
+    homeBash=~/$bashFile
+    sleep 1s
+
+    ## make executable bash in home dir
+    cp $bashFilePath $homeBash
+    sudo chmod +x $homeBash
+
+    origianlBashrc=~/.bashrc
+    backupBashrc=$origianlBashrc.backup_$(date +%d%b%Y%H%S)
+    tempBashrc=$origianlBashrc.temp
+
+    ## make a safety backup of ~/.bashrc
+    cp $origianlBashrc $backupBashrc
+    cp $origianlBashrc $tempBashrc
+
+    ## Make a temporary .bashrc file to edit
+    ## Delete previous line reference to bash file
+    sed -i "/$bashFile/d" $tempBashrc
+    sleep 1s
+
+    ## Delete previous line reference to bash file autocomplete
+    sed -i "/$autocompleteString/d" $tempBashrc
+    sleep 1s
+
+    aliasautoString="\
+    \n## Alias for $bashFilePath \
+    \nalias $aliasVar=\"bash $homeBash\" \
+    \n## $aliasVar alias autocomplete \
+    \ncomplete -W \"$autocompleteString\" $aliasVar \
+    \n"
+
+    ## Append ~/.bashrc with alias and it's auto complete argv
+    echo -e "$aliasautoString" >> $tempBashrc
+
+    ## Make the temp file the ~/.bashrc file
+    sudo mv $tempBashrc $origianlBashrc
+    sleep 1
+
+    ## apply the new ~/.bashrc
+    source $origianlBashrc
+}
+
 function Optional_Alias {
     ## Option to add an alias to the (.bashrc) or .profile
     ## It is just an info display commemorating the headless-host install
@@ -218,53 +265,13 @@ function Optional_Alias {
 
     case $yn in
         [Yy]* )
-            ## path of the ctodo.bash file
-            headlesshostPath=$(pwd)/sources/headless-host-alias.bash
-
-            origianlBashrc=~/.bashrc
-            backupBashrc=$origianlBashrc.backup_$(date +%d%b%Y%H%S)
-            tempBashrc=$origianlBashrc.temp
-
-            ## copy headless-host-alias.bash to home dir
-            sudo cp $headlesshostPath ~/
-            sleep 1
-
-            ## update permission and executablity
-            sudo chmod 777 ~/headless-host-alias.bash
-            sudo chmod +x ~/headless-host-alias.bash
-
-            headlesshostPath=~/headless-host-alias.bash
-
-            ## make a safety backup of ~/.bashrc
-            cp $origianlBashrc $backupBashrc
-            cp $origianlBashrc $tempBashrc
-
-            ## Make a temporary .bashrc file to edit
-            ## Delete previous line reference to headless-host-alias.bash
-            sed -i "/headless-host-alias.bash/d" $tempBashrc
+            aliasVar=hh
+            autocompleteString="alsamixer battery down edit mount nvlc off restart unmount up"
+            bashFile=headless-host-alias.bash
+            bashFilePath=$(pwd)/sources/headless-host-alias.bash
             sleep 1s
 
-            ## Delete previous line reference to headless-host-alias autocomplete
-            autocompleteString='alsamixer battery down edit mount nvlc off restart unmount up'
-            sed -i "/$autocompleteString/d" $tempBashrc
-            sleep 1s
-
-            aliasautoString="\
-            \n## Alias for $headlesshostPath \
-            \nalias hh=\"bash $headlesshostPath\" \
-            \n## hh alias autocomplete \
-            \ncomplete -W \"$autocompleteString\" hh \
-            \n"
-
-            echo -e "$aliasautoString" $tempBashrc
-
-            ## Make the temp file the ~/.bashrc file
-            sudo mv $tempBashrc $origianlBashrc
-            sleep 1
-
-            ## apply the new ~/.bashrc
-            source $origianlBashrc
-
+            make_bashrc_alias $aliasVar "$autocompleteString" $bashFile $bashFilePath
             ;;
     esac
 }
@@ -360,6 +367,7 @@ function Main_Menu {
     case $installNo in
         1 ) ## 1. Import a personally curated Apt repository of Deb's
             source ./sources/0.0-Apt-Repository.bash
+            Optional_Alias
             Done_Message
             ;;
         2 ) ## 2. Install just a Tty environment

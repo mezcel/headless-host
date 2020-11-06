@@ -4,51 +4,157 @@
 ## 2.0-Install-Desktop-Environment.sh
 ##
 
-## Decorative tty colors
-function Tput_Colors {
-    ## Foreground Color using ANSI escape
+function Decorative_Formatting {
+    ## Decorative tty colors
+    function Tput_Colors {
+        ## Foreground Color using ANSI escape provided though tput
 
-    FG_BLACK=$(tput setaf 0)
-    FG_RED=$(tput setaf 1)
-    FG_GREEN=$(tput setaf 2)
-    FG_YELLOW=$(tput setaf 3)
-    FG_BLUE=$(tput setaf 4)
-    FG_MAGENTA=$(tput setaf 5)
-    FG_CYAN=$(tput setaf 6)
-    FG_WHITE=$(tput setaf 7)
-    FG_NoColor=$(tput sgr0)
+        FG_BLACK=$(tput setaf 0)
+        FG_RED=$(tput setaf 1)
+        FG_GREEN=$(tput setaf 2)
+        FG_YELLOW=$(tput setaf 3)
+        FG_BLUE=$(tput setaf 4)
+        FG_MAGENTA=$(tput setaf 5)
+        FG_CYAN=$(tput setaf 6)
+        FG_WHITE=$(tput setaf 7)
+        FG_NoColor=$(tput sgr0)
 
-    ## Background Color using ANSI escape
+        ## Background Color using ANSI escape provided though tput
 
-    BG_BLACK=$(tput setab 0)
-    BG_RED=$(tput setab 1)
-    BG_GREEN=$(tput setab 2)
-    BG_YELLOW=$(tput setab 3)
-    BG_BLUE=$(tput setab 4)
-    BG_MAGENTA=$(tput setab 5)
-    BG_CYAN=$(tput setab 6)
-    BG_WHITE=$(tput setab 7)
-    BG_NoColor=$(tput sgr0)
+        BG_BLACK=$(tput setab 0)
+        BG_RED=$(tput setab 1)
+        BG_GREEN=$(tput setab 2)
+        BG_YELLOW=$(tput setab 3)
+        BG_BLUE=$(tput setab 4)
+        BG_MAGENTA=$(tput setab 5)
+        BG_CYAN=$(tput setab 6)
+        BG_WHITE=$(tput setab 7)
+        BG_NoColor=$(tput sgr0)
 
-    ## set mode using ANSI escape
+        ## set mode using ANSI escape provided though tput
 
-    MODE_BOLD=$(tput bold)
-    MODE_DIM=$(tput dim)
-    MODE_BEGIN_UNDERLINE=$(tput smul)
-    MODE_EXIT_UNDERLINE=$(tput rmul)
-    MODE_REVERSE=$(tput rev)
-    MODE_ENTER_STANDOUT=$(tput smso)
-    MODE_EXIT_STANDOUT=$(tput rmso)
+        MODE_BOLD=$(tput bold)
+        MODE_DIM=$(tput dim)
+        MODE_BEGIN_UNDERLINE=$(tput smul)
+        MODE_EXIT_UNDERLINE=$(tput rmul)
+        MODE_REVERSE=$(tput rev)
+        MODE_ENTER_STANDOUT=$(tput smso)
+        MODE_EXIT_STANDOUT=$(tput rmso)
 
-    # clear styles using ANSI escape
+        # clear styles using ANSI escape provided though tput
 
-    STYLES_OFF=$(tput sgr0)
-    FGBG_NoColor=$(tput sgr0)
+        STYLES_OFF=$(tput sgr0)
+        FGBG_NoColor=$(tput sgr0)
+    }
+
+    function ttyCenter {
+        str="$1"
+        tputFgColor=$2
+        width=80
+        strLength=${#str}
+        centerCol=$(( ( width/2 )-( strLength / 2 ) ))
+
+        for (( i=0; i<=$centerCol; i++ ))
+        do
+           printf " "
+        done
+        printf "$MODE_BOLD$tputFgColor$str$STYLES_OFF\n"
+    }
+
+    function ttyHR {
+        hrChar=$1
+        tputFgColor=$2
+
+        width=80
+        for (( i=0; i<$width; i++ ))
+        do
+           printf "$tputFgColor$hrChar"
+        done
+        printf "$STYLES_OFF\n"
+    }
+
+    function ttyNestedString {
+        str=$1
+        tputFgColor=$2
+
+        strArray=($str)
+        lineArray=()
+
+        strLength="${#str}"
+        preString=" "
+        ttyMaxCols=79
+
+        charCount=0
+        isFrstLine=1
+
+        printf "$tputFgColor"
+        for i in "${strArray[@]}"; do
+            charCount=$(($charCount+${#i}+1))
+
+            if [ $isFrstLine -ne 1 ]; then
+                ttyMaxCols=79
+                ttyMaxCols=$(($ttyMaxCols-4))
+                preString="    "
+            else
+                preString=" "
+            fi
+
+            if [ $charCount -lt $ttyMaxCols ]; then
+                ## append lineArray
+                lineArray+=("$i")
+            else
+                echo "$preString${lineArray[*]}"
+
+                isFrstLine=0
+                lineArray=()
+                lineArray+=("$i")
+                charCount=${#i}
+            fi
+        done
+
+        printf "$preString${lineArray[*]}\n$STYLES_OFF"
+    }
+
+    function ttyCenteredHeader {
+        str=$1
+        borderChar=$2
+        tputFgColor=$3
+
+        ttyHR "$borderChar" "$tputFgColor"
+        ttyCenter "$str" "$tputFgColor"
+        ttyHR "$borderChar" "$tputFgColor"
+    }
+
+    function ttyPromptInput {
+        promptTitle=$1
+        promptString=$2
+        defaultAnswer=$3
+        tputFgColor=$4
+        tputBgColor=$5
+
+        width=80
+        promptTitleLength=${#promptTitle}
+
+        titleLength=${#promptTitle}
+        highlightLength=$(( 79-$titleLength ))
+
+        printf "$tputBgColor$FG_BLACK $promptTitle"
+        for (( i=0; i<$highlightLength; i++ ))
+        do
+           printf "$tputBgColor "
+        done
+        printf "$STYLES_OFF\n"
+
+        read -e -p " $tputFgColor$promptString$STYLES_OFF" -i "$defaultAnswer" readInput
+        printf "$STYLES_OFF\n"
+        sleep 1
+    }
+
 }
 
 function Install_DWM {
 
-    echo -e "$FG_CYAN\n\tInstalling DWM ...\n $FGBG_NoColor"
+    ttyCenteredHeader "Install DWM" "." "$FG_CYAN"
     sleep 2s
 
     ## variable used to cd back to the directory
@@ -63,7 +169,7 @@ function Install_DWM {
 
 function Suckless_Patches {
 
-    echo -e "$FG_CYAN\n\tInstalling suckless dependencies...\n $FGBG_NoColor"
+    ttyCenteredHeader "Installing suckless dependencies" "-" "$FG_CYAN"
     sleep 2s
 
     sudo apt update
@@ -120,7 +226,7 @@ function Optional_Openbox {
 
 function Desktop_Applications {
 
-    echo -e "$FG_CYAN\n\tInstalling gtk and other desktop environment tools...\n $FGBG_NoColor"
+    ttyCenteredHeader "Installing gtk and other desktop environment tools" "." "$FG_CYAN"
     sleep 2s
 
     ## Xorg DE apps
@@ -171,7 +277,7 @@ function Home_Directory {
     ## Home Directory Configs
     ## This function assumes the script is running as source when launched from the headless-host root directory.
 
-    echo -e "${BG_MAGENTA}$FG_BLACK\n\tPopulating home Directory Configs and dot files ...\n $FGBG_NoColor"
+    ttyNestedString "Populating home Directory Configs and dot files..." "$FG_CYAN"
     sleep 2s
 
     sudo cp -rf ./home/.config ~/
@@ -206,6 +312,8 @@ function Home_Directory {
     mkdir -p ~/.backup/
     mkdir -p ~/.swp/
     mkdir -p ~/.undo/
+
+    ttyNestedString "Finished Populating home Directory Configs." "$FG_GREEN"
 }
 
 function Desktop_Audio {
@@ -221,24 +329,22 @@ function Desktop_Audio {
     isVlc=$?
 
     if [ $isPulse -ne 0 ]; then
-        promptString="${BG_GREEN}${FG_BLACK}Install VLC Media Player and its dependencies? [ Y/n ]$FGBG_NoColor: "
-        yn=yes
+        promptString="Install VLC Media Player and its dependencies? [ Y/n ]: "
+        readInput=yes
     elif [ $isAlsa -ne 0 ]; then
-        promptString="${BG_GREEN}${FG_BLACK}Install VLC Media Player and its dependencies? [ Y/n ]$FGBG_NoColor: "
-        yn=yes
+        promptString="Install VLC Media Player and its dependencies? [ Y/n ]: "
+        readInput=yes
     elif [ $isVlc -ne 0 ]; then
-        promptString="${BG_GREEN}${FG_BLACK}Install VLC Media Player and its dependencies? [ Y/n ]$FGBG_NoColor: "
-        yn=yes
+        promptString="Install VLC Media Player and its dependencies? [ Y/n ]: "
+        readInput=yes
     else
-        promptString="${BG_YELLOW}${FG_BLACK}Install VLC Media Player and its dependencies? [ y/N ]$FGBG_NoColor: "
-        yn=no
+        promptString="Install VLC Media Player and its dependencies? [ y/N ]: "
+        readInput=no
     fi
 
-    echo ""
-    read -e -p "$promptString" -i "$yn" yn
-    echo ""
+    ttyPromptInput "VLC:" "$promptString" "$readInput" "$FG_GREEN" "$BG_GREEN"
 
-    case $yn in
+    case $readInput in
         [Yy]* )
             if [ $(uname -r | grep Microsoft &> /dev/null; echo $?) -ne 0 ]; then
                 ## Debian 10.5 live iso comes with audio driver stuff. Or maybe it is just bundled in the package now.
@@ -257,15 +363,11 @@ function Desktop_Audio {
     esac
 }
 
+Decorative_Formatting
 Tput_Colors
 
-echo ""
-titleColors=${BG_MAGENTA}${FG_WHITE}
-echo "${titleColors}## ##################################################################################################$STYLES_OFF"
-echo "${titleColors}## Desktop Environment                                                                             ##$STYLES_OFF"
-echo "${titleColors}## ##################################################################################################$STYLES_OFF"
-echo ""
-sleep 1s
+ttyCenteredHeader "Desktop Environment" "#" "$FG_MAGENTA"
+sleep 2s
 
 Desktop_Applications
 Optional_Openbox

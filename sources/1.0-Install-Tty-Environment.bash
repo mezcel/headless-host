@@ -4,46 +4,152 @@
 ## 1.0-Install-Tty-Environment.sh
 ##
 
-## Decorative tty colors
-function Tput_Colors {
-    ## Foreground Color using ANSI escape
+function Decorative_Formatting {
+    ## Decorative tty colors
+    function Tput_Colors {
+        ## Foreground Color using ANSI escape provided though tput
 
-    FG_BLACK=$(tput setaf 0)
-    FG_RED=$(tput setaf 1)
-    FG_GREEN=$(tput setaf 2)
-    FG_YELLOW=$(tput setaf 3)
-    FG_BLUE=$(tput setaf 4)
-    FG_MAGENTA=$(tput setaf 5)
-    FG_CYAN=$(tput setaf 6)
-    FG_WHITE=$(tput setaf 7)
-    FG_NoColor=$(tput sgr0)
+        FG_BLACK=$(tput setaf 0)
+        FG_RED=$(tput setaf 1)
+        FG_GREEN=$(tput setaf 2)
+        FG_YELLOW=$(tput setaf 3)
+        FG_BLUE=$(tput setaf 4)
+        FG_MAGENTA=$(tput setaf 5)
+        FG_CYAN=$(tput setaf 6)
+        FG_WHITE=$(tput setaf 7)
+        FG_NoColor=$(tput sgr0)
 
-    ## Background Color using ANSI escape
+        ## Background Color using ANSI escape provided though tput
 
-    BG_BLACK=$(tput setab 0)
-    BG_RED=$(tput setab 1)
-    BG_GREEN=$(tput setab 2)
-    BG_YELLOW=$(tput setab 3)
-    BG_BLUE=$(tput setab 4)
-    BG_MAGENTA=$(tput setab 5)
-    BG_CYAN=$(tput setab 6)
-    BG_WHITE=$(tput setab 7)
-    BG_NoColor=$(tput sgr0)
+        BG_BLACK=$(tput setab 0)
+        BG_RED=$(tput setab 1)
+        BG_GREEN=$(tput setab 2)
+        BG_YELLOW=$(tput setab 3)
+        BG_BLUE=$(tput setab 4)
+        BG_MAGENTA=$(tput setab 5)
+        BG_CYAN=$(tput setab 6)
+        BG_WHITE=$(tput setab 7)
+        BG_NoColor=$(tput sgr0)
 
-    ## set mode using ANSI escape
+        ## set mode using ANSI escape provided though tput
 
-    MODE_BOLD=$(tput bold)
-    MODE_DIM=$(tput dim)
-    MODE_BEGIN_UNDERLINE=$(tput smul)
-    MODE_EXIT_UNDERLINE=$(tput rmul)
-    MODE_REVERSE=$(tput rev)
-    MODE_ENTER_STANDOUT=$(tput smso)
-    MODE_EXIT_STANDOUT=$(tput rmso)
+        MODE_BOLD=$(tput bold)
+        MODE_DIM=$(tput dim)
+        MODE_BEGIN_UNDERLINE=$(tput smul)
+        MODE_EXIT_UNDERLINE=$(tput rmul)
+        MODE_REVERSE=$(tput rev)
+        MODE_ENTER_STANDOUT=$(tput smso)
+        MODE_EXIT_STANDOUT=$(tput rmso)
 
-    ## clear styles using ANSI escape
+        # clear styles using ANSI escape provided though tput
 
-    STYLES_OFF=$(tput sgr0)
-    FGBG_NoColor=$(tput sgr0)
+        STYLES_OFF=$(tput sgr0)
+        FGBG_NoColor=$(tput sgr0)
+    }
+
+    function ttyCenter {
+        str="$1"
+        tputFgColor=$2
+        width=80
+        strLength=${#str}
+        centerCol=$(( ( width/2 )-( strLength / 2 ) ))
+
+        for (( i=0; i<=$centerCol; i++ ))
+        do
+           printf " "
+        done
+        printf "$MODE_BOLD$tputFgColor$str$STYLES_OFF\n"
+    }
+
+    function ttyHR {
+        hrChar=$1
+        tputFgColor=$2
+
+        width=80
+        for (( i=0; i<$width; i++ ))
+        do
+           printf "$tputFgColor$hrChar"
+        done
+        printf "$STYLES_OFF\n"
+    }
+
+    function ttyNestedString {
+        str=$1
+        tputFgColor=$2
+
+        strArray=($str)
+        lineArray=()
+
+        strLength="${#str}"
+        preString=" "
+        ttyMaxCols=79
+
+        charCount=0
+        isFrstLine=1
+
+        printf "$tputFgColor"
+        for i in "${strArray[@]}"; do
+            charCount=$(($charCount+${#i}+1))
+
+            if [ $isFrstLine -ne 1 ]; then
+                ttyMaxCols=79
+                ttyMaxCols=$(($ttyMaxCols-4))
+                preString="    "
+            else
+                preString=" "
+            fi
+
+            if [ $charCount -lt $ttyMaxCols ]; then
+                ## append lineArray
+                lineArray+=("$i")
+            else
+                echo "$preString${lineArray[*]}"
+
+                isFrstLine=0
+                lineArray=()
+                lineArray+=("$i")
+                charCount=${#i}
+            fi
+        done
+
+        printf "$preString${lineArray[*]}\n$STYLES_OFF"
+    }
+
+    function ttyCenteredHeader {
+        str=$1
+        borderChar=$2
+        tputFgColor=$3
+
+        ttyHR "$borderChar" "$tputFgColor"
+        ttyCenter "$str" "$tputFgColor"
+        ttyHR "$borderChar" "$tputFgColor"
+    }
+
+    function ttyPromptInput {
+        promptTitle=$1
+        promptString=$2
+        defaultAnswer=$3
+        tputFgColor=$4
+        tputBgColor=$5
+
+        width=80
+        promptTitleLength=${#promptTitle}
+
+        titleLength=${#promptTitle}
+        highlightLength=$(( 79-$titleLength ))
+
+        printf "$tputBgColor$FG_BLACK $promptTitle"
+        for (( i=0; i<$highlightLength; i++ ))
+        do
+           printf "$tputBgColor "
+        done
+        printf "$STYLES_OFF\n"
+
+        read -e -p " $tputFgColor$promptString$STYLES_OFF" -i "$defaultAnswer" readInput
+        printf "$STYLES_OFF\n"
+        sleep 1
+    }
+
 }
 
 function Set_User_Permission {
@@ -68,6 +174,9 @@ function Set_User_Permission {
 }
 
 function Install_Network_Drivers {
+    ttyCenteredHeader "Network drivers" "-" "$FG_CYAN"
+    sleep 2s
+
     sudo apt install -y linux-image-$(uname -r)
     sudo apt install -y linux-headers-$(uname -r)
 
@@ -81,9 +190,9 @@ function Install_Network_Drivers {
     isBroadcom=$?
 
     if [ $isBroadcom -eq 0 ]; then
-        echo -e "${BG_CYAN}${FG_BLACK}\nBroadcom Wifi Driver: ${STYLES_OFF}\n"
-        echo -e "${FG_CYAN}\tIf you choose to install Broadcom drivers, the computer will restart after installation."
-        echo -e "${STYLES_OFF}"
+
+        ttyCenteredHeader "Broadcom Wifi" "." "$FG_YELLOW"
+        ttyNestedString "If you choose to install Broadcom drivers, the computer will restart after installation." "$FG_YELLOW"
 
         ## check if driver is already installed
         sudo dpkg-query --list broadcom-sta-dkms firmware-brcm80211 &>/dev/null
@@ -91,32 +200,26 @@ function Install_Network_Drivers {
         yn=$?
         if [ $yn -eq 0 ]; then
             promptString="Install the brcm80211 Broadcom wifi drivers? [ y/N ]: "
-            yn=no
+            readInput=no
         else
             promptString="Install the brcm80211 Broadcom wifi drivers? [ Y/n ]: "
-            yn=yes
+            readInput=yes
         fi
 
-        read -e -p "$promptString" -i "$yn" yn
-        echo ""
+        ttyPromptInput "Broadcom wifi drivers:" "$promptString" "$readInput" "$FG_GREEN" "$BG_GREEN"
 
-        case $yn in
+        case $readInput in
             [Yy]* )
                 sudo apt install -y firmware-brcm80211
                 sudo apt install -y broadcom-sta-dkms
 
-                echo -e "$FG_YELLOW"
-                echo -e "\nI recommend restarting the computer now. \
-                \n\tNote: You will need to run the installer again. \
-                \n\tOn the next pass the option to install brcm80211 will be default to \"no\" for convenience.\n"
-                echo -e "${STYLES_OFF}"
+                ttyNestedString "I recommend restarting the computer now." "$FG_RED"
+                ttyNestedString "Note: You will need to run the installer again. On the next pass the option to install brcm80211 will be default to \"no\" for convenience." "$FG_RED"
 
                 promptString="Restart the computer now? [ Y/n ]: "
-                sleep 2s
-                ynRestart=yes
-                read -e -p "$promptString" -i "$ynRestart" ynRestart
-                echo ""
-                case $yn in
+                ttyPromptInput "Restart:" "$promptString" "yes" "$FG_GREEN" "$BG_GREEN"
+
+                case $readInput in
                     [Yy]* )
                         sudo reboot
                     ;;
@@ -128,8 +231,7 @@ function Install_Network_Drivers {
 }
 
 function Terminal_Applications {
-
-    echo -e "$FG_CYAN\n\tInstalling applications focused on terminal productivity ...\n $FGBG_NoColor"
+    ttyCenteredHeader "Installing applications focused on terminal productivity" "-" "$FG_CYAN"
     sleep 2s
 
     sudo apt update
@@ -172,7 +274,8 @@ function Terminal_Applications {
 
     #sudo apt install -y git
     sudo apt install -y tlp
-    echo -e "\n\n"
+
+    ttyCenteredHeader "Autoremove network-manager" "." "$FG_CYAN"
     sudo apt remove -y network-manager
     sudo apt -y autoremove
 
@@ -184,7 +287,7 @@ function Terminal_Applications {
     mkdir -p ~/.swp/
     mkdir -p ~/.undo/
 
-    echo -e "\n\n"
+    ttyCenteredHeader "Autoremove nano" "." "$FG_CYAN"
     sudo apt remove -y nano
     sudo apt purge -y nano
     sudo apt -y autoremove
@@ -196,7 +299,7 @@ function Setup_Git {
     command -v git &>/dev/null
 
     if [ $? -eq 0 ]; then
-        echo -e "$BG_CYAN${FG_BLACK}\nConfigure Git for Github:$FGBG_NoColor${FG_CYAN}\n"
+        ttyCenteredHeader "Git Configuration: ~/.gitconfig" "-" "$FG_CYAN"
 
         ## Set ~/.gitconfig
         if [ ! -f ~/.gitconfig ]; then
@@ -236,21 +339,19 @@ function Terminal_Audio {
     isAlsa=$?
 
     if [ $isPulse -ne 0 ]; then
-        promptString="${BG_GREEN}${FG_BLACK}Install Alsamixer with PulseAudio? [ Y/n ]$FGBG_NoColor: "
-        yn=yes
+        promptString="Install Alsamixer with PulseAudio? [ Y/n ]: "
+        readInput=yes
     elif [ $isAlsa -ne 0 ]; then
-        promptString="${BG_GREEN}${FG_BLACK}Install Alsamixer with PulseAudio? [ Y/n ]$FGBG_NoColor: "
-        yn=yes
+        promptString="Install Alsamixer with PulseAudio? [ Y/n ]: "
+        readInput=yes
     else
-        promptString="${BG_YELLOW}${FG_BLACK}Install Alsamixer with PulseAudio? [ y/N ]$FGBG_NoColor: "
-        yn=no
+        promptString="Install Alsamixer with PulseAudio? [ y/N ]: "
+        readInput=no
     fi
 
-    echo ""
-    read -e -p "$promptString" -i "$yn" yn
-    echo ""
+    ttyPromptInput "Audio Drivers:" "$promptString" "$readInput" "$FG_GREEN" "$BG_GREEN"
 
-    case $yn in
+    case $promptString in
         [Yy]* )
             if [ $(uname -r | grep Microsoft &> /dev/null; echo $?) -ne 0 ]; then
                 ## Debian 10.5 live iso comes with audio driver stuff. Or maybe it is just bundled in the package now.
@@ -296,61 +397,78 @@ function Home_Directory {
     ## This function assumes the script is running as source when launched from the headless-host root directory.
     ## I manually chmod 777 just in case files were transferred from somewhere secure before imported into user's root
 
-    echo -e "$FG_CYAN\n\tPopulating home Directory Configs ...\n $FGBG_NoColor"
+    ttyNestedString "Populating home Directory Configs ..." "$FG_CYAN"
     sleep 2s
 
     #sudo cp -rf ./home/.config ~/
     #sudo chmod 777 ~/.config
     mkdir -p ~/.config
-    sudo cp -rf ./home/.config/vifm ~/.config/
-    sudo chmod -R 777 ~/.config/vifm/*
 
-    sudo cp -rf ./home/Music ~/
-    sudo chmod -R 777 ~/Music/*
-
-    sudo cp -rf ./home/Images ~/
-    sudo chmod -R 777 ~/Images/*
-
-    if [ -f ~/.tmux.conf ]; then
-        cp ~/.tmux.conf ~/.tmux.conf.backup.$(date +%d%b%Y_%H%M%S)
+    if [ -d ./home/.config/vifm ]; then
+        sudo cp -rf ./home/.config/vifm ~/.config/
+        sudo chmod -R 777 ~/.config/vifm/*
     fi
-    sudo cp ./home/.tmux.conf ~/
-    sudo chmod 777 ~/.tmux.conf
-    sudo dos2unix ~/.tmux.conf
 
-    if [ -f ~/.toprc ]; then
-        cp ~/.toprc ~/.toprc.backup.$(date +%d%b%Y_%H%M%S)
+    if [ -d ./home/Music ]; then
+        sudo cp -rf ./home/Music ~/
+        sudo chmod -R 777 ~/Music/*
     fi
-    sudo cp ./home/.toprc ~/
-    sudo chmod 777 ~/.toprc
-    sudo dos2unix ~/.toprc
 
-    if [ -f ~/.vimrc ]; then
-        cp ~/.vimrc ~/.vimrc.backup.$(date +%d%b%Y_%H%M%S)
+    if [ -d ./home/Images ]; then
+        sudo cp -rf ./home/Images ~/
+        sudo chmod -R 777 ~/Images/*
     fi
-    sudo cp ./home/.vimrc ~/
-    sudo chmod 777 ~/.vimrc
-    sudo dos2unix ~/.vimrc
 
-    if [ -d ~/.vim ]; then
-        cp -rf ~/.vim ~/.vim.backup.$(date +%d%b%Y_%H%M%S)
+    if [ -f ./home/.tmux.conf ]; then
+        if [ -f ~/.tmux.conf ]; then
+            cp ~/.tmux.conf ~/.tmux.conf.backup.$(date +%d%b%Y_%H%M%S)
+        fi
+        sudo cp ./home/.tmux.conf ~/
+        sudo chmod 777 ~/.tmux.conf
+        sudo dos2unix ~/.tmux.conf
     fi
-    sudo cp -rf ./home/.vim ~/
-    sudo chmod -R 777 ~/.vim/*
-    sudo chmod 777 ~/.vim/colors/*
 
-    if [ -d ~/terminalsexy ]; then
-        sudo cp -rf ~/terminalsexy ~/terminalsexy.backup.$(date +%d%b%Y_%H%M%S)
+    if [ -f ./home/.toprc ]; then
+        if [ -f ~/.toprc ]; then
+            cp ~/.toprc ~/.toprc.backup.$(date +%d%b%Y_%H%M%S)
+        fi
+        sudo cp ./home/.toprc ~/
+        sudo chmod 777 ~/.toprc
+        sudo dos2unix ~/.toprc
     fi
-    sudo cp -rf ./home/terminalsexy ~/
-    #chmod 777 -R ~/terminalsexy/*
-    sudo chmod 777 ~/terminalsexy/Linux_Console/*
-    sudo chmod 777 ~/terminalsexy/st/*
-    sudo chmod 777 ~/terminalsexy/Xresources/*
 
-    sudo chmod +x ./my_iwconfig.sh
-    sudo chmod +x ./install.sh
-    sudo chmod +x ./home/dl-my-repos.sh
+    if [ -f ./home/.vimrc ]; then
+        if [ -f ~/.vimrc ]; then
+            cp ~/.vimrc ~/.vimrc.backup.$(date +%d%b%Y_%H%M%S)
+        fi
+        sudo cp ./home/.vimrc ~/
+        sudo chmod 777 ~/.vimrc
+        sudo dos2unix ~/.vimrc
+    fi
+
+    if [ -d ./home/.vim ]; then
+        if [ -d ~/.vim ]; then
+            cp -rf ~/.vim ~/.vim.backup.$(date +%d%b%Y_%H%M%S)
+        fi
+        sudo cp -rf ./home/.vim ~/
+        sudo chmod -R 777 ~/.vim/*
+        sudo chmod 777 ~/.vim/colors/*
+    fi
+
+    if [ -d ./home/terminalsexy ]; then
+        if [ -d ~/terminalsexy ]; then
+            sudo cp -rf ~/terminalsexy ~/terminalsexy.backup.$(date +%d%b%Y_%H%M%S)
+        fi
+        sudo cp -rf ./home/terminalsexy ~/
+        #chmod 777 -R ~/terminalsexy/*
+        sudo chmod 777 ~/terminalsexy/Linux_Console/*
+        sudo chmod 777 ~/terminalsexy/st/*
+        sudo chmod 777 ~/terminalsexy/Xresources/*
+    fi
+
+    #sudo chmod +x ./my_iwconfig.sh
+    #sudo chmod +x ./install.sh
+    #sudo chmod +x ./home/dl-my-repos.sh
 
     ## oh-my-bash
     if [ -d ./home/.oh-my-bash ]; then
@@ -368,21 +486,19 @@ function Home_Directory {
     mkdir -p ~/.swp/
     mkdir -p ~/.undo/
 
+    ttyNestedString "Finished Populating home Directory Configs." "$FG_GREEN"
+
 }
 
 ## ##########################
 ## Run
 ## ##########################
 
+Decorative_Formatting
 Tput_Colors
 
-echo ""
-titleColors=${BG_MAGENTA}${FG_WHITE}
-echo "${titleColors}## ##################################################################################################$STYLES_OFF"
-echo "${titleColors}## Install a TTY environment                                                                       ##$STYLES_OFF"
-echo "${titleColors}## ##################################################################################################$STYLES_OFF"
-echo ""
-sleep 1s
+ttyCenteredHeader "Install a TTY environment " "#" "$FG_MAGENTA"
+sleep 2s
 
 Terminal_Applications
 

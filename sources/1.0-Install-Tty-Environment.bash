@@ -112,6 +112,12 @@ function Decorative_Formatting {
             fi
         done
 
+        if [ $isFrstLine -ne 1 ]; then
+            preString="    "
+        else
+            preString=" "
+        fi
+
         printf "$preString${lineArray[*]}\n$STYLES_OFF"
     }
 
@@ -125,6 +131,23 @@ function Decorative_Formatting {
         ttyHR "$borderChar" "$tputFgColor"
     }
 
+    function ttyBoldRow {
+        str=$1
+        tputBgColor=$2
+
+        width=79
+        strLength=${#str}
+
+        highlightLength=$(( $width-$strLength ))
+
+        printf "$tputBgColor$FG_BLACK $str"
+        for (( i=0; i<$highlightLength; i++ ))
+        do
+           printf "$tputBgColor "
+        done
+        printf "$STYLES_OFF\n"
+    }
+
     function ttyPromptInput {
         promptTitle=$1
         promptString=$2
@@ -132,18 +155,7 @@ function Decorative_Formatting {
         tputFgColor=$4
         tputBgColor=$5
 
-        width=80
-        promptTitleLength=${#promptTitle}
-
-        titleLength=${#promptTitle}
-        highlightLength=$(( 79-$titleLength ))
-
-        printf "$tputBgColor$FG_BLACK $promptTitle"
-        for (( i=0; i<$highlightLength; i++ ))
-        do
-           printf "$tputBgColor "
-        done
-        printf "$STYLES_OFF\n"
+        ttyBoldRow "$promptTitle" "$tputBgColor"
 
         read -e -p " $tputFgColor$promptString$STYLES_OFF" -i "$defaultAnswer" readInput
         printf "$STYLES_OFF\n"
@@ -398,7 +410,7 @@ function Home_Directory {
     ## Home Directory Configs
     ## This function assumes the script is running as source when launched from the headless-host root directory.
     ## I manually chmod 777 just in case files were transferred from somewhere secure before imported into user's root
-    
+
     ttyCenteredHeader "Dot Files" "." "$FG_CYAN"
     ttyNestedString "Populating home Directory Configs ..." "$FG_YELLOW"
     sleep 2s

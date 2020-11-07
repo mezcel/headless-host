@@ -2,46 +2,191 @@
 
 ## This is just an easy access readme/help/launcher for the "headless-host" configuration.
 
-## Decorative tty colors
-function tput_colors {
-    ## Foreground Color using ANSI escape
+function Decorative_Formatting {
+    ## Decorative tty colors
+    function Tput_Colors {
+        ## Foreground Color using ANSI escape provided through tput
 
-    FG_BLACK=$(tput setaf 0)
-    FG_RED=$(tput setaf 1)
-    FG_GREEN=$(tput setaf 2)
-    FG_YELLOW=$(tput setaf 3)
-    FG_BLUE=$(tput setaf 4)
-    FG_MAGENTA=$(tput setaf 5)
-    FG_CYAN=$(tput setaf 6)
-    FG_WHITE=$(tput setaf 7)
-    FG_NoColor=$(tput sgr0)
+        FG_BLACK=$(tput setaf 0)
+        FG_RED=$(tput setaf 1)
+        FG_GREEN=$(tput setaf 2)
+        FG_YELLOW=$(tput setaf 3)
+        FG_BLUE=$(tput setaf 4)
+        FG_MAGENTA=$(tput setaf 5)
+        FG_CYAN=$(tput setaf 6)
+        FG_WHITE=$(tput setaf 7)
+        FG_NoColor=$(tput sgr0)
 
-    ## Background Color using ANSI escape
+        ## Background Color using ANSI escape provided through tput
 
-    BG_BLACK=$(tput setab 0)
-    BG_RED=$(tput setab 1)
-    BG_GREEN=$(tput setab 2)
-    BG_YELLOW=$(tput setab 3)
-    BG_BLUE=$(tput setab 4)
-    BG_MAGENTA=$(tput setab 5)
-    BG_CYAN=$(tput setab 6)
-    BG_WHITE=$(tput setab 7)
-    BG_NoColor=$(tput sgr0)
+        BG_BLACK=$(tput setab 0)
+        BG_RED=$(tput setab 1)
+        BG_GREEN=$(tput setab 2)
+        BG_YELLOW=$(tput setab 3)
+        BG_BLUE=$(tput setab 4)
+        BG_MAGENTA=$(tput setab 5)
+        BG_CYAN=$(tput setab 6)
+        BG_WHITE=$(tput setab 7)
+        BG_NoColor=$(tput sgr0)
 
-    ## set mode using ANSI escape
+        ## set mode using ANSI escape provided through tput
 
-    MODE_BOLD=$(tput bold)
-    MODE_DIM=$(tput dim)
-    MODE_BEGIN_UNDERLINE=$(tput smul)
-    MODE_EXIT_UNDERLINE=$(tput rmul)
-    MODE_REVERSE=$(tput rev)
-    MODE_ENTER_STANDOUT=$(tput smso)
-    MODE_EXIT_STANDOUT=$(tput rmso)
+        MODE_BOLD=$(tput bold)
+        MODE_DIM=$(tput dim)
+        MODE_BEGIN_UNDERLINE=$(tput smul)
+        MODE_EXIT_UNDERLINE=$(tput rmul)
+        MODE_REVERSE=$(tput rev)
+        MODE_ENTER_STANDOUT=$(tput smso)
+        MODE_EXIT_STANDOUT=$(tput rmso)
 
-    # clear styles using ANSI escape
+        # clear styles using ANSI escape provided through tput
 
-    STYLES_OFF=$(tput sgr0)
-    FGBG_NoColor=$(tput sgr0)
+        STYLES_OFF=$(tput sgr0)
+        FGBG_NoColor=$(tput sgr0)
+    }
+
+    function ttyCenter {
+        str="$1"
+        tputFgColor=$2
+        width=80
+        strLength=${#str}
+        centerCol=$(( ( width/2 )-( strLength / 2 ) ))
+
+        for (( i=0; i<=$centerCol; i++ ))
+        do
+           printf " "
+        done
+        printf "$MODE_BOLD$tputFgColor$str$STYLES_OFF\n"
+    }
+
+    function ttyHR {
+        hrChar=$1
+        tputFgColor=$2
+
+        width=80
+        for (( i=0; i<$width; i++ ))
+        do
+           printf "$tputFgColor$hrChar"
+        done
+        printf "$STYLES_OFF\n"
+    }
+
+    function ttyNestedString {
+        str=$1
+        tputFgColor=$2
+
+        strArray=($str)
+        lineArray=()
+
+        strLength="${#str}"
+        preString=" "
+        ttyMaxCols=79
+
+        charCount=0
+        isFrstLine=1
+
+        printf "$tputFgColor"
+        for i in "${strArray[@]}"; do
+            charCount=$(($charCount+${#i}+1))
+
+            if [ $isFrstLine -ne 1 ]; then
+                ttyMaxCols=79
+                ttyMaxCols=$(($ttyMaxCols-4))
+                preString="    "
+            else
+                isFrstLine=1
+                preString=" "
+            fi
+
+            if [ $charCount -lt $ttyMaxCols ]; then
+                ## append lineArray
+                lineArray+=("$i")
+            else
+                echo "$preString${lineArray[*]}"
+
+                isFrstLine=0
+                lineArray=()
+                lineArray+=("$i")
+                charCount=${#i}
+            fi
+        done
+
+        if [ $isFrstLine -ne 1 ]; then
+            preString="    "
+        else
+            preString=" "
+        fi
+
+        printf "$preString${lineArray[*]}\n$STYLES_OFF"
+    }
+
+    function ttyCenteredHeader {
+        str=$1
+        borderChar=$2
+        tputFgColor=$3
+
+        ttyHR "$borderChar" "$tputFgColor"
+        ttyCenter "$str" "$tputFgColor"
+        ttyHR "$borderChar" "$tputFgColor"
+    }
+
+    function ttyBoldRow {
+        str=$1
+        tputBgColor=$2
+
+        width=79
+        strLength=${#str}
+
+        highlightLength=$(( $width-$strLength ))
+
+        printf "$tputBgColor$FG_BLACK $str"
+        for (( i=0; i<$highlightLength; i++ ))
+        do
+           printf "$tputBgColor "
+        done
+        printf "$STYLES_OFF\n"
+    }
+
+    function ttyPromptInput {
+        promptTitle=$1
+        promptString=$2
+        defaultAnswer=$3
+        tputFgColor=$4
+        tputBgColor=$5
+
+        ttyBoldRow "$promptTitle" "$tputBgColor"
+
+        read -e -p " $tputFgColor$promptString$STYLES_OFF" -i "$defaultAnswer" readInput
+        printf "$STYLES_OFF\n"
+        sleep 1
+    }
+
+}
+
+function ttyAliasDescription {
+    boldChars="${MODE_BOLD}$1${STYLES_OFF}"
+    normalChars="${FG_CYAN}$2${STYLES_OFF}"
+    descChars="${FG_YELLOW}${MODE_BOLD}$3${STYLES_OFF}"
+
+    if [ -z  $4 ]; then
+        pathChars=" "
+    else
+        pathChars="$4"
+    fi
+
+    nameLength=$(( ${#1} + ${#2} ))
+    if [ $nameLength -le 3 ]; then
+        aliasName="${FG_CYAN}hh ${boldChars}${normalChars}\t"
+    else
+        aliasName="${FG_CYAN}hh ${boldChars}${normalChars}"
+    fi
+    descString="${descChars}"
+
+    echo -e " $aliasName\t$descString"
+
+    if [ ${#pathChars} -gt 1 ]; then
+        echo -e "\t\t\t${FG_MAGENTA}$pathChars$STYLES_OFF"
+    fi
 }
 
 function wifi_up {
@@ -79,14 +224,15 @@ function show_additional_alias {
     ## alias vars exist between "\ " and "=" after the "^alias " string
     aliasArray=($(cat ~/.bashrc | grep "^alias " | awk -F[\ =] '{print $2}'))
 
-    echo -e " ${FG_YELLOW}\
-    \n\tList of aliases defined in the ~/.bashrc :\n\t\t${FG_CYAN}${MODE_BOLD}${aliasArray[*]}${STYLES_OFF}\n"
+    ttyNestedString "All aliases defined in ~/.bashrc" "$FG_YELLOW"
+    echo -e "\t${FG_CYAN}${MODE_BOLD}${aliasArray[*]}${STYLES_OFF}"
 }
 
 function about {
     clear
-    echo -e "${BG_BLUE}${FG_WHITE}headless-host${STYLES_OFF}\n"
-    echo -e "${FG_GREEN}${MODE_BOLD}\t\"hh\" is a ~/.bashrc alias used to perform the following: ${STYLES_OFF}\n"
+
+    ttyCenteredHeader "headless-host" "#" "$FG_CYAN"
+    ttyNestedString "\"hh\" is a ~/.bashrc alias used to launch commonly used server administrative tasks. Enter \"hh\" followed by a shortcut letter or auto complete argument." "$FG_GREEN"
 
     boldLetter1=${FG_CYAN}${MODE_BOLD}
     boldLetter2=${STYLES_OFF}${FG_CYAN}
@@ -98,25 +244,29 @@ function about {
 
     musicPlaylist=~/Music/myRadio.pls
 
-    echo -e "\t${FG_BLUE}${MODE_BEGIN_UNDERLINE}Alias input:${MODE_EXIT_UNDERLINE}${STYLES_OFF}\n \
-        \n\t${boldLetter2}hh ${boldLetter1}m${boldLetter2}ount\t${brightDesc}mount\t/dev/sdb1 \
-        \n\t${boldLetter2}hh ${boldLetter1}um${boldLetter2}ount\t${brightDesc}umount\t/dev/sdb1 \
-        \n\t${boldLetter2}hh ${boldLetter1}u${boldLetter2}p\t\t${brightDesc}connect to wifi \n\t\t\t\t${FG_MAGENTA}$defaultWifi\
-        \n\t${boldLetter2}hh ${boldLetter1}d${boldLetter2}own\t\t${brightDesc}disconnect wifi \
-        \n\t${boldLetter2}hh ${boldLetter1}r${boldLetter2}estart\t${brightDesc}restart wifi \
-        \n\t${boldLetter2}hh ${boldLetter1}n${boldLetter2}vlc\t\t${brightDesc}launch nvlc playlst \
-        \n\t\t\t\t${FG_MAGENTA}$musicPlaylist\
-        \n\t${boldLetter2}hh ${boldLetter1}a${boldLetter2}lsa\t\t${brightDesc}launch alsamixer \
-        \n\t${boldLetter2}hh ${boldLetter1}b${boldLetter2}attery\t${brightDesc}view tlp battery state \
-        \n\t${boldLetter2}hh ${boldLetter1}e${boldLetter2}dit\t\t${brightDesc}edit the hh controls \
-        \n\t\t\t\t${FG_MAGENTA}$aliasPath \
-        \n\t${boldLetter2}hh ${boldLetter1}off${boldLetter2}\t\t${brightDesc}shutdown computer"
-    echo -e "${STYLES_OFF}"
+    echo ""
+    ttyBoldRow "hh alias':" "${BG_CYAN}"
 
+    ttyAliasDescription "m" "ount" "mount\t/dev/sdb1" " "
+    ttyAliasDescription "um" "ount" "umount\t/dev/sdb1" " "
+    ttyAliasDescription "u" "p" "connect to wifi as defined by wpa_supplicant" "$defaultWifi"
+    ttyAliasDescription "d" "own" "disconnect wifi" " "
+    ttyAliasDescription "r" "eset" "restart wifi" " "
+    ttyAliasDescription "n" "vlc" "launch nvlc playlst" "$musicPlaylist"
+    ttyAliasDescription "a" "lsamixer" "launch alsamixer" " "
+    ttyAliasDescription "b" "attery" "view tlp battery state" " "
+    ttyAliasDescription "e" "dit" "edit the \"hh\" script in Vim." "$aliasPath"
+    ttyAliasDescription "off" " " "go offline & shutdown computer" " "
+    echo ""
+
+    ttyBoldRow "~/.bashrc alias':" "${BG_CYAN}"
     show_additional_alias
 
     ## make an auto complete list in case one doesn't exist
     complete -W 'up down restart mount umount off edit alsamixer nvlc' hh
+
+    ttyHR "#" "$FG_CYAN"
+    echo ""
 }
 
 function streaming_radio {
@@ -156,7 +306,6 @@ function edit_hh_alias {
         fi
     fi
 }
-
 
 function computer_off {
     sleep 1
@@ -290,7 +439,9 @@ function bashrc_fix {
 ## RUN
 ## #############
 
-tput_colors
+Decorative_Formatting
+Tput_Colors
+
 bashrc_fix
 
 case "$1" in

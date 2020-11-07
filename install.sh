@@ -108,6 +108,12 @@ function Decorative_Formatting {
             fi
         done
 
+        if [ $isFrstLine -ne 1 ]; then
+            preString="    "
+        else
+            preString=" "
+        fi
+
         printf "$preString${lineArray[*]}\n$STYLES_OFF"
     }
 
@@ -121,6 +127,23 @@ function Decorative_Formatting {
         ttyHR "$borderChar" "$tputFgColor"
     }
 
+    function ttyBoldRow {
+        str=$1
+        tputBgColor=$2
+
+        width=79
+        strLength=${#str}
+
+        highlightLength=$(( $width-$strLength ))
+
+        printf "$tputBgColor$FG_BLACK $str"
+        for (( i=0; i<$highlightLength; i++ ))
+        do
+           printf "$tputBgColor "
+        done
+        printf "$STYLES_OFF\n"
+    }
+
     function ttyPromptInput {
         promptTitle=$1
         promptString=$2
@@ -128,18 +151,7 @@ function Decorative_Formatting {
         tputFgColor=$4
         tputBgColor=$5
 
-        width=80
-        promptTitleLength=${#promptTitle}
-
-        titleLength=${#promptTitle}
-        highlightLength=$(( 79-$titleLength ))
-
-        printf "$tputBgColor$FG_BLACK $promptTitle"
-        for (( i=0; i<$highlightLength; i++ ))
-        do
-           printf "$tputBgColor "
-        done
-        printf "$STYLES_OFF\n"
+        ttyBoldRow "$promptTitle" "$tputBgColor"
 
         read -e -p " $tputFgColor$promptString$STYLES_OFF" -i "$defaultAnswer" readInput
         printf "$STYLES_OFF\n"
@@ -249,7 +261,7 @@ function Install_Configurations {
         sudo mv $motdTemp $motdFile
     }
 
-    function make_bashrc_alias {
+    function Make_Bashrc_Alias {
         aliasVar=$1
         autocompleteString=$2
         bashFile=$3
@@ -316,7 +328,7 @@ function Install_Configurations {
                 bashFilePath=$(pwd)/sources/headless-host-alias.bash
 
                 if [ -f $bashFilePath ]; then
-                    make_bashrc_alias $aliasVar "$autocompleteString" $bashFile $bashFilePath
+                    Make_Bashrc_Alias $aliasVar "$autocompleteString" $bashFile $bashFilePath
                 else
                     ttyNestedString "The \"hh\" alias requires a $bashFilePath script. That file path was not detected." "$FG_RED"
                 fi

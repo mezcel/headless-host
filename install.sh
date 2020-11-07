@@ -238,6 +238,7 @@ function Install_Configurations {
         ttyNestedString "Decorating /etc/issue ..." "$MODE_BOLD$FG_GREEN"
 
         sudo cp $issueFile $issueTemp
+        sleep 1s
 
         echo -en "\
         \n${bakred}${bldwht}# Headless Host                                              ${txtrst}\
@@ -245,8 +246,10 @@ function Install_Configurations {
         \n${txtwht}${bakred}- github: https://github.com/mezcel/headless-host.git        ${txtrst}\
         \n${txtrst}\
         \n" >> $issueTemp
+        sleep 1s
 
         sudo mv $issueTemp $issueFile
+        sleep 1s
 
         ## /etc/motd
         ttyNestedString "Decorating /etc/issue ..." "$MODE_BOLD$FG_GREEN"
@@ -256,10 +259,13 @@ function Install_Configurations {
 
         ## make a safety backup of /etc/motd
         sudo cp $motdFile $motdFile.backup_$(date +%d%b%Y%H%S)
+        sleep 1s
 
         ## customize issue
         sudo cp $motdFile $motdTemp
+        sleep 1s
 
+        ## Clear motd file
         echo -e "" > $motdTemp
 
         sudo mv $motdTemp $motdFile
@@ -430,7 +436,7 @@ function Install_Home {
             * ) selectionString="The selected menu item from \"installer.sh\"" ;;
         esac
 
-        ttyCenteredHeader "DONE" "#" "$FG_GREEN"
+        ttyCenteredHeader "DONE" "!" "$FG_GREEN"
         ttyNestedString "Finished running: $selectionString" "$FG_CYAN"
     }
 

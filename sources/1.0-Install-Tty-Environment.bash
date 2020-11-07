@@ -395,12 +395,14 @@ function Set_Nerdtree {
         ttyNestedString "Importing NERDTree ..." "$MODE_BOLD$FG_GREEN"
         if [ ! -d ./home/.vim/pack/vendor/start/nerdtree ]; then
             git clone https://github.com/preservim/nerdtree.git ~/.vim/pack/vendor/start/nerdtree
-            sleep 1s
+            sleep 2s
         elif [ -d ./home/.vim/pack/vendor/start/nerdtree ]; then
             sudo mkdir -p ~/.vim/pack/vendor/start
-            sudo chmod -R 777 ./home/.vim/pack/vendor/start/nerdtree
+            #sudo chmod -R 777 ./home/.vim/pack/vendor/start/nerdtree
+
             sudo cp -rf ./home/.vim/pack/vendor/start/nerdtree ~/.vim/pack/vendor/start/
-            sleep 1s
+            sudo chmod -R 777 ~/.vim/pack/vendor/start/
+            sleep 2s
         fi
     fi
 
@@ -408,6 +410,7 @@ function Set_Nerdtree {
     if [ -d ~/.vim/pack/vendor/start/nerdtree ]; then
         ttyNestedString "Importing NERDTree ..." "$MODE_BOLD$FG_GREEN"
         sudo vim -u NONE -c "helptags ~/.vim/pack/vendor/start/nerdtree/doc" -c q
+        sleep 2s
     fi
 
 }

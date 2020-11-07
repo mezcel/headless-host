@@ -181,7 +181,7 @@ function personal_repo {
         sleep 2s
     fi
 
-    ttyNestedString "Indexing the $debRepo/$indexZip local off line Debian mirror repository. \n\tThis will take \"a moment\" to \"a while\" ..." "$MODE_BOLD$FG_GREEN"
+    ttyNestedString "Indexing the $debRepo/$indexZip local off-line Debian mirror repository. This will take \"a moment\" up to \"a while\" ..." "$MODE_BOLD$FG_GREEN"
 
     sudo dpkg-scanpackages $debRepo | gzip > $debRepo/$indexZip
     sleep 2s
@@ -258,7 +258,7 @@ function setup_apt_repo {
     else
         ## Yes Internet
 
-        promptString="${FG_YELLOW}Overwrite existing sources.list with a USA Debian mirror? [ Y/n ]: "
+        promptString="Overwrite existing sources.list with a USA Debian mirror? [ Y/n ]: "
         ttyPromptInput "Mirror link source:" "$promptString" "yes" "$FG_YELLOW" "$BG_YELLOW"
 
         case $readInput in

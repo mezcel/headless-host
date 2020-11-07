@@ -198,6 +198,9 @@ function personal_repo {
 
 function setup_apt_repo {
 
+    ttyCenteredHeader "Import a directory of personally curated Apt mirror repository .deb's" "-" "$FG_MAGENTA"
+    sleep 2
+
     pingIp=google.com
     sudo ping -c3 $pingIp &>/dev/null
 
@@ -205,15 +208,15 @@ function setup_apt_repo {
     if [ $pingTest -ne 0 ]; then
         ## No Internet
         ttyNestedString "Ping test on $pingIp, failed.$STYLES_OFF Internet is not required in setting up an Apt repository." "$FG_RED"
-        ttyNestedString "* For an online Apt repo, connect to the internet and have it's url ready." "$FG_BLUE"
-        ttyNestedString "* For a USB Apt repo, ensure it is mounted before continuing." "$FG_BLUE"
-        ttyNestedString "* For a local Apt repo, make sure you have it's full path from the computer's \"file system\" root \"/\" directory." "$FG_BLUE"
+        ttyNestedString "- For an online Apt repo, connect to the internet and have it's url ready." "$FG_BLUE"
+        ttyNestedString "- For a USB Apt repo, ensure it is mounted before continuing." "$FG_BLUE"
+        ttyNestedString "- For a local Apt repo, make sure you have it's full path from the computer's \"file system\" root \"/\" directory." "$FG_BLUE"
 
         if [ "$( ls -A /etc/apt/sources.list.d )" ]; then
-            promptString="Do you want to initialize and apply your personal repository mirror link source? [ y/N ]: "
+            promptString="Initialize and apply your personal repository mirror link source? [ y/N ]: "
             readInput=no
         else
-            promptString="Do you want to initialize and apply your personal repository mirror link source? [ Y/n ]: "
+            promptString="Initialize and apply your personal repository mirror link source? [ Y/n ]: "
             readInput=yes
         fi
 
@@ -224,11 +227,11 @@ function setup_apt_repo {
                 echo ""
                 readInput=/downloaded-debs
 
-                promptString="Enter the full repository mirror link path? [ $downloadedDebs ]: "
+                promptString="Enter the full repository mirror link path? [ $readInput ]: "
                 ttyPromptInput "Personal Apt Mirror Repository:" "$promptString" "$readInput" "$FG_GREEN" "$BG_GREEN"
 
                 if [ ! -d $readInput ]; then
-                    ttyNestedString "$downloadedDebs is not a directory. Exiting now. Check everything and try again." "$FG_RED"
+                    ttyNestedString "$readInput is not a directory. Exiting now. Check everything and try again." "$FG_RED"
                     Exit
                 else
                     personal_repo $readInput
@@ -292,7 +295,7 @@ function set_personal_repo {
 Decorative_Formatting
 Tput_Colors
 
-ttyCenteredHeader "Import a personally curated Apt repository of Deb's" "#" "$FG_MAGENTA"
+ttyCenteredHeader "Setup an Apt Mirror Repository" "#" "$FG_MAGENTA"
 sleep 1s
 
 #set_personal_repo

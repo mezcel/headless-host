@@ -80,7 +80,7 @@ function show_additional_alias {
     aliasArray=($(cat ~/.bashrc | grep "^alias " | awk -F[\ =] '{print $2}'))
 
     echo -e " ${FG_YELLOW}\
-    \n\tList of aliases set from the ~/.bashrc :\n\t\t${FG_CYAN}${MODE_BOLD}${aliasArray[*]}${STYLES_OFF}\n"
+    \n\tList of aliases defined in the ~/.bashrc :\n\t\t${FG_CYAN}${MODE_BOLD}${aliasArray[*]}${STYLES_OFF}\n"
 }
 
 function about {

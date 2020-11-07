@@ -331,6 +331,8 @@ function Install_Configurations {
 
         me=$(whoami)
         if [ $me == "root" ]; then
+            ttyCenteredHeader "Shared Resources" "-" "$FG_Cyan"
+
             skellDir=/etc/skel/headless-host
 
             mkdir -p $skellDir
@@ -341,23 +343,23 @@ function Install_Configurations {
             chmod -R 777 $skellDir
 
             ## make a headless-hot skel
-            ttyNestedString "!!! A fresh headless-host directory was placed in /etc/skel !!!" "$FG_YELLOW"
+            ttyNestedString "A fresh headless-host directory was placed in /etc/skel." "$FG_YELLOW"
 
             ## prompt to manually add headless-host to a preexisting user
             echo ""
-            promptSting="Do you want to add the headless-host directory to a preexisting user's ~/ ? [ y/N ]: "
+            promptSting="Add the headless-host repo to an existing user's ~/ ? [ y/N ]: "
             ttyPromptInput "/etc/skel file:" "$promptSting" "yes" "$FG_GREEN" "$BG_GREEN"
 
             case $readInput in
                 [Yy]* )
-                    echo -e "${FG_MAGENTA}## Preexisting users:\n${FG_CYAN}\n$(ls /home)\n$STYLES_OFF"
+                    ttyNestedString "Preexisting users:" "$FG_MAGENTA"
                     #demoUser=mezcel
                     demoUser=$(ls /home)
                     demoUser=$(echo $demoUser | awk '{print $1}')
                     sleep 1s
 
                     promptSting="Enter the name of a desired preexisting user? [ $demoUser ]: "
-                    ttyPromptInput "/etc/skel file:" "$promptSting" "$demoUser" "$FG_GREEN" "$BG_GREEN"
+                    ttyPromptInput "Copy headless-host repo to user:" "$promptSting" "$demoUser" "$FG_GREEN" "$BG_GREEN"
 
                     if [ -d /home/$readInput ]; then
                         ## check if the user already has headless-host
@@ -368,7 +370,7 @@ function Install_Configurations {
                             cp -rf $skellDir /home/$readInput/headless-host
                             sleep 1
                             chmod -R 777 /home/$readInput/headless-host
-                            ttyNestedString "!!! /home/$readInput/headless-host was created !!!" "$FG_YELLOW"
+                            ttyNestedString "/home/$readInput/headless-host was created." "$FG_YELLOW"
                         else
                             ttyNestedString "\t\"headless-host\" appears to exist somewhere in the \"$readInput\" account." "$MODE_DIM$FG_YELLOW"
                             ttyNestedString "\tNothing new was added to /home/$readInput " "$MODE_DIM$FG_YELLOW"

@@ -276,8 +276,9 @@ function Desktop_Applications {
 function Home_Directory {
     ## Home Directory Configs
     ## This function assumes the script is running as source when launched from the headless-host root directory.
-
-    ttyNestedString "Populating home Directory Configs and dot files..." "$FG_CYAN"
+    
+    ttyCenteredHeader "Dot Files" "." "$FG_CYAN"
+    ttyNestedString "Populating home Directory Configs and dot files..." "$FG_YELLOW"
     sleep 2s
 
     sudo cp -rf ./home/.config ~/
@@ -317,6 +318,8 @@ function Home_Directory {
 }
 
 function Desktop_Audio {
+
+    ttyCenteredHeader "Desktop Audio" "-" "$FG_Cyan"
 
     #sudo dpkg-query --list alsa-utils pavucontrol vlc libdvd-pkg libdvd-pkg
     command -v pulseaudio &>/dev/null
@@ -371,7 +374,7 @@ sleep 2s
 
 Desktop_Applications
 Optional_Openbox
-Home_Directory
 Desktop_Audio
 
 Suckless_Patches
+Home_Directory

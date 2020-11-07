@@ -331,6 +331,8 @@ function Setup_Git {
 
 function Terminal_Audio {
 
+    ttyCenteredHeader "Audio" "-" "$FG_Cyan"
+
     #sudo dpkg-query --list alsa-utils pavucontrol
     command -v pulseaudio &>/dev/null
     isPulse=$?
@@ -396,8 +398,9 @@ function Home_Directory {
     ## Home Directory Configs
     ## This function assumes the script is running as source when launched from the headless-host root directory.
     ## I manually chmod 777 just in case files were transferred from somewhere secure before imported into user's root
-
-    ttyNestedString "Populating home Directory Configs ..." "$FG_CYAN"
+    
+    ttyCenteredHeader "Dot Files" "." "$FG_CYAN"
+    ttyNestedString "Populating home Directory Configs ..." "$FG_YELLOW"
     sleep 2s
 
     #sudo cp -rf ./home/.config ~/
@@ -504,5 +507,5 @@ Terminal_Applications
 
 Setup_Git
 Terminal_Audio
-Home_Directory
 Set_Nerdtree
+Home_Directory

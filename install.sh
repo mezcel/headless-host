@@ -185,6 +185,7 @@ function Install_Configurations {
     }
 
     function Decorate_MotdIssue {
+
         ## ANSI Escape Sequence: Terminal Color Codes
 
         txtblk='\e[0;30m' # Black - Regular
@@ -234,6 +235,8 @@ function Install_Configurations {
         sudo cp $issueFile $issueFile.backup_$(date +%d%b%Y%H%S)
 
         ## customize issue
+        ttyNestedString "Decorating /etc/issue ..." "$MODE_BOLD$FG_GREEN"
+
         sudo cp $issueFile $issueTemp
 
         echo -en "\
@@ -246,6 +249,7 @@ function Install_Configurations {
         sudo mv $issueTemp $issueFile
 
         ## /etc/motd
+        ttyNestedString "Decorating /etc/issue ..." "$MODE_BOLD$FG_GREEN"
 
         motdTemp=~/motd.temp
         motdFile=/etc/motd
@@ -268,6 +272,8 @@ function Install_Configurations {
         bashFilePath=$4
         homeBash=~/$bashFile
         sleep 1s
+
+        ttyNestedString "Updating ~/.basrc alias' ..." "$MODE_BOLD$FG_GREEN"
 
         ## make executable bash in home dir
         cp $bashFilePath $homeBash

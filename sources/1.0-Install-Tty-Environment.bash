@@ -343,7 +343,7 @@ function Setup_Git {
 
 function Terminal_Audio {
 
-    ttyCenteredHeader "Audio" "-" "$FG_Cyan"
+    ttyCenteredHeader "Audio" "-" "$FG_CYAN"
 
     #sudo dpkg-query --list alsa-utils pavucontrol
     command -v pulseaudio &>/dev/null
@@ -367,7 +367,11 @@ function Terminal_Audio {
 
     case $promptString in
         [Yy]* )
-            if [ $(uname -r | grep Microsoft &> /dev/null; echo $?) -ne 0 ]; then
+            thisKernel=$(uname -r)
+            echo $thisKernel | grep Microsoft &>/dev/null
+            isMS=$?
+            
+            if [ $isMS -ne 0 ]; then
                 ## Debian 10.5 live iso comes with audio driver stuff. Or maybe it is just bundled in the package now.
 
                 sudo apt install -y alsa-utils
@@ -388,6 +392,7 @@ function Terminal_Audio {
 function Set_Nerdtree {
 
     if [ ! -d ~/.vim/pack/vendor/start/nerdtree ]; then
+        ttyNestedString "Importing NERDTree ..." "$MODE_BOLD$FG_GREEN"
         if [ ! -d ./home/.vim/pack/vendor/start/nerdtree ]; then
             git clone https://github.com/preservim/nerdtree.git ~/.vim/pack/vendor/start/nerdtree
             sleep 1s
@@ -401,6 +406,7 @@ function Set_Nerdtree {
 
     ## install vim nerdtree
     if [ -d ~/.vim/pack/vendor/start/nerdtree ]; then
+        ttyNestedString "Importing NERDTree ..." "$MODE_BOLD$FG_GREEN"
         sudo vim -u NONE -c "helptags ~/.vim/pack/vendor/start/nerdtree/doc" -c q
     fi
 
@@ -412,7 +418,7 @@ function Home_Directory {
     ## I manually chmod 777 just in case files were transferred from somewhere secure before imported into user's root
 
     ttyCenteredHeader "Dot Files" "." "$FG_CYAN"
-    ttyNestedString "Populating home Directory Configs ..." "$FG_YELLOW"
+    ttyNestedString "Populating home Directory Configs ..." "$MODE_BOLD$FG_YELLOW"
     sleep 2s
 
     #sudo cp -rf ./home/.config ~/
@@ -501,7 +507,7 @@ function Home_Directory {
     mkdir -p ~/.swp/
     mkdir -p ~/.undo/
 
-    ttyNestedString "Finished Populating home Directory Configs." "$FG_GREEN"
+    ttyNestedString "Finished Populating home Directory Configs." "$MODE_BOLD$FG_GREEN"
 
 }
 

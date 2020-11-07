@@ -178,7 +178,7 @@ function Ask4NetworkManager {
 }
 
 function Install_Network_Drivers {
-    ttyCenteredHeader "Network drivers" "-" "$FG_CYAN"
+    ttyNestedString "Installing network drivers ..." "$MODE_BOLD$FG_GREEN"
     sleep 2s
 
     sudo apt install -y linux-image-$(uname -r)
@@ -236,7 +236,7 @@ function Install_Network_Drivers {
 
 function networking_applications {
 
-    ttyCenteredHeader "Networking applications" "-" "$FG_CYAN"
+    ttyNestedString "Installing networking applications ..." "$MODE_BOLD$FG_CYAN"
     sleep 2s
 
     sudo apt update

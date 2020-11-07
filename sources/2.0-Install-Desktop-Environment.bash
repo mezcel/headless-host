@@ -315,9 +315,9 @@ function Home_Directory {
         fi
     fi
 
-    sudo chmod +x ./my_iwconfig.sh
-    sudo chmod +x ./install.sh
-    sudo chmod +x ./home/dl-my-repos.sh
+    #sudo chmod +x ./my_iwconfig.sh
+    #sudo chmod +x ./install.sh
+    #sudo chmod +x ./home/dl-my-repos.sh
 
     mkdir -p ~/Downloads
 
@@ -331,7 +331,7 @@ function Home_Directory {
 
 function Desktop_Audio {
 
-    ttyCenteredHeader "Desktop Audio" "-" "$FG_Cyan"
+    ttyCenteredHeader "Desktop Audio" "-" "$FG_CYAN"
 
     #sudo dpkg-query --list alsa-utils pavucontrol vlc libdvd-pkg libdvd-pkg
     command -v pulseaudio &>/dev/null
@@ -361,7 +361,11 @@ function Desktop_Audio {
 
     case $readInput in
         [Yy]* )
-            if [ $(uname -r | grep Microsoft &> /dev/null; echo $?) -ne 0 ]; then
+            thisKernel=$(uname -r)
+            echo $thisKernel | grep Microsoft &>/dev/null
+            isMS=$?
+            
+            if [ $isMS -ne 0 ]; then
                 ## Debian 10.5 live iso comes with audio driver stuff. Or maybe it is just bundled in the package now.
 
                 sudo apt install -y alsa-utils

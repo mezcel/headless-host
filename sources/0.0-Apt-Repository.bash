@@ -175,22 +175,19 @@ function personal_repo {
     customSourceList=/etc/apt/sources.list.d/$repoListName
 
     if [ -f $debRepo/$indexZip ]; then
-        echo "$FG_YELLOW"
-        echo -e "Removing previous $debRepo/$indexZip ... $FGBG_NoColor"
+        ttyNestedString "Removing previous $debRepo/$indexZip ..." "$MODE_BOLD$FG_YELLOW"
 
         sudo rm $debRepo/$indexZip
         sleep 2s
     fi
 
-    echo "$FG_GREEN"
-    echo -e "Indexing the $debRepo/$indexZip local off line Debian mirror repository. \n\tThis will take \"a moment\" to \"a while\" ... $FGBG_NoColor\n"
+    ttyNestedString "Indexing the $debRepo/$indexZip local off line Debian mirror repository. \n\tThis will take \"a moment\" to \"a while\" ..." "$MODE_BOLD$FG_GREEN"
 
     sudo dpkg-scanpackages $debRepo | gzip > $debRepo/$indexZip
     sleep 2s
 
-    if [ -f $debRepo/$indexZip ]; then
-        echo "$FG_YELLOW"
-        echo -e "Overwriting existing $customSourceList, and writing a new one. $FGBG_NoColor \n"
+    if [ -f $debRepo/$indexZip ]; then        
+        ttyNestedString "Overwriting existing $customSourceList, and writing a new one ..." "$MODE_BOLD$FG_YELLOW"
         sleep 1s
 
         ## Write file
@@ -223,12 +220,12 @@ function setup_apt_repo {
         ttyNestedString "- For an online Apt repo, connect to the internet and have it's url ready." "$FG_BLUE"
         ttyNestedString "- For a USB Apt repo, ensure it is mounted before continuing." "$FG_BLUE"
         ttyNestedString "- For a local Apt repo, make sure you have it's full path from the computer's \"file system\" root \"/\" directory." "$FG_BLUE"
-
+        echo ""
         if [ "$( ls -A /etc/apt/sources.list.d )" ]; then
-            promptString="Initialize and apply your personal repository mirror link source? [ y/N ]: "
+            promptString="Initialize and apply your personal repository mirror? [ y/N ]: "
             readInput=no
         else
-            promptString="Initialize and apply your personal repository mirror link source? [ Y/n ]: "
+            promptString="Initialize and apply your personal repository mirror? [ Y/n ]: "
             readInput=yes
         fi
 
@@ -243,18 +240,18 @@ function setup_apt_repo {
                 ttyPromptInput "Personal Apt Mirror Repository:" "$promptString" "$readInput" "$FG_GREEN" "$BG_GREEN"
 
                 if [ ! -d $readInput ]; then
-                    ttyNestedString "$readInput is not a directory. Exiting now. Check everything and try again." "$FG_RED"
+                    ttyNestedString "$readInput is not a directory. Exiting now. Check everything and try again." "$MODE_BOLD$FG_RED"
                     Exit
                 else
                     personal_repo $readInput
                 fi
                 ;;
             [Nn]* )
-                ttyNestedString "Canceled importing an additional custom off line Apt mirror repository." "$FG_RED"
+                ttyNestedString "Canceled importing an additional custom off line Apt mirror repository." "$MODE_BOLD$FG_RED"
                 sleep 1
                 ;;
             * )
-                ttyNestedString "You did not enter a \"y\" or \"n\" response. Exited. Done." "$FG_RED"
+                ttyNestedString "You did not enter a \"y\" or \"n\" response. Exited. Done." "$MODE_BOLD$FG_RED"
                 exit
                 ;;
         esac
@@ -290,17 +287,6 @@ function setup_apt_repo {
     fi
 }
 
-function set_personal_repo {
-    ttyCenteredHeader "Mounting a personally curated APT repository." "#" "$FG_CYAN"
-    sleep 1s
-
-    me=$(whoami)
-    if [ $me == "root" ]; then
-        ## Personally curated repo
-        setup_apt_repo
-    fi
-}
-
 ## #####################################################################################################################
 ## Personal repository
 
@@ -310,5 +296,4 @@ Tput_Colors
 ttyCenteredHeader "Setup an Apt Mirror Repository" "#" "$FG_MAGENTA"
 sleep 2s
 
-#set_personal_repo
 setup_apt_repo

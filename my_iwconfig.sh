@@ -54,13 +54,10 @@ function greeting {
     echo "$FG_MAGENTA"
     echo "## ##########################################################################################################"
     echo "## About:        This script will prompt the user to connect to a wireless network ssid and make a launcher"
-    echo "##                   script to log into known wpa_supplicant ssid configurations."
-    echo "##"
-    echo "## Instructions: Run this script in the root account to make a new wpa_supplicant account profile."
-    echo "##               Run this script in a user account to generate a script which logs in/out of known ssids."
+    echo "##                   script to manage existing wpa_supplicant ssid configurations."
     echo "##"
     echo "## Source Code:  https://raw.githubusercontent.com/mezcel/headless-host/master/my_iwconfig.sh"
-    echo "## Dependency:   Requires the net-tools .deb package for Debian"
+    echo "## Dependency:   Requires the net-tools.deb & wireless-tools.deb package for Debian."
     echo "## ##########################################################################################################"
     echo "$FG_NoColor"
 }
@@ -114,10 +111,10 @@ function select_ssid {
     ## Select which SSID to connect to
     echo -e "\n${FG_CYAN}(step 4 of 4)${FG_NoColor}\tSelecting an SSID ...\t\t\t${FG_GREEN}user input ...${FG_NoColor}\n"
     promptTab=$(echo -e "\t\t")
-    read -p "${promptTab}Enter the number representing the desired SSID? [0 - $(( ${#ssidArr[@]} - 1 ))]: " ssidNo
+    read -p "${promptTab}Enter the number representing the desired SSID? [ 0 - $(( ${#ssidArr[@]} - 1 )) ]: " ssidNo
 
     echo ""
-    read -e -p "${promptTab}Connect to ${MODE_BOLD}${ssidArr[$ssidNo]}${FG_NoColor} ? [Y/n]: " -i "yes" yn
+    read -e -p "${promptTab}Connect to ${MODE_BOLD}${ssidArr[$ssidNo]}${FG_NoColor} ? [ Y/n ]: " -i "yes" yn
 
     case $yn in
         [Yy]* )
@@ -159,10 +156,10 @@ function define_wpa_credentials {
 
     ## define ssid permission
     echo ""
-    read -e -p "${promptTab}Enter SSID: [ $myssid ]: " -i "$myssid" myssid
+    read -e -p "${promptTab}Enter SSID: [ ${FG_CYAN}$myssid${FG_NoColor} ]: " -i "$myssid" myssid
 
     if [ -f /etc/wpa_supplicant/wpa_supplicant_$myssid.conf ]; then
-        promptString="${promptTab}$myssid already has a wpa_supplicant.conf, do you want to overwrite it? [ Y/n ]: "
+        promptString="${promptTab}${FG_RED}$myssid has a wpa_supplicant.conf, overwrite it? [ Y/n ]:${FG_NoColor} "
         read -e -p "$promptString" -i "yes" yn
         case $yn in
             [Yy]* )

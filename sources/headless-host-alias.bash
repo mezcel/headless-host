@@ -296,7 +296,7 @@ function Alias_Arguments {
         aliasPath=$(cat ~/.bashrc | grep "alias hh=\"bash " | awk '{print $3}' | sed 's/"//g')
 
         if [ -f $aliasPath ]; then
-            sudo chmod 777 $aliasPath
+            #sudo chmod 777 $aliasPath
             command -v vim &>/dev/null
 
             if [ $? -eq 0 ]; then

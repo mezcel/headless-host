@@ -369,7 +369,7 @@ function Configure_Tty_Environment {
                 thisKernel=$(uname -r)
                 echo $thisKernel | grep Microsoft &>/dev/null
                 isMS=$?
-            
+
                 if [ $isMS -ne 0 ]; then
                     ## Debian 10.5 live iso comes with audio driver stuff. Or maybe it is just bundled in the package now.
 
@@ -389,7 +389,7 @@ function Configure_Tty_Environment {
     }
 
     function Set_Nerdtree {
-        ttyCenteredHeader "NERDTree" "." "$FG_YELLOW" 
+        ttyCenteredHeader "NERDTree" "." "$FG_YELLOW"
         sleep 2s
 
         if [ ! -d ~/.vim/pack/vendor/start/nerdtree ]; then
@@ -399,10 +399,10 @@ function Configure_Tty_Environment {
                 sleep 2s
             elif [ -d ./home/.vim/pack/vendor/start/nerdtree ]; then
                 sudo mkdir -p ~/.vim/pack/vendor/start
-                #sudo chmod -R 777 ./home/.vim/pack/vendor/start/nerdtree
+                #sudo #chmod -R 777 ./home/.vim/pack/vendor/start/nerdtree
 
-                sudo cp -rf ./home/.vim/pack/vendor/start/nerdtree ~/.vim/pack/vendor/start/
-                sudo chmod -R 777 ~/.vim/pack/vendor/start/
+                sudo cp -rf --no-preserve=mode ./home/.vim/pack/vendor/start/nerdtree ~/.vim/pack/vendor/start/
+                sudo #chmod -R 777 ~/.vim/pack/vendor/start/
                 sleep 2s
             fi
         fi
@@ -424,26 +424,26 @@ function Configure_Tty_Environment {
         ttyNestedString "Populating home Directory Configs ..." "$MODE_BOLD$FG_YELLOW"
         sleep 2s
 
-        #sudo cp -rf ./home/.config ~/
-        #sudo chmod 777 ~/.config
+        #sudo cp -rf --no-preserve=mode ./home/.config ~/
+        ##sudo chmod 777 ~/.config
         mkdir -p ~/.config
 
         if [ -d ./home/.config/vifm ]; then
-            sudo cp -rf ./home/.config/vifm ~/.config/
+            sudo cp -rf --no-preserve=mode ./home/.config/vifm ~/.config/
             sleep 1s
-            sudo chmod -R 777 ~/.config/vifm/*
+            sudo #chmod -R 777 ~/.config/vifm/*
         fi
 
         if [ -d ./home/Music ]; then
-            sudo cp -rf ./home/Music ~/
+            sudo cp -rf --no-preserve=mode ./home/Music ~/
             sleep 1s
-            sudo chmod -R 777 ~/Music/*
+            sudo #chmod -R 777 ~/Music/*
         fi
 
         if [ -d ./home/Images ]; then
-            sudo cp -rf ./home/Images ~/
+            sudo cp -rf --no-preserve=mode ./home/Images ~/
             sleep 1s
-            sudo chmod -R 777 ~/Images/*
+            sudo #chmod -R 777 ~/Images/*
         fi
 
         if [ -f ./home/.tmux.conf ]; then
@@ -453,7 +453,7 @@ function Configure_Tty_Environment {
             fi
             sudo cp ./home/.tmux.conf ~/
             sleep 1s
-            sudo chmod 777 ~/.tmux.conf
+            #sudo chmod 777 ~/.tmux.conf
             sudo dos2unix ~/.tmux.conf
         fi
 
@@ -463,7 +463,7 @@ function Configure_Tty_Environment {
             fi
             sudo cp ./home/.toprc ~/
             sleep 1s
-            sudo chmod 777 ~/.toprc
+            #sudo chmod 777 ~/.toprc
             sudo dos2unix ~/.toprc
         fi
 
@@ -473,37 +473,37 @@ function Configure_Tty_Environment {
             fi
             sudo cp ./home/.vimrc ~/
             sleep 1s
-            sudo chmod 777 ~/.vimrc
+            #sudo chmod 777 ~/.vimrc
             sudo dos2unix ~/.vimrc
         fi
 
         if [ -d ./home/.vim ]; then
             if [ -d ~/.vim ]; then
-                cp -rf ~/.vim ~/.vim.backup.$(date +%d%b%Y_%H%M%S)
+                cp -rf --no-preserve=mode ~/.vim ~/.vim.backup.$(date +%d%b%Y_%H%M%S)
             fi
-            sudo cp -rf ./home/.vim ~/
+            sudo cp -rf --no-preserve=mode ./home/.vim ~/
             sleep 1s
-            sudo chmod -R 777 ~/.vim/*
-            sudo chmod 777 ~/.vim/colors/*
+            sudo #chmod -R 777 ~/.vim/*
+            #sudo chmod 777 ~/.vim/colors/*
         fi
 
         if [ -d ./home/terminalsexy ]; then
             if [ -d ~/terminalsexy ]; then
-                sudo cp -rf ~/terminalsexy ~/terminalsexy.backup.$(date +%d%b%Y_%H%M%S)
+                sudo cp -rf --no-preserve=mode ~/terminalsexy ~/terminalsexy.backup.$(date +%d%b%Y_%H%M%S)
             fi
-            sudo cp -rf ./home/terminalsexy ~/
+            sudo cp -rf --no-preserve=mode ./home/terminalsexy ~/
             sleep 1s
             #chmod 777 -R ~/terminalsexy/*
-            sudo chmod 777 ~/terminalsexy/Linux_Console/*
-            sudo chmod 777 ~/terminalsexy/st/*
-            sudo chmod 777 ~/terminalsexy/Xresources/*
+            #sudo chmod 777 ~/terminalsexy/Linux_Console/*
+            #sudo chmod 777 ~/terminalsexy/st/*
+            #sudo chmod 777 ~/terminalsexy/Xresources/*
         fi
 
         ## oh-my-bash
         if [ -d ./home/.oh-my-bash ]; then
-            sudo cp -rf ./home/.oh-my-bash ~/
+            sudo cp -rf --no-preserve=mode ./home/.oh-my-bash ~/
             sleep 1s
-            sudo chmod -R 777 ~/.oh-my-bash
+            sudo #chmod -R 777 ~/.oh-my-bash
             sudo cp ~/.oh-my-bash/templates/bashrc.osh-template ~/.bashrc
         fi
 

@@ -230,14 +230,15 @@ function Install_Configurations {
         issueFile=/etc/issue
 
         ## make a safety backup of /etc/issue
-        sudo cp $issueFile $issueFile.backup_$(date +%d%b%Y%H%S)
+        sudo cp $issueFile $issueFile.backup_$(date +%d%b%Y%H%S) &>/dev/null
 
         ## customize issue
         ttyNestedString "Decorating /etc/issue ..." "$MODE_BOLD$FG_GREEN"
 
-        sudo cp $issueFile $issueTemp
+        sudo cp $issueFile $issueTemp &>/dev/null
         sleep 1s
 
+        ## Decorate /etc/issue
         echo -en "\
         \n${bakred}${bldwht}# Headless Host                                              ${txtrst}\
         \n${txtwht}${bakred}- A Debian server respin by mezcel                           ${txtrst}\
@@ -246,7 +247,7 @@ function Install_Configurations {
         \n" >> $issueTemp
         sleep 1s
 
-        sudo mv $issueTemp $issueFile
+        sudo mv $issueTemp $issueFile &>/dev/null
         sleep 1s
 
         ## /etc/motd
@@ -256,17 +257,18 @@ function Install_Configurations {
         motdFile=/etc/motd
 
         ## make a safety backup of /etc/motd
-        sudo cp $motdFile $motdFile.backup_$(date +%d%b%Y%H%S)
+        sudo cp $motdFile $motdFile.backup_$(date +%d%b%Y%H%S) &>/dev/null
         sleep 1s
 
         ## customize issue
-        sudo cp $motdFile $motdTemp
+        sudo cp $motdFile $motdTemp &>/dev/null
         sleep 1s
 
         ## Clear motd file
-        echo -e "" > $motdTemp
+        sudo echo -e "" > $motdTemp &>/dev/null
+        sleep 1
 
-        sudo mv $motdTemp $motdFile
+        sudo mv $motdTemp $motdFile &>/dev/null
     }
 
     function Make_Bashrc_Alias {
@@ -352,17 +354,18 @@ function Install_Configurations {
         ## Manually add headless host to any preexisting users created before the /etc/skel recieve headless-host
 
         me=$(whoami)
+
         if [ $me == "root" ]; then
             ttyCenteredHeader "Shared Resources" "-" "$FG_Cyan"
 
             skellDir=/etc/skel/headless-host
 
             mkdir -p $skellDir
-            chmod -R 777 $skellDir
+            #chmod -R 777 $skellDir
 
-            cp -rf . $skellDir
+            cp -rf --no-preserve=mode . $skellDir
             sleep 1
-            chmod -R 777 $skellDir
+            #chmod -R 777 $skellDir
 
             ## make a headless-hot skel
             ttyNestedString "A fresh headless-host directory was placed in /etc/skel." "$FG_YELLOW"
@@ -377,21 +380,21 @@ function Install_Configurations {
                     ttyNestedString "Preexisting users:" "$FG_MAGENTA"
                     #demoUser=mezcel
                     demoUser=$(ls /home)
-                    demoUser=$(echo $demoUser | awk '{print $1}')
+                    readInput=$(echo $demoUser | awk '{print $1}')
                     sleep 1s
 
-                    promptSting="Enter the name of a desired preexisting user? [ $demoUser ]: "
-                    ttyPromptInput "Copy headless-host repo to user:" "$promptSting" "$demoUser" "$FG_GREEN" "$BG_GREEN"
+                    promptSting="Enter the name of a desired preexisting user? [ $readInput ]: "
+                    ttyPromptInput "Copy headless-host repo to user:" "$promptSting" "$readInput" "$FG_GREEN" "$BG_GREEN"
 
                     if [ -d /home/$readInput ]; then
                         ## check if the user already has headless-host
-                        find /home/$demoUser -name "headless-host*" | grep "headless-host" &>/dev/null
+                        find /home/$readInput -name "headless-host*" | grep "headless-host" &>/dev/null
                         isUserHH=$?
 
                         if [ $isUserHH -ne 0 ]; then
-                            cp -rf $skellDir /home/$readInput/headless-host
+                            cp -rf --no-preserve=mode $skellDir /home/$readInput/headless-host
                             sleep 1
-                            chmod -R 777 /home/$readInput/headless-host
+                            #chmod -R 777 /home/$readInput/headless-host
                             ttyNestedString "/home/$readInput/headless-host was created." "$FG_YELLOW"
                         else
                             ttyNestedString "\t\"headless-host\" appears to exist somewhere in the \"$readInput\" account." "$MODE_DIM$FG_YELLOW"
@@ -403,7 +406,9 @@ function Install_Configurations {
                     fi
                     ;;
             esac
-
+        else
+            ttyCenteredHeader "This script will only edit the /etc/skel directory if this script is ran from the \"root\" account." "!" "$FG_RED"
+            sleep 2s
         fi
     }
 }
@@ -432,6 +437,7 @@ function Install_Home {
             * ) selectionString="The selected menu item from \"installer.sh\"" ;;
         esac
 
+        echo ""
         ttyCenteredHeader "DONE" "!" "$FG_GREEN"
         ttyNestedString "Finished running: $selectionString" "$FG_CYAN"
     }

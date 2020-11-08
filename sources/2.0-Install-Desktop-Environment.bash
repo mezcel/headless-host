@@ -208,9 +208,9 @@ function Configure_Desktop_Environment {
         sudo apt install -y libgcr-3-dev
         sudo apt install -y suckless-tools
 
-        sudo cp -rf ./suckless ~/
-        sudo chmod -R 777 ~/suckless/*
-        #sudo cp -rf ./home/terminalsexy ~/
+        sudo cp -rf --no-preserve=mode ./suckless ~/
+        sudo #chmod -R 777 ~/suckless/*
+        #sudo cp -rf --no-preserve=mode ./home/terminalsexy ~/
 
         ## Original DWM Source
         #git clone git://git.suckless.org/dwm ~/suckless/factory-default/dwm
@@ -294,13 +294,13 @@ function Configure_Desktop_Environment {
         ttyNestedString "Populating home Directory Configs and dot files..." "$FG_YELLOW"
         sleep 2s
 
-        sudo cp -rf ./home/.config ~/
-        sudo chmod -R 777 ~/.config/*
-        sudo chmod 777 ~/.config/geany/geany.conf
-        sudo chmod 777 ~/.config/gtk-2.0/*
-        sudo chmod 777 ~/.config/gtk-3.0/*
-        sudo chmod 777 ~/.config/openbox/*
-        sudo chmod 777 ~/.config/tint2/*
+        sudo cp -rf --no-preserve=mode ./home/.config ~/
+        sudo #chmod -R 777 ~/.config/*
+        #sudo chmod 777 ~/.config/geany/geany.conf
+        #sudo chmod 777 ~/.config/gtk-2.0/*
+        #sudo chmod 777 ~/.config/gtk-3.0/*
+        #sudo chmod 777 ~/.config/openbox/*
+        #sudo chmod 777 ~/.config/tint2/*
 
         if [ -f ~/.bashrc ]; then
             if [ -f ~/terminalsexy/Xresources/myNord.light ]; then
@@ -364,7 +364,7 @@ function Configure_Desktop_Environment {
                 thisKernel=$(uname -r)
                 echo $thisKernel | grep Microsoft &>/dev/null
                 isMS=$?
-            
+
                 if [ $isMS -ne 0 ]; then
                     ## Debian 10.5 live iso comes with audio driver stuff. Or maybe it is just bundled in the package now.
 

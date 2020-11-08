@@ -389,6 +389,9 @@ function Configure_Tty_Environment {
     }
 
     function Set_Nerdtree {
+        ttyCenteredHeader "NERDTree" "." "$FG_YELLOW" 
+        sleep 2s
+
         if [ ! -d ~/.vim/pack/vendor/start/nerdtree ]; then
             ttyNestedString "Importing NERDTree ..." "$MODE_BOLD$FG_GREEN"
             if [ ! -d ./home/.vim/pack/vendor/start/nerdtree ]; then

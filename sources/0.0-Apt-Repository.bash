@@ -231,8 +231,8 @@ function Configure_Apt {
                     echo ""
                     readInput=/downloaded-debs
 
-                    promptString="Enter the full repository mirror link path? [ $readInput ]: "
-                    ttyPromptInput "Personal Apt Mirror Repository:" "$promptString" "$readInput" "$FG_GREEN" "$BG_GREEN"
+                    promptString="Full directory path? [ $readInput ]: "
+                    ttyPromptInput "Personal Apt Repository Repository:" "$promptString" "$readInput" "$FG_GREEN" "$BG_GREEN"
 
                     if [ ! -d $readInput ]; then
                         ttyNestedString "$readInput is not a directory. Exiting now. Check everything and try again." "$MODE_BOLD$FG_RED"

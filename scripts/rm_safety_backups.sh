@@ -9,7 +9,7 @@ sudo rm -rf ~/suckless.backup*
 sudo rm ~/.vimrc.backup*
 sudo rm ~/.tmux.conf.backup*
 sudo rm ~/.bashrc.backup*
-sudo rm ~/.vimrc.backup*
+sudo rm ~/.toprc.backup*
 sudo rm ~/xinitrc.backup*
 
 sudo rm /etc/issue.backup*

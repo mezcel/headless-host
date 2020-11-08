@@ -131,7 +131,7 @@ function Decorative_Formatting {
         ttyHR "$borderChar" "$tputFgColor"
     }
 
-    function ttyBoldRow {
+    function ttyHighlightRow {
         str=$1
         tputBgColor=$2
 
@@ -155,7 +155,7 @@ function Decorative_Formatting {
         tputFgColor=$4
         tputBgColor=$5
 
-        ttyBoldRow "$promptTitle" "$tputBgColor"
+        ttyHighlightRow "$promptTitle" "$tputBgColor"
 
         read -e -p " $tputFgColor$promptString$STYLES_OFF" -i "$defaultAnswer" readInput
         printf "$STYLES_OFF\n"
@@ -164,226 +164,236 @@ function Decorative_Formatting {
 
 }
 
-function Install_DWM {
+function Configure_Desktop_Environment {
+    function Install_DWM {
 
-    ttyCenteredHeader "Install DWM" "." "$FG_CYAN"
-    sleep 2s
+        ttyCenteredHeader "Install DWM" "." "$FG_CYAN"
+        sleep 2s
 
-    ## variable used to cd back to the directory
-    thisScriptPath=$(pwd)
+        ## variable used to cd back to the directory
+        thisScriptPath=$(pwd)
 
-    cd ~/suckless/st
-    sudo make clean install && cd ~/suckless/dmenu
-    sudo make clean install && cd ~/suckless/dwm
-    sudo make clean install && cd $thisScriptPath
-    sleep 5s
-}
+        cd ~/suckless/st
+        sudo make clean install && cd ~/suckless/dmenu
+        sudo make clean install && cd ~/suckless/dwm
+        sudo make clean install && cd $thisScriptPath
+        sleep 5s
+    }
 
-function Suckless_Patches {
+    function Suckless_Patches {
 
-    ttyCenteredHeader "Installing suckless dependencies" "-" "$FG_CYAN"
-    sleep 2s
+        ttyCenteredHeader "Installing suckless dependencies" "-" "$FG_CYAN"
+        sleep 2s
 
-    sudo apt update
-    sudo apt --fix-broken install
-    sudo apt update
+        sudo apt update
+        sudo apt --fix-broken install
+        sudo apt update
 
-    sudo apt install -y build-essential
-    sudo apt install -y git
+        sudo apt install -y build-essential
+        sudo apt install -y git
 
-    ## If Not WLS
-    if [ $(uname -r | grep Microsoft &> /dev/null; echo $?) -ne 0 ]; then
-        sudo apt install -y xorg
-        sudo apt install -y xinit
-        sudo apt install -y arandr
-    fi
-
-    ## dwm requirements
-    sudo apt install -y libx11-dev
-    sudo apt install -y libxft-dev
-    sudo apt install -y libxinerama-dev
-    sudo apt install -y xclip
-    sudo apt install -y xvkbd
-    sudo apt install -y libgcr-3-dev
-    sudo apt install -y suckless-tools
-
-    sudo cp -rf ./suckless ~/
-    sudo chmod -R 777 ~/suckless/*
-    #sudo cp -rf ./home/terminalsexy ~/
-
-    ## Original DWM Source
-    #git clone git://git.suckless.org/dwm ~/suckless/factory-default/dwm
-    #git clone git://git.suckless.org/st ~/suckless/factory-default/st
-    #git clone https://git.suckless.org/slstatus ~/suckless/factory-default/slstatus
-
-    echo -e "feh --bg-fill ~/.config/openbox/wcrr.png \n" > ~/.fehbg
-
-    if [ -f ~/.xinitrc ]; then
-        cp ~/.xinitrc ~/.xinitrc.backup.$(date +%d%b%Y_%H%M%S)
-    fi
-
-    echo -e "bash ~/.fehbg &\nexec ~/suckless/dwm/dwm" > ~/.xinitrc
-    echo -e "bash ~/.fehbg & \nexec ~/suckless/dwm/dwm" > ~/.xinitrc_dwm
-    echo "exec openbox-session" > ~/.xinitrc_openbox
-
-    ## Build DWM
-    Install_DWM
-}
-
-function Optional_Openbox {
-    sudo apt install -y openbox
-    sudo apt install -y tint2
-    sudo apt install -y conky
-}
-
-function Desktop_Applications {
-
-    ttyCenteredHeader "Installing gtk and other desktop environment tools" "." "$FG_CYAN"
-    sleep 2s
-
-    ## Xorg DE apps
-
-    sudo apt update
-    sudo apt --fix-broken install
-    sudo apt update
-
-    sudo apt install -y build-essential
-
-    sudo apt install -y libvte-dev
-    sudo apt install -y geany
-    sudo apt install -y geany-plugins
-    sudo apt install -y mousepad
-    sudo apt install -y zathura
-
-    sudo apt install -y pcmanfm
-    sudo apt install -y libfm-tools
-    sudo apt install -y libusbmuxd-tools
-    sudo apt install -y udiskie
-    sudo apt install -y xarchiver
-    sudo apt install -y gvfs
-    sudo apt install -y tumbler
-    sudo apt install -y ffmpegthumbnailer
-
-    ## Openbox backup
-    sudo apt install -y xterm
-    sudo apt install -y openbox
-    sudo apt install -y tint2
-    sudo apt install -y conky
-    sudo apt install -y feh
-
-    sudo apt install -y gparted
-
-    ## light weight screensaver
-    # sudo apt install xfishtank
-
-    ## If Not WLS
-    if [ $(uname -r | grep Microsoft &> /dev/null; echo $?) -ne 0 ]; then
-        sudo apt install -y iceweasel
-        sudo apt install -y firefox-esr
-    fi
-
-    sudo apt install -y gimp
-}
-
-function Home_Directory {
-    ## Home Directory Configs
-    ## This function assumes the script is running as source when launched from the headless-host root directory.
-
-    ttyCenteredHeader "Dot Files" "." "$FG_CYAN"
-    ttyNestedString "Populating home Directory Configs and dot files..." "$FG_YELLOW"
-    sleep 2s
-
-    sudo cp -rf ./home/.config ~/
-    #sudo chmod -R 777 ~/.config/*
-    sudo chmod 777 ~/.config/geany/geany.conf
-    sudo chmod 777 ~/.config/gtk-2.0/*
-    sudo chmod 777 ~/.config/gtk-3.0/*
-    sudo chmod 777 ~/.config/openbox/*
-    sudo chmod 777 ~/.config/tint2/*
-
-    if [ -f ~/.bashrc ]; then
-        if [ -f ~/terminalsexy/Xresources/myNord.light ]; then
-            cp ~/terminalsexy/Xresources/myNord.light ~/.Xresources
-            echo '' >> ~/.bashrc
-            echo '## xterm color scheme ' >> ~/.bashrc
-            echo 'pgrep -x Xorg &>/dev/null ' >> ~/.bashrc
-            echo 'isXorg=$?' >> ~/.bashrc
-            echo 'if [ $isXorg -eq 0 ]; then' >> ~/.bashrc
-            echo -e "\txrdb -merge ~/.Xresources" >> ~/.bashrc
-            echo 'fi' >> ~/.bashrc
-            echo '' >> ~/.bashrc
+        ## If Not WLS
+        if [ $(uname -r | grep Microsoft &> /dev/null; echo $?) -ne 0 ]; then
+            sudo apt install -y xorg
+            sudo apt install -y xinit
+            sudo apt install -y arandr
         fi
-    fi
 
-    #sudo chmod +x ./my_iwconfig.sh
-    #sudo chmod +x ./install.sh
-    #sudo chmod +x ./home/dl-my-repos.sh
+        ## dwm requirements
+        sudo apt install -y libx11-dev
+        sudo apt install -y libxft-dev
+        sudo apt install -y libxinerama-dev
+        sudo apt install -y xclip
+        sudo apt install -y xvkbd
+        sudo apt install -y libgcr-3-dev
+        sudo apt install -y suckless-tools
 
-    mkdir -p ~/Downloads
+        sudo cp -rf ./suckless ~/
+        sudo chmod -R 777 ~/suckless/*
+        #sudo cp -rf ./home/terminalsexy ~/
 
-    ## Vim cache
-    mkdir -p ~/.backup/
-    mkdir -p ~/.swp/
-    mkdir -p ~/.undo/
+        ## Original DWM Source
+        #git clone git://git.suckless.org/dwm ~/suckless/factory-default/dwm
+        #git clone git://git.suckless.org/st ~/suckless/factory-default/st
+        #git clone https://git.suckless.org/slstatus ~/suckless/factory-default/slstatus
 
-    ttyNestedString "Finished Populating home Directory Configs." "$FG_GREEN"
-}
+        echo -e "feh --bg-fill ~/.config/openbox/wcrr.png \n" > ~/.fehbg
 
-function Desktop_Audio {
+        if [ -f ~/.xinitrc ]; then
+            cp ~/.xinitrc ~/.xinitrc.backup.$(date +%d%b%Y_%H%M%S)
+        fi
 
-    ttyCenteredHeader "Desktop Audio" "-" "$FG_CYAN"
+        echo -e "bash ~/.fehbg &\nexec ~/suckless/dwm/dwm" > ~/.xinitrc
+        echo -e "bash ~/.fehbg & \nexec ~/suckless/dwm/dwm" > ~/.xinitrc_dwm
+        echo "exec openbox-session" > ~/.xinitrc_openbox
 
-    #sudo dpkg-query --list alsa-utils pavucontrol vlc libdvd-pkg libdvd-pkg
-    command -v pulseaudio &>/dev/null
-    isPulse=$?
+        ## Build DWM
+        Install_DWM
+    }
 
-    command -v alsamixer &>/dev/null
-    isAlsa=$?
+    function Optional_Openbox {
+        sudo apt install -y openbox
+        sudo apt install -y tint2
+        sudo apt install -y conky
+    }
 
-    command -v vlc &>/dev/null
-    isVlc=$?
+    function Desktop_Applications {
 
-    if [ $isPulse -ne 0 ]; then
-        promptString="Install VLC Media Player and its dependencies? [ Y/n ]: "
-        readInput=yes
-    elif [ $isAlsa -ne 0 ]; then
-        promptString="Install VLC Media Player and its dependencies? [ Y/n ]: "
-        readInput=yes
-    elif [ $isVlc -ne 0 ]; then
-        promptString="Install VLC Media Player and its dependencies? [ Y/n ]: "
-        readInput=yes
-    else
-        promptString="Install VLC Media Player and its dependencies? [ y/N ]: "
-        readInput=no
-    fi
+        ttyCenteredHeader "Installing gtk and other desktop environment tools" "." "$FG_CYAN"
+        sleep 2s
 
-    ttyPromptInput "VLC:" "$promptString" "$readInput" "$FG_GREEN" "$BG_GREEN"
+        ## Xorg DE apps
 
-    case $readInput in
-        [Yy]* )
-            thisKernel=$(uname -r)
-            echo $thisKernel | grep Microsoft &>/dev/null
-            isMS=$?
-            
-            if [ $isMS -ne 0 ]; then
-                ## Debian 10.5 live iso comes with audio driver stuff. Or maybe it is just bundled in the package now.
+        sudo apt update
+        sudo apt --fix-broken install
+        sudo apt update
 
-                sudo apt install -y alsa-utils
-                sudo apt install -y pavucontrol
-                #sudo apt install -y mplayer
-                sudo apt install -y vlc
-                ## play protected dvd movies
-                sudo apt install -y libdvd-pkg
-                sudo dpkg-reconfigure libdvd-pkg
+        sudo apt install -y build-essential
+
+        sudo apt install -y libvte-dev
+        sudo apt install -y geany
+        sudo apt install -y geany-plugins
+        sudo apt install -y mousepad
+        sudo apt install -y zathura
+
+        sudo apt install -y pcmanfm
+        sudo apt install -y libfm-tools
+        sudo apt install -y libusbmuxd-tools
+        sudo apt install -y udiskie
+        sudo apt install -y xarchiver
+        sudo apt install -y gvfs
+        sudo apt install -y tumbler
+        sudo apt install -y ffmpegthumbnailer
+
+        ## Openbox backup
+        sudo apt install -y xterm
+        sudo apt install -y openbox
+        sudo apt install -y tint2
+        sudo apt install -y conky
+        sudo apt install -y feh
+
+        sudo apt install -y gparted
+
+        ## light weight screensaver
+        # sudo apt install xfishtank
+
+        ## If Not WLS
+        if [ $(uname -r | grep Microsoft &> /dev/null; echo $?) -ne 0 ]; then
+            sudo apt install -y iceweasel
+            sudo apt install -y firefox-esr
+        fi
+
+        sudo apt install -y gimp
+    }
+
+    function Home_Directory {
+        ## Home Directory Configs
+        ## This function assumes the script is running as source when launched from the headless-host root directory.
+
+        ttyCenteredHeader "Dot Files" "." "$FG_CYAN"
+        ttyNestedString "Populating home Directory Configs and dot files..." "$FG_YELLOW"
+        sleep 2s
+
+        sudo cp -rf ./home/.config ~/
+        sudo chmod -R 777 ~/.config/*
+        sudo chmod 777 ~/.config/geany/geany.conf
+        sudo chmod 777 ~/.config/gtk-2.0/*
+        sudo chmod 777 ~/.config/gtk-3.0/*
+        sudo chmod 777 ~/.config/openbox/*
+        sudo chmod 777 ~/.config/tint2/*
+
+        if [ -f ~/.bashrc ]; then
+            if [ -f ~/terminalsexy/Xresources/myNord.light ]; then
+                ## Light Xterm theme
+                cp ~/terminalsexy/Xresources/myNord.light ~/.Xresources
+
+                echo '' >> ~/.bashrc
+                echo '## xterm color scheme ' >> ~/.bashrc
+                echo 'pgrep -x Xorg &>/dev/null ' >> ~/.bashrc
+                echo 'isXorg=$?' >> ~/.bashrc
+                echo 'if [ $isXorg -eq 0 ]; then' >> ~/.bashrc
+                echo -e "\txrdb -merge ~/.Xresources" >> ~/.bashrc
+                echo 'fi' >> ~/.bashrc
+                echo '' >> ~/.bashrc
             fi
+        fi
 
-            sleep 2s
-            ;;
-    esac
+        mkdir -p ~/Downloads
+
+        ## Vim cache
+        mkdir -p ~/.backup/
+        mkdir -p ~/.swp/
+        mkdir -p ~/.undo/
+
+        ttyNestedString "Finished Populating home Directory Configs." "$FG_GREEN"
+        sleep 2
+    }
+
+    function Desktop_Audio {
+
+        ttyCenteredHeader "Desktop Audio" "-" "$FG_CYAN"
+
+        #sudo dpkg-query --list alsa-utils pavucontrol vlc libdvd-pkg libdvd-pkg
+        command -v pulseaudio &>/dev/null
+        isPulse=$?
+
+        command -v alsamixer &>/dev/null
+        isAlsa=$?
+
+        command -v vlc &>/dev/null
+        isVlc=$?
+
+        if [ $isPulse -ne 0 ]; then
+            promptString="Install VLC Media Player and its dependencies? [ Y/n ]: "
+            readInput=yes
+        elif [ $isAlsa -ne 0 ]; then
+            promptString="Install VLC Media Player and its dependencies? [ Y/n ]: "
+            readInput=yes
+        elif [ $isVlc -ne 0 ]; then
+            promptString="Install VLC Media Player and its dependencies? [ Y/n ]: "
+            readInput=yes
+        else
+            promptString="Install VLC Media Player and its dependencies? [ y/N ]: "
+            readInput=no
+        fi
+
+        ttyPromptInput "VLC:" "$promptString" "$readInput" "$FG_GREEN" "$BG_GREEN"
+
+        case $readInput in
+            [Yy]* )
+                thisKernel=$(uname -r)
+                echo $thisKernel | grep Microsoft &>/dev/null
+                isMS=$?
+            
+                if [ $isMS -ne 0 ]; then
+                    ## Debian 10.5 live iso comes with audio driver stuff. Or maybe it is just bundled in the package now.
+
+                    sudo apt install -y alsa-utils
+                    sudo apt install -y pavucontrol
+                    #sudo apt install -y mplayer
+                    sudo apt install -y vlc
+                    ## play protected dvd movies
+                    sudo apt install -y libdvd-pkg
+                    sudo dpkg-reconfigure libdvd-pkg
+                fi
+
+                sleep 2s
+                ;;
+        esac
+    }
 }
+
+## #############################################################################
+## Configure Desktop Environment
+## #############################################################################
+
+## Initialize
 
 Decorative_Formatting
 Tput_Colors
+Configure_Desktop_Environment
+
+## RUN
 
 ttyCenteredHeader "Desktop Environment" "#" "$FG_MAGENTA"
 sleep 2s

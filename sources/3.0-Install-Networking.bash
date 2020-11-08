@@ -131,7 +131,7 @@ function Decorative_Formatting {
         ttyHR "$borderChar" "$tputFgColor"
     }
 
-    function ttyBoldRow {
+    function ttyHighlightRow {
         str=$1
         tputBgColor=$2
 
@@ -155,125 +155,127 @@ function Decorative_Formatting {
         tputFgColor=$4
         tputBgColor=$5
 
-        ttyBoldRow "$promptTitle" "$tputBgColor"
+        ttyHighlightRow "$promptTitle" "$tputBgColor"
 
         read -e -p " $tputFgColor$promptString$STYLES_OFF" -i "$defaultAnswer" readInput
         printf "$STYLES_OFF\n"
         sleep 1
     }
-
 }
 
-function Ask4NetworkManager {
-    promptString="${FG_RED}Do you want to install NetworkManager? [ y/N ]: "
-    ttyPromptInput "NetworkManager" "$promptString" "NoThanks" "$FG_RED" "$BG_RED"
-
-    case $readInput in
-        [Yy]* )
-            sudo apt install -y network-manager
-            #sudo apt install -y xrdp
-            ;;
-    esac
-
-}
-
-function Install_Network_Drivers {
-    ttyNestedString "Installing network drivers ..." "$MODE_BOLD$FG_GREEN"
-    sleep 2s
-
-    sudo apt install -y linux-image-$(uname -r)
-    sudo apt install -y linux-headers-$(uname -r)
-
-    sudo apt install -y firmware-linux-free
-    sudo apt install -y firmware-linux-nonfree
-    sudo apt install -y firmware-iwlwifi
-
-    ## Detect and/or Display the wireless driver Chipset
-
-    lspci | grep "Broadcom" &>/dev/null
-    isBroadcom=$?
-
-    if [ $isBroadcom -eq 0 ]; then
-
-        ttyCenteredHeader "Broadcom Wifi" "." "$FG_YELLOW"
-        ttyNestedString "If you choose to install Broadcom drivers, the computer will restart after installation." "$FG_YELLOW"
-
-        ## check if driver is already installed
-        sudo dpkg-query --list broadcom-sta-dkms firmware-brcm80211 &>/dev/null
-
-        yn=$?
-        if [ $yn -eq 0 ]; then
-            promptString="Install the brcm80211 Broadcom wifi drivers? [ y/N ]: "
-            readInput=no
-        else
-            promptString="Install the brcm80211 Broadcom wifi drivers? [ Y/n ]: "
-            readInput=yes
-        fi
-
-        ttyPromptInput "Broadcom wifi drivers:" "$promptString" "$readInput" "$FG_GREEN" "$BG_GREEN"
+function Get_Networking_Applications {
+    function Ask4NetworkManager {
+        promptString="${FG_RED}Do you want to install NetworkManager? [ y/N ]: "
+        ttyPromptInput "NetworkManager" "$promptString" "NoThanks" "$FG_RED" "$BG_RED"
 
         case $readInput in
             [Yy]* )
-                sudo apt install -y firmware-brcm80211
-                sudo apt install -y broadcom-sta-dkms
-
-                ttyNestedString "I recommend restarting the computer now." "$FG_RED"
-                ttyNestedString "Note: You will need to run the installer again. On the next pass the option to install brcm80211 will be default to \"no\" for convenience." "$FG_RED"
-
-                promptString="Restart the computer now? [ Y/n ]: "
-                ttyPromptInput "Restart:" "$promptString" "yes" "$FG_GREEN" "$BG_GREEN"
-
-                case $readInput in
-                    [Yy]* )
-                        sudo reboot
-                    ;;
-                esac
+                sudo apt install -y network-manager
+                #sudo apt install -y xrdp
                 ;;
         esac
+    }
 
-    fi
+    function Install_Network_Drivers {
+        ttyCenteredHeader "Networking drivers" "." "$FG_CYAN"
+        sleep 2s
+
+        sudo apt install -y linux-image-$(uname -r)
+        sudo apt install -y linux-headers-$(uname -r)
+
+        sudo apt install -y firmware-linux-free
+        sudo apt install -y firmware-linux-nonfree
+        sudo apt install -y firmware-iwlwifi
+
+        ## Detect and/or Display the wireless driver Chipset
+
+        lspci | grep "Broadcom" &>/dev/null
+        isBroadcom=$?
+
+        if [ $isBroadcom -eq 0 ]; then
+
+            ttyCenteredHeader "Broadcom Wifi" "." "$FG_YELLOW"
+            ttyNestedString "If you choose to install Broadcom drivers, the computer will restart after installation." "$FG_YELLOW"
+
+            ## check if driver is already installed
+            sudo dpkg-query --list broadcom-sta-dkms firmware-brcm80211 &>/dev/null
+
+            yn=$?
+            if [ $yn -eq 0 ]; then
+                promptString="Install the brcm80211 Broadcom wifi drivers? [ y/N ]: "
+                readInput=no
+            else
+                promptString="Install the brcm80211 Broadcom wifi drivers? [ Y/n ]: "
+                readInput=yes
+            fi
+
+            ttyPromptInput "Broadcom wifi drivers:" "$promptString" "$readInput" "$FG_GREEN" "$BG_GREEN"
+
+            case $readInput in
+                [Yy]* )
+                    sudo apt install -y firmware-brcm80211
+                    sudo apt install -y broadcom-sta-dkms
+
+                    ttyNestedString "I recommend restarting the computer now." "$FG_RED"
+                    ttyNestedString "Note: You will need to run the installer again. On the next pass the option to install brcm80211 will be default to \"no\" for convenience." "$FG_RED"
+
+                    promptString="Restart the computer now? [ Y/n ]: "
+                    ttyPromptInput "Restart:" "$promptString" "yes" "$FG_GREEN" "$BG_GREEN"
+
+                    case $readInput in
+                        [Yy]* )
+                            sudo reboot
+                        ;;
+                    esac
+                    ;;
+            esac
+
+        fi
+    }
+
+    function networking_applications {
+        sudo apt update
+        sudo apt --fix-broken install
+        sudo apt update
+
+        ## Install network drivers
+        Install_Network_Drivers
+        
+        ttyCenteredHeader "Networking application packages" "-" "$FG_CYAN"
+        sleep 2s
+
+        sudo apt install -y resolvconf
+
+        sudo apt install -y build-essential
+        sudo apt install -y util-linux
+        sudo apt remove nano
+
+        sudo apt install -y elinks
+        sudo apt install -y w3m
+        sudo apt install -y git
+        sudo apt install -y curl
+        sudo apt install -y iputils-ping
+    }
+
+    function Set_WpaSupplicant {
+        promptString="Connect to an available wireless network? [ y/N ]: "
+        ttyPromptInput "Wifi SSID Connection (wpa_supplicant):" "$promptString" "not_now" "$FG_GREEN" "$BG_GREEN"
+
+        case $readInput in
+            [Yy]* )
+                bash my_iwconfig.sh
+                ;;
+        esac
+    }
 }
 
-function networking_applications {
-
-    ttyNestedString "Installing networking applications ..." "$MODE_BOLD$FG_CYAN"
-    sleep 2s
-
-    sudo apt update
-    sudo apt --fix-broken install
-    sudo apt update
-
-    ## Install network drivers
-    Install_Network_Drivers
-
-    sudo apt install -y resolvconf
-
-    sudo apt install -y build-essential
-    sudo apt install -y util-linux
-    sudo apt remove nano
-
-    sudo apt install -y elinks
-    sudo apt install -y w3m
-    sudo apt install -y git
-    sudo apt install -y curl
-    sudo apt install -y iputils-ping
-}
-
-function Set_WpaSupplicant {
-    promptString="Connect to an available wireless network? [ y/N ]: "
-    ttyPromptInput "Wifi SSID Connection (wpa_supplicant):" "$promptString" "not_now" "$FG_GREEN" "$BG_GREEN"
-
-    case $readInput in
-        [Yy]* )
-            bash my_iwconfig.sh
-            ;;
-    esac
-}
-
-## RUN
+## Initialize
 
 Decorative_Formatting
 Tput_Colors
+Get_Networking_Applications
+
+## RUN
 
 ttyCenteredHeader "Networking packages" "#" "$FG_MAGENTA"
 sleep 2s

@@ -130,7 +130,7 @@ function Decorative_Formatting {
         ttyHR "$borderChar" "$tputFgColor"
     }
 
-    function ttyBoldRow {
+    function ttyHighlightRow {
         str=$1
         tputBgColor=$2
 
@@ -154,293 +154,300 @@ function Decorative_Formatting {
         tputFgColor=$4
         tputBgColor=$5
 
-        ttyBoldRow "$promptTitle" "$tputBgColor"
+        ttyHighlightRow "$promptTitle" "$tputBgColor"
 
         read -e -p " $tputFgColor$promptString$STYLES_OFF" -i "$defaultAnswer" readInput
         printf "$STYLES_OFF\n"
         sleep 1
     }
-
 }
 
-function ttyAliasDescription {
-    boldChars="${MODE_BOLD}$1${STYLES_OFF}"
-    normalChars="${FG_CYAN}$2${STYLES_OFF}"
-    descChars="${FG_YELLOW}${MODE_BOLD}$3${STYLES_OFF}"
+function Alias_Arguments {
+    function ttyAliasDescription {
+        boldChars="${MODE_BOLD}$1${STYLES_OFF}"
+        normalChars="${FG_CYAN}$2${STYLES_OFF}"
+        descChars="${FG_YELLOW}${MODE_BOLD}$3${STYLES_OFF}"
 
-    if [ -z  $4 ]; then
-        pathChars=" "
-    else
-        pathChars="$4"
-    fi
+        if [ -z  $4 ]; then
+            pathChars=" "
+        else
+            pathChars="$4"
+        fi
 
-    nameLength=$(( ${#1} + ${#2} ))
-    if [ $nameLength -le 3 ]; then
-        aliasName="${FG_CYAN}hh ${boldChars}${normalChars}\t"
-    else
-        aliasName="${FG_CYAN}hh ${boldChars}${normalChars}"
-    fi
-    descString="${descChars}"
+        nameLength=$(( ${#1} + ${#2} ))
+        if [ $nameLength -le 3 ]; then
+            aliasName="${FG_CYAN}hh ${boldChars}${normalChars}\t"
+        else
+            aliasName="${FG_CYAN}hh ${boldChars}${normalChars}"
+        fi
+        descString="${descChars}"
 
-    echo -e " $aliasName\t$descString"
+        echo -e " $aliasName\t$descString"
 
-    if [ ${#pathChars} -gt 1 ]; then
-        echo -e "\t\t\t${FG_MAGENTA}$pathChars$STYLES_OFF"
-    fi
-}
+        if [ ${#pathChars} -gt 1 ]; then
+            echo -e "\t\t\t${FG_MAGENTA}$pathChars$STYLES_OFF"
+        fi
+    }
 
-function wifi_up {
-    sleep 1
-    defaultWifi=$(find ~/ -maxdepth 1 -name "launch_*.sh")
-    if [ -f $defaultWifi ]; then
-        bash $defaultWifi up
-    else
-        echo -e "${FG_YELLOW}\nscript file is missing. nothing happened.\n$STYLES_OFF"
-    fi
-}
+    function wifi_up {
+        sleep 1
+        defaultWifi=$(find ~/ -maxdepth 1 -name "launch_*.sh")
+        if [ -f $defaultWifi ]; then
+            bash $defaultWifi up
+        else
+            echo -e "${FG_YELLOW}\nscript file is missing. nothing happened.\n$STYLES_OFF"
+        fi
+    }
 
-function wifi_down {
-    sleep 1
-    defaultWifi=$(find ~/ -maxdepth 1 -name "launch_*.sh")
-    if [ -f $defaultWifi ]; then
-        bash $defaultWifi down
-    else
-        echo -e "${FG_YELLOW}\nscript file is missing. nothing happened.\n$STYLES_OFF"
-    fi
-}
+    function wifi_down {
+        sleep 1
+        defaultWifi=$(find ~/ -maxdepth 1 -name "launch_*.sh")
+        if [ -f $defaultWifi ]; then
+            bash $defaultWifi down
+        else
+            echo -e "${FG_YELLOW}\nscript file is missing. nothing happened.\n$STYLES_OFF"
+        fi
+    }
 
-function wifi_restart {
-    sleep 1
-    defaultWifi=$(find ~/ -maxdepth 1 -name "launch_*.sh")
-    if [ -f $defaultWifi ]; then
-        bash $defaultWifi restart
-    else
-        echo -e "${FG_YELLOW}\nscript file is missing. nothing happened.\n$STYLES_OFF"
-    fi
-}
+    function wifi_restart {
+        sleep 1
+        defaultWifi=$(find ~/ -maxdepth 1 -name "launch_*.sh")
+        if [ -f $defaultWifi ]; then
+            bash $defaultWifi restart
+        else
+            echo -e "${FG_YELLOW}\nscript file is missing. nothing happened.\n$STYLES_OFF"
+        fi
+    }
 
-function show_additional_alias {
-    ## get a list of pre-existing aliases in ~/.bashrc
-    ## alias vars exist between "\ " and "=" after the "^alias " string
-    aliasArray=($(cat ~/.bashrc | grep "^alias " | awk -F[\ =] '{print $2}'))
+    function show_additional_alias {
+        ## get a list of pre-existing aliases in ~/.bashrc
+        ## alias vars exist between "\ " and "=" after the "^alias " string
+        aliasArray=($(cat ~/.bashrc | grep "^alias " | awk -F[\ =] '{print $2}'))
 
-    ttyNestedString "All aliases defined in ~/.bashrc" "$FG_YELLOW"
-    echo -e "\t${FG_CYAN}${MODE_BOLD}${aliasArray[*]}${STYLES_OFF}"
-}
+        ttyNestedString "All aliases defined in ~/.bashrc" "$FG_YELLOW"
+        echo -e "\t${FG_CYAN}${MODE_BOLD}${aliasArray[*]}${STYLES_OFF}"
+    }
 
-function about {
-    clear
+    function about {
+        clear
 
-    ttyCenteredHeader "headless-host" "#" "$FG_CYAN"
-    ttyNestedString "\"hh\" is a ~/.bashrc alias used to launch commonly used server administrative tasks. Enter \"hh\" followed by a shortcut letter or auto complete argument." "$FG_GREEN"
+        ttyCenteredHeader "headless-host" "#" "$FG_CYAN"
+        ttyNestedString "\"hh\" is a ~/.bashrc alias used to launch commonly used server administrative tasks. Enter \"hh\" followed by a shortcut letter or auto complete argument." "$FG_GREEN"
 
-    boldLetter1=${FG_CYAN}${MODE_BOLD}
-    boldLetter2=${STYLES_OFF}${FG_CYAN}
-    brightDesc=${FG_YELLOW}${MODE_BOLD}
+        boldLetter1=${FG_CYAN}${MODE_BOLD}
+        boldLetter2=${STYLES_OFF}${FG_CYAN}
+        brightDesc=${FG_YELLOW}${MODE_BOLD}
 
-    aliasPath=$(cat ~/.bashrc | grep "alias hh=\"bash " | awk '{print $3}' | sed 's/"//g')
+        aliasPath=$(cat ~/.bashrc | grep "alias hh=\"bash " | awk '{print $3}' | sed 's/"//g')
 
-    defaultWifi=$(find ~/ -maxdepth 1 -name "launch_*.sh")
+        defaultWifi=$(find ~/ -maxdepth 1 -name "launch_*.sh")
 
-    musicPlaylist=~/Music/myRadio.pls
-
-    echo ""
-    ttyBoldRow "hh alias':" "${BG_CYAN}"
-
-    ttyAliasDescription "m" "ount" "mount\t/dev/sdb1" " "
-    ttyAliasDescription "um" "ount" "umount\t/dev/sdb1" " "
-    ttyAliasDescription "u" "p" "connect to wifi as defined by wpa_supplicant" "$defaultWifi"
-    ttyAliasDescription "d" "own" "disconnect wifi" " "
-    ttyAliasDescription "r" "eset" "restart wifi" " "
-    ttyAliasDescription "n" "vlc" "launch nvlc playlst" "$musicPlaylist"
-    ttyAliasDescription "a" "lsamixer" "launch alsamixer" " "
-    ttyAliasDescription "b" "attery" "view tlp battery state" " "
-    ttyAliasDescription "e" "dit" "edit the \"hh\" script in Vim." "$aliasPath"
-    ttyAliasDescription "off" " " "go offline & shutdown computer" " "
-    echo ""
-
-    ttyBoldRow "~/.bashrc alias':" "${BG_CYAN}"
-    show_additional_alias
-
-    ## make an auto complete list in case one doesn't exist
-    complete -W 'up down restart mount umount off edit alsamixer nvlc' hh
-
-    ttyHR "#" "$FG_CYAN"
-    echo ""
-}
-
-function streaming_radio {
-    sleep 1
-    command -v vlc &>/dev/null
-
-    if [ $? -eq 0 ]; then
         musicPlaylist=~/Music/myRadio.pls
 
-        if [ -f $musicPlaylist ]; then
-            nvlc $musicPlaylist
-        fi
-    fi
-}
+        echo ""
+        ttyHighlightRow "hh alias':" "${BG_CYAN}"
 
-function launch_alsamixer {
-    sleep 1
-    command -v alsamixer &>/dev/null
+        ttyAliasDescription "m" "ount" "mount\t/dev/sdb1" " "
+        ttyAliasDescription "um" "ount" "umount\t/dev/sdb1" " "
+        ttyAliasDescription "u" "p" "connect to wifi as defined by wpa_supplicant" "$defaultWifi"
+        ttyAliasDescription "d" "own" "disconnect wifi" " "
+        ttyAliasDescription "r" "eset" "restart wifi" " "
+        ttyAliasDescription "n" "vlc" "launch nvlc playlst" "$musicPlaylist"
+        ttyAliasDescription "a" "lsamixer" "launch alsamixer" " "
+        ttyAliasDescription "b" "attery" "view tlp battery state" " "
+        ttyAliasDescription "e" "dit" "edit the \"hh\" script in Vim." "$aliasPath"
+        ttyAliasDescription "off" " " "go offline & shutdown computer" " "
+        echo ""
 
-    if [ $? -eq 0 ]; then
-        alsamixer
-    fi
-}
+        ttyHighlightRow "~/.bashrc alias':" "${BG_CYAN}"
+        show_additional_alias
 
-function edit_hh_alias {
-    sleep 1
-    aliasPath=$(cat ~/.bashrc | grep "alias hh=\"bash " | awk '{print $3}' | sed 's/"//g')
+        ## make an auto complete list in case one doesn't exist
+        complete -W 'up down restart mount umount off edit alsamixer nvlc' hh
 
-    if [ -f $aliasPath ]; then
-        sudo chmod 777 $aliasPath
-        command -v vim &>/dev/null
+        ttyHR "#" "$FG_CYAN"
+        echo ""
+    }
+
+    function streaming_radio {
+        sleep 1
+        command -v vlc &>/dev/null
 
         if [ $? -eq 0 ]; then
-            vim $aliasPath
-        else
-            vi $aliasPath
+            musicPlaylist=~/Music/myRadio.pls
+
+            if [ -f $musicPlaylist ]; then
+                nvlc $musicPlaylist
+            fi
         fi
-    fi
-}
+    }
 
-function computer_off {
-    sleep 1
-    ## close wireless and shutdown computer
-    defaultWifi=$(find ~/ -maxdepth 1 -name "launch_*.sh")
+    function launch_alsamixer {
+        sleep 1
+        command -v alsamixer &>/dev/null
 
-    bash $defaultWifi down
-    sudo shutdown now
-}
-
-function mountSDB1 {
-
-    echo -e "${MODE_BOLD}${BG_BLUE}${FG_WHITE}\nmount /dev/sdb1 ...${STYLES_OFF}"
-    sleep 1
-
-    command -v udiskie $>/dev/null
-    isUdiskie=$?
-
-    if [ $isUdiskie -eq 0 ]; then
-        echo -e "${MODE_BOLD}${FG_MAGENTA}"
-        udiskie-mount /dev/sdb1
-        echo ""
-        lsblk
-        echo "${STYLES_OFF}"
-    else
-        mountDestination=/media/$(whoami)
-
-        if [ ! -d $mountDestination ]; then
-            sudo mkdir -p $mountDestination
+        if [ $? -eq 0 ]; then
+            alsamixer
         fi
+    }
 
-        if [ ! -d $mountDestination ]; then
-            mountDestination=/mnt
+    function edit_hh_alias {
+        sleep 1
+        aliasPath=$(cat ~/.bashrc | grep "alias hh=\"bash " | awk '{print $3}' | sed 's/"//g')
+
+        if [ -f $aliasPath ]; then
+            sudo chmod 777 $aliasPath
+            command -v vim &>/dev/null
+
+            if [ $? -eq 0 ]; then
+                vim $aliasPath
+            else
+                vi $aliasPath
+            fi
         fi
+    }
 
-        sudo mount /dev/sdb1 $mountDestination &>/dev/null
-        isSuccess=$?
+    function computer_off {
+        sleep 1
+        ## close wireless and shutdown computer
+        defaultWifi=$(find ~/ -maxdepth 1 -name "launch_*.sh")
 
+        bash $defaultWifi down
+        sudo shutdown now
+    }
+
+    function mountSDB1 {
+
+        echo -e "${MODE_BOLD}${BG_BLUE}${FG_WHITE}\nmount /dev/sdb1 ...${STYLES_OFF}"
         sleep 1
 
-        if [ $isSuccess -eq 0 ]; then
-            echo -e "${MODE_BOLD}${FG_MAGENTA}## $mountDestination/*\n"
-            ls -al $mountDestination
-            echo "${STYLES_OFF}${FG_MAGENTA}"
+        command -v udiskie $>/dev/null
+        isUdiskie=$?
+
+        if [ $isUdiskie -eq 0 ]; then
+            echo -e "${MODE_BOLD}${FG_MAGENTA}"
+            udiskie-mount /dev/sdb1
+            echo ""
             lsblk
             echo "${STYLES_OFF}"
         else
-            echo -e "${MODE_BOLD}${FG_RED}## Mount failed${STYLES_OFF}"
+            mountDestination=/media/$(whoami)
+
+            if [ ! -d $mountDestination ]; then
+                sudo mkdir -p $mountDestination
+            fi
+
+            if [ ! -d $mountDestination ]; then
+                mountDestination=/mnt
+            fi
+
+            sudo mount /dev/sdb1 $mountDestination &>/dev/null
+            isSuccess=$?
+
+            sleep 1
+
+            if [ $isSuccess -eq 0 ]; then
+                echo -e "${MODE_BOLD}${FG_MAGENTA}## $mountDestination/*\n"
+                ls -al $mountDestination
+                echo "${STYLES_OFF}${FG_MAGENTA}"
+                lsblk
+                echo "${STYLES_OFF}"
+            else
+                echo -e "${MODE_BOLD}${FG_RED}## Mount failed${STYLES_OFF}"
+                echo "${STYLES_OFF}${FG_MAGENTA}"
+                lsblk
+                echo "${STYLES_OFF}"
+            fi
+        fi
+    }
+
+    function unmountSDB1 {
+        echo -e "${MODE_BOLD}${BG_BLUE}${FG_WHITE}\numount /dev/sdb1 ...${STYLES_OFF}"
+        sleep 1
+
+        command -v udiskie $>/dev/null
+        isUdiskie=$?
+
+        if [ $isUdiskie -eq 0 ]; then
+            echo "${STYLES_OFF}${FG_MAGENTA}"
+            udiskie-umount /dev/sdb1 --force --detach
+            echo ""
+            lsblk
+            echo "${STYLES_OFF}"
+        else
+            sudo umount /dev/sdb1
             echo "${STYLES_OFF}${FG_MAGENTA}"
             lsblk
             echo "${STYLES_OFF}"
         fi
-    fi
-}
 
-function unmountSDB1 {
-    echo -e "${MODE_BOLD}${BG_BLUE}${FG_WHITE}\numount /dev/sdb1 ...${STYLES_OFF}"
-    sleep 1
-
-    command -v udiskie $>/dev/null
-    isUdiskie=$?
-
-    if [ $isUdiskie -eq 0 ]; then
-        echo "${STYLES_OFF}${FG_MAGENTA}"
-        udiskie-umount /dev/sdb1 --force --detach
-        echo ""
-        lsblk
-        echo "${STYLES_OFF}"
-    else
+        ## umount again just for safety
         sudo umount /dev/sdb1
-        echo "${STYLES_OFF}${FG_MAGENTA}"
-        lsblk
-        echo "${STYLES_OFF}"
-    fi
+    }
 
-    ## umount again just for safety
-    sudo umount /dev/sdb1
-}
-
-function tlp_battery {
-    echo -e "${MODE_BOLD}${FG_MAGENTA}${FG_WHITE}\ntlp-stat | grep \"+++ Battery\" -A 11  ... ${STYLES_OFF}"
-    sleep 1
-
-    command -v tlp-stat &>/dev/null
-    isTlp=$?
-
-    if [ $isTlp -eq 0 ]; then
-        echo "${STYLES_OFF}${FG_MAGENTA}${MODE_BOLD}"
-        sudo tlp-stat | grep "+++ Battery" -A 11
-        echo "${STYLES_OFF}"
-    else
-        echo -e "${FG_YELLOW}\nTLP is not installed.\n$STYLES_OFF"
-    fi
-}
-
-function bashrc_fix {
-    ## Add ~/.bashrc alias if it is does not exist
-
-    aliasPath=$(cat ~/.bashrc | grep "alias hh=\"bash " | awk '{print $3}' | sed 's/"//g')
-
-    if [ -z $aliasPath ]; then
-        thisFile=`basename $0`
-        headlesshostPath=$(pwd)/$thisFile
-
-        ## make a safety backup of ~/.bashrc
-        cp ~/.bashrc ~/.bashrc.backup_$(date +%d%b%Y%H%S)
-
-        ## Make a temporary .bashrc file to edit
-        ## Delete previous reference to headless-host-alias.bash
-        sed '/headless-host-alias.bash/c\' ~/.bashrc > ~/.bashrc.temp
-        sleep 1s
-        sed 'alsamixer battery down edit mount nvlc off restart unmount up/c\' ~/.bashrc > ~/.bashrc.temp
+    function tlp_battery {
+        echo -e "${MODE_BOLD}${FG_MAGENTA}${FG_WHITE}\ntlp-stat | grep \"+++ Battery\" -A 11  ... ${STYLES_OFF}"
         sleep 1
 
-        echo -e "\n## Alias for headless-host-alias.bash" >> ~/.bashrc.temp
-        echo "alias hh=\"bash $headlesshostPath\"" >> ~/.bashrc.temp
-        echo "complete -W \"alsamixer battery down edit mount nvlc off restart unmount up\" hh" >> ~/.bashrc.temp
+        command -v tlp-stat &>/dev/null
+        isTlp=$?
 
-        sudo mv ~/.bashrc.temp ~/.bashrc
-        sleep 1
+        if [ $isTlp -eq 0 ]; then
+            echo "${STYLES_OFF}${FG_MAGENTA}${MODE_BOLD}"
+            sudo tlp-stat | grep "+++ Battery" -A 11
+            echo "${STYLES_OFF}"
+        else
+            echo -e "${FG_YELLOW}\nTLP is not installed.\n$STYLES_OFF"
+        fi
+    }
 
-        source ~/.bashrc
+    function bashrc_fix {
+        ## Add ~/.bashrc alias if it is does not exist
 
-        ## alias autocomplete
-        ## alsamixer battery down edit mount nvlc off restart unmount up
-        complete -W "alsamixer battery down edit mount nvlc off restart unmount up" hh
-    fi
+        aliasPath=$(cat ~/.bashrc | grep "alias hh=\"bash " | awk '{print $3}' | sed 's/"//g')
+
+        if [ -z $aliasPath ]; then
+            thisFile=`basename $0`
+            headlesshostPath=$(pwd)/$thisFile
+
+            ## make a safety backup of ~/.bashrc
+            cp ~/.bashrc ~/.bashrc.backup_$(date +%d%b%Y%H%S)
+
+            ## Make a temporary .bashrc file to edit
+            ## Delete previous reference to headless-host-alias.bash
+            sed '/headless-host-alias.bash/c\' ~/.bashrc > ~/.bashrc.temp
+            sleep 1s
+            sed 'alsamixer battery down edit mount nvlc off restart unmount up/c\' ~/.bashrc > ~/.bashrc.temp
+            sleep 1
+
+            echo -e "\n## Alias for headless-host-alias.bash" >> ~/.bashrc.temp
+            echo "alias hh=\"bash $headlesshostPath\"" >> ~/.bashrc.temp
+            echo "complete -W \"alsamixer battery down edit mount nvlc off restart unmount up\" hh" >> ~/.bashrc.temp
+
+            sudo mv ~/.bashrc.temp ~/.bashrc
+            sleep 1
+
+            source ~/.bashrc
+
+            ## alias autocomplete
+            ## alsamixer battery down edit mount nvlc off restart unmount up
+            complete -W "alsamixer battery down edit mount nvlc off restart unmount up" hh
+        fi
+    }
 }
 
-## #############
-## RUN
-## #############
+
+## #############################################################################
+## Headless Host alias arguments
+## #############################################################################
+
+## Initialize
 
 Decorative_Formatting
 Tput_Colors
+Alias_Arguments
+
+## RUN
 
 bashrc_fix
 

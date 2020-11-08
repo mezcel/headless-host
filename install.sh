@@ -127,7 +127,7 @@ function Decorative_Formatting {
         ttyHR "$borderChar" "$tputFgColor"
     }
 
-    function ttyBoldRow {
+    function ttyHighlightRow {
         str=$1
         tputBgColor=$2
 
@@ -151,17 +151,15 @@ function Decorative_Formatting {
         tputFgColor=$4
         tputBgColor=$5
 
-        ttyBoldRow "$promptTitle" "$tputBgColor"
+        ttyHighlightRow "$promptTitle" "$tputBgColor"
 
         read -e -p " $tputFgColor$promptString$STYLES_OFF" -i "$defaultAnswer" readInput
         printf "$STYLES_OFF\n"
         sleep 1
     }
-
 }
 
 function Install_Configurations {
-
     function Set_Sudo_User {
         if [ $(whoami) == "root" ]; then
             adduser mezcel sudo
@@ -408,11 +406,9 @@ function Install_Configurations {
 
         fi
     }
-
 }
 
 function Install_Home {
-
     function Welcome_Header {
         ttyCenteredHeader "headless-host ( A distro installer and server setup script )" "#" "$FG_CYAN"
         echo -e "$MODE_BOLD $FG_CYAN \

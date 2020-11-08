@@ -144,7 +144,7 @@ function Decorative_Formatting {
         ttyHR "$borderChar" "$tputFgColor"
     }
 
-    function ttyBoldRow {
+    function ttyHighlightRow {
         str=$1
         tputBgColor=$2
 
@@ -168,549 +168,537 @@ function Decorative_Formatting {
         tputFgColor=$4
         tputBgColor=$5
 
-        ttyBoldRow "$promptTitle" "$tputBgColor"
+        ttyHighlightRow "$promptTitle" "$tputBgColor"
 
         read -e -p " $tputFgColor$promptString$STYLES_OFF" -i "$defaultAnswer" readInput
         printf "$STYLES_OFF\n"
         sleep 1
     }
-
 }
 
-function About_Message {
-    ## Cover page about information
-    ttyCenteredHeader "About" "-" "$FG_GREEN"
-    ttyNestedString "- This script intended to setup Debian server as a wireless sshd acces point. This script will write config scripts for: Hostapd, Dnsmasq, SSH Server, Network interface names and IP" "$FG_GREEN"
-    ttyNestedString "- Official Debian Guidance: https://www.debian.org/doc/manuals/debian-reference/ch05.en.html" "$FG_CYAN"
+function Configure_Router {
+    function About_Message {
+        ## Cover page about information
+        ttyCenteredHeader "About" "-" "$FG_GREEN"
+        ttyNestedString "- This script intended to setup Debian server as a wireless sshd acces point. This script will write config scripts for: Hostapd, Dnsmasq, SSH Server, Network interface names and IP" "$FG_GREEN"
+        ttyNestedString "- Official Debian Guidance: https://www.debian.org/doc/manuals/debian-reference/ch05.en.html" "$FG_CYAN"
 
-    thisFileName=`basename "$0"`
-    ttyNestedString "- Inspect this script before running it: $(pwd)/$thisFileName" "$FG_YELLOW"
+        thisFileName=`basename "$0"`
+        ttyNestedString "- Inspect this script before running it: $(pwd)/$thisFileName" "$FG_YELLOW"
 
-    promptString="Commence configuring server? [ y/N ]: "
-    readInput=no
-    ttyPromptInput "Run Installer:" "$promptString" "$readInput" "$FG_GREEN" "$BG_GREEN"
-
-    case $readInput in
-        [Yy]* )
-            ## continue with setup
-            ttyNestedString "Commencing the Hostapd, Dnsmasq, SSH Server, Ad-hoc Network interface names, and IP setup ..." "${MODE_BOLD}$FG_GREEN"
-            ;;
-        * )
-            ttyNestedString "Exited ad-hoc network configuration." "${MODE_BOLD}$FG_RED"
-            exit
-        ;;
-    esac
-    echo ""
-
-}
-
-function Accesspoint_Check {
-    sudo iw list | grep "Supported interface modes" -A 8 | grep "AP" &>/dev/null
-    isAP=$?
-
-    ## Display message indicating AP is not available.
-    if [ $isAP -ne 0 ]; then
-
-        ttyCenteredHeader "Incompatible Access Point Hardware" "!" "$FG_RED"
-
-        ttyNestedString "The current wireless card is not capable of serving a wireless access point. Hostapd will not work through your existing wireless card. Hostapd (Host access point daemon) is a user space software access point capable of turning normal network interface cards into access points and authentication servers. You can continue... but this script is intended to configure a Hotspot for wireless adhoc ssh file sharing between computers." "$STYLES_OFF"
-        ttyNestedString "WARNING: Continuing may break/conflict with your existing networking configurations or functionalities. (This option to still continue is for debugging other things.)" "${MODE_BOLD}$FG_YELLOW"
-
-        promptString="Do you want to continue running this script? [ y/N ]: "
+        promptString="Commence configuring server? [ y/N ]: "
         readInput=no
-        ttyPromptInput "Continue despite the lack of AP support:" "$promptString" "$readInput" "$FG_RED" "$BG_RED"
-
-        case $readInput in
-            [Nn]* )
-                ttyNestedString "Exited ad-hoc network configuration." "${MODE_BOLD}$FG_RED"
-                exit
-        esac
-    fi
-}
-
-function Write_Grub_Defaults {
-    ## Make wifi = wlan0, and ethernet=eth0 instead of however else the kernel decided to name them.
-
-    ttyCenteredHeader "GRUB Network Interface Names" "." "$FG_CYAN"
-
-    ttyNestedString "You can update grub to recognize Wifi and Ethernet interfaces as \"wlan0\" and \"eth0\", instead of however else the kernel decided to name them by default. The computer will need to reboot after any GRUB alterations." "$FG_YELLOW"
-
-    promptString="Update the /etc/default/grub file? [ n/Y ]: "
-    readInput=no
-    ttyPromptInput "GRUB network interface names" "$promptString" "$readInput" "$FG_RED" "$BG_RED"
-    sleep 2s
-
-    case $readInput in
-        [Yy]* )
-            ttyNestedString "Editing the /etc/default/grub file ..." "${MODE_BOLD}$FG_CYAN"
-
-            if [ -f /etc/default/grub ]; then
-                sudo cp /etc/default/grub /etc/default/grub.backup.$(date +%d%b%Y_%H%M%S)
-                sleep 3s
-            fi
-
-            ## replace the line:
-            ## GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"
-            ## with
-            ## GRUB_CMDLINE_LINUX_DEFAULT="net.ifnames=0"
-
-            sudo sed '/quiet/c\GRUB_CMDLINE_LINUX_DEFAULT="net.ifnames=0"' /etc/default/grub > /tmp/grub.temp
-            sleep 3s
-
-            sudo mv /tmp/grub.temp /etc/default/grub
-            sleep 3s
-
-            sudo update-grub
-
-            ttyNestedString "Debian will need to restart to reinitialize everything." "${MODE_BOLD}$FG_RED"
-            read -p "Press ENTER to reboot..." pauseEnter
-
-            sudo reboot
-            ;;
-
-        * )
-            ttyNestedString "Continuing without editing the interface names..." "${MODE_BOLD}$FG_GREEN"
-            ttyNestedString "Writing a delay script for ethernet connection at boot..." "${MODE_BOLD}$FG_GREEN"
-            ;;
-    esac
-}
-
-function Install_Network_Drivers {
-    ttyCenteredHeader "Network drivers" "-" "$FG_CYAN"
-    sleep 2s
-
-    sudo apt install -y linux-image-$(uname -r)
-    sudo apt install -y linux-headers-$(uname -r)
-
-    sudo apt install -y firmware-linux-free
-    sudo apt install -y firmware-linux-nonfree
-    sudo apt install -y firmware-iwlwifi
-
-    ## Detect and/or Display the wireless driver Chipset
-
-    lspci | grep "Broadcom" &>/dev/null
-    isBroadcom=$?
-
-    if [ $isBroadcom -eq 0 ]; then
-
-        ttyCenteredHeader "Broadcom Wifi" "." "$FG_YELLOW"
-        ttyNestedString "If you choose to install Broadcom drivers, the computer will restart after installation. You will need to run this script again if you want to complete the rest of the installation." "$FG_YELLOW"
-
-        ## check if driver is already installed
-        sudo dpkg-query --list broadcom-sta-dkms firmware-brcm80211 &>/dev/null
-
-        yn=$?
-        if [ $yn -eq 0 ]; then
-            promptString="Install the brcm80211 Broadcom wifi drivers? [ y/N ]: "
-            readInput=no
-        else
-            promptString="Install the brcm80211 Broadcom wifi drivers? [ Y/n ]: "
-            readInput=yes
-        fi
-
-        ttyPromptInput "Broadcom wifi drivers:" "$promptString" "$readInput" "$FG_GREEN" "$BG_GREEN"
+        ttyPromptInput "Run Installer:" "$promptString" "$readInput" "$FG_GREEN" "$BG_GREEN"
 
         case $readInput in
             [Yy]* )
-                sudo apt install -y firmware-brcm80211
-                sudo apt install -y broadcom-sta-dkms
-
-                ttyNestedString "I recommend restarting the computer now." "$FG_RED"
-                ttyNestedString "Note: You will need to run the installer again. On the next pass the option to install brcm80211 will be default to \"no\" for convenience." "$FG_RED"
-
-                promptString="Restart the computer now? [ Y/n ]: "
-                ttyPromptInput "Restart:" "$promptString" "yes" "$FG_GREEN" "$BG_GREEN"
-
-                case $readInput in
-                    [Yy]* )
-                        sudo reboot
-                    ;;
-                esac
+                ## continue with setup
+                ttyNestedString "Commencing the Hostapd, Dnsmasq, SSH Server, Ad-hoc Network interface names, and IP setup ..." "${MODE_BOLD}$FG_GREEN"
                 ;;
+            * )
+                ttyNestedString "Exited ad-hoc network configuration." "${MODE_BOLD}$FG_RED"
+                exit
+            ;;
         esac
+        echo ""
+    }
 
-    fi
-}
+    function Accesspoint_Check {
+        sudo iw list | grep "Supported interface modes" -A 8 | grep "AP" &>/dev/null
+        isAP=$?
 
-function Install_Packages {
+        ## Display message indicating AP is not available.
+        if [ $isAP -ne 0 ]; then
 
-    ttyCenteredHeader "Installing applications focused on sshd access point configuration" "-" "$FG_CYAN"
-    sleep 2s
+            ttyCenteredHeader "Incompatible Access Point Hardware" "!" "$FG_RED"
 
-    sudo apt update
-    sudo apt --fix-broken install
-    sudo apt update
+            ttyNestedString "The current wireless card is not capable of serving a wireless access point. Hostapd will not work through your existing wireless card. Hostapd (Host access point daemon) is a user space software access point capable of turning normal network interface cards into access points and authentication servers. You can continue... but this script is intended to configure a Hotspot for wireless adhoc ssh file sharing between computers." "$STYLES_OFF"
+            ttyNestedString "WARNING: Continuing may break/conflict with your existing networking configurations or functionalities. (This option to still continue is for debugging other things.)" "${MODE_BOLD}$FG_YELLOW"
 
-    ## Install network drivers
-    Install_Network_Drivers
+            promptString="Do you want to continue running this script? [ y/N ]: "
+            readInput=no
+            ttyPromptInput "Continue despite the lack of AP support:" "$promptString" "$readInput" "$FG_RED" "$BG_RED"
 
-    sudo apt install -y resolvconf
+            case $readInput in
+                [Nn]* )
+                    ttyNestedString "Exited ad-hoc network configuration." "${MODE_BOLD}$FG_RED"
+                    exit
+            esac
+        fi
+    }
 
-    sudo apt install -y dnsmasq
-    sudo apt install -y iptables
-    sudo apt install -y hostapd
-    sudo apt install -y ifplugd
+    function Write_Grub_Defaults {
+        ## Make wifi = wlan0, and ethernet=eth0 instead of however else the kernel decided to name them.
 
-    sudo apt install -y openssh-server
+        ttyCenteredHeader "GRUB Network Interface Names" "." "$FG_CYAN"
 
-}
+        ttyNestedString "You can update grub to recognize Wifi and Ethernet interfaces as \"wlan0\" and \"eth0\", instead of however else the kernel decided to name them by default. The computer will need to reboot after any GRUB alterations." "$FG_YELLOW"
 
-function Write_Network_Interfaces {
-    mywlan=$1
-    myeth=$2
+        promptString="Update the /etc/default/grub file? [ n/Y ]: "
+        readInput=no
+        ttyPromptInput "GRUB network interface names" "$promptString" "$readInput" "$FG_RED" "$BG_RED"
+        sleep 2s
 
-    ttyCenteredHeader "Network Interface IPs" "-" "$FG_CYAN"
-    sleep 2s
+        case $readInput in
+            [Yy]* )
+                ttyNestedString "Editing the /etc/default/grub file ..." "${MODE_BOLD}$FG_CYAN"
 
-    tempFile=~/interfaces
-    #destinationFile=/etc/network/interfaces
-    destinationFile=/etc/network/interfaces.d/setup
+                if [ -f /etc/default/grub ]; then
+                    sudo cp /etc/default/grub /etc/default/grub.backup.$(date +%d%b%Y_%H%M%S)
+                    sleep 3s
+                fi
 
-    echo "## $destinationFile
+                ## replace the line:
+                ## GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"
+                ## with
+                ## GRUB_CMDLINE_LINUX_DEFAULT="net.ifnames=0"
 
-## #############################################################################
-## Class network addresses           net mask      net mask/bits  # of subnets
-## A     10.x.x.x                    255.0.0.0     /8             1
-## B     172.16.x.x — 172.31.x.x     255.255.0.0   /16            16
-## C     192.168.0.x — 192.168.255.x 255.255.255.0 /24            256
-## #############################################################################
-## Note:
-## If one of these addresses is assigned to a host, then that host must not
-## access the Internet directly but must access it through a gateway that acts
-## as a proxy for individual services
-## #############################################################################
-
-auto lo
-iface lo inet loopback
-
-auto $myeth
-#allow-auto $myeth
-#allow-hotplug $myeth
-iface $myeth inet dhcp
-#iface $myeth inet static
-#   address 192.168.1.100
-#   netmask 255.255.255.0
-#   broadcast 192.168.1.255
-#   gateway 192.168.1.1
-#   #dns-domain localhost
-#   #dns-nameservers 192.168.1.2
-
-auto $mywlan
-iface $mywlan inet static
-    address 10.42.0.1
-    netmask 255.0.0.0
-    wireless-channel 1
-    wireless-mod ad-hoc
-
-    ## Wifi using the wpasupplicant package
-    #wpa-ssid ATT123
-    #wpa-psk MYPASSPHRASE" > $tempFile
-
-    cat $tempFile
-
-    promptString="Apply the above network interface config file? [ Y/n ]: "
-    readInput=yes
-    ttyPromptInput "Configure $destinationFile" "$promptString" "$readInput" "$FG_GREEN" "$BG_GREEN"
-
-    case $readInput in
-        [Yy]* )
-            if [ -f $destinationFile ]; then
-                sudo cp $destinationFile $destinationFile.backup.$(date +%d%b%Y_%H%M%S)
-            fi
-
-            sudo mv $tempFile $destinationFile
-            ;;
-    esac
-
-}
-
-function Write_Hostapd_Conf {
-    ## https://wiki.debian.org/hostap
-    ## aptitude install hostap-utils wireless-tools
-
-    mywlan=$1
-    myssid=$2
-    mypassword=$3
-
-    ttyCenteredHeader "Hostapd Wireless Access Point" "-" "$FG_CYAN"
-    sleep 2s
-
-    tempFile=~/hostapd.conf
-    destinationFile=/etc/hostapd/hostapd.conf
-
-    echo "## $destinationFile
-
-interface=$mywlan
-driver=nl80211
-ssid=$myssid
-hw_mode=g
-channel=1
-macaddr_acl=0
-auth_algs=1
-ignore_broadcast_ssid=0
-wpa=2
-#wpa=3
-wpa_passphrase=$mypassword
-wpa_key_mgmt=WPA-PSK
-wpa_pairwise=TKIP
-rsn_pairwise=CCMP" > $tempFile
-
-    cat $tempFile
-
-    promptString="Apply the above access point configuration file? [ Y/n ]: "
-    readInput=yes
-    ttyPromptInput "Configure $destinationFile" "$promptString" "$readInput" "$FG_GREEN" "$BG_GREEN"
-
-    case $readInput in
-        [Yy]* )
-            if [ -f $destinationFile ]; then
-                sudo cp $destinationFile $destinationFile.backup.$(date +%d%b%Y_%H%M%S)
-            fi
-
-            sudo mv $tempFile $destinationFile
-            ;;
-    esac
-
-}
-
-function Write_Dnsmasq_Conf {
-    ## https://wiki.debian.org/dnsmasq
-    ## apt-get install dnsmasq
-
-    mywlan=$1
-    myeth=$2
-
-    ttyCenteredHeader "Dnsmasq" "-" "$FG_CYAN"
-
-    tempFile=~/dnsmasq.conf
-    destinationFile=/etc/dnsmasq.conf
-
-    echo "## $destinationFile
-
-interface=$mywlan
-
-## Ip range for clients
-#dhcp-range=10.42.0.0,10.42.0.8,12h
-dhcp-range=$mywlan,10.42.0.1,10.42.0.24,12h
-
-## Router ip
-#dhcp-option=3,10.42.0.1
-    " > $tempFile
-
-    cat $tempFile
-
-    promptString="Apply the above dnsmasq configuration file? [ Y/n ]: "
-    readInput=yes
-    ttyPromptInput "Configure $destinationFile" "$promptString" "$readInput" "$FG_GREEN" "$BG_GREEN"
-
-    case $readInput in
-        [Yy]* )
-            if [ -f $destinationFile ]; then
-                sudo cp $destinationFile $destinationFile.backup.$(date +%d%b%Y_%H%M%S)
-                sudo cp /etc/default/hostapd /etc/default/hostapd.backup.$(date +%d%b%Y_%H%M%S)
-            fi
-
-            sudo mv $tempFile $destinationFile
-
-            sudo sed '/DAEMON_CONF=""/c\DAEMON_CONF="/etc/hostapd/hostapd.conf"' /etc/default/hostapd > ~/default_hostapd
-
-            if [ -f ~/init_d_hostapd ]; then
-                sudo mv ~/default_hostapd /etc/default/hostapd
-            fi
-            ;;
-    esac
-
-}
-
-function Init_Hotspot_Interfaces {
-
-    mywlan=$1
-
-    ttyCenteredHeader "Initialize Hotspot Interfaces" "-" "$FG_CYAN"
-
-    sudo ip link set $mywlan up
-    sudo systemctl stop dnsmasq
-    sudo systemctl stop hostapd
-    sudo systemctl unmask hostapd
-    sudo systemctl enable hostapd
-    sudo systemctl restart hostapd
-    sudo systemctl enable dnsmasq
-    sudo systemctl restart dnsmasq
-
-}
-
-function Customize_HostSshd {
-
-    ttyCenteredHeader "Customize SSH Configuration" "-" "$FG_CYAN"
-    sleep 3s
-
-    promptString="Edit the ssh config file, sshd_config? [ Y/n ] : "
-    readInput=yes
-    ttyPromptInput "Customize /etc/ssh/sshd_config" "$promptString" "$readInput" "$FG_GREEN" "$BG_GREEN"
-
-    myListenAddresses=$( ip -o -4 addr show | awk '{print $4}' | cut -d/ -f1 | awk '{print "ListenAddress "$1}' )
-    sleep 1s
-
-    case $readInput in
-        [Yy]* )
-            sudo systemctl stop sshd
-
-            ## Listen address
-            ttyCenteredHeader "SSHD Listen address candidates" "." "$FG_YELLOW"
-            echo -e "${FG_YELLOW}"
-            ip -o -4 addr show
-            echo "${STYLES_OFF}${FG_CYAN}"
-            read -e -p " ListenAddress ( 10.42.0.1 ) : " -i "10.42.0.1" myListenAddress
-            read -e -p " Port ( 22 ) : " -i "22" myPort
-
-            read -e -p " PermitRootLogin ( no ) : " -i "no" myPermitRootLogin
-            read -e -p " AllowUsers ( mezcel ) : " -i "mezcel" myAllowUsers
-            read -e -p " AuthorizedKeysFile ( .ssh/authorized_keys ) : " -i ".ssh/authorized_keys" myAuthorizedKeysFile
-            read -e -p " ChallengeResponseAuthentication ( no ) : " -i "no" myChallengeResponseAuthentication
-            read -e -p " UsePAM ( yes ) : " -i "yes" myUsePAM
-            read -e -p " PrintMotd ( no ) : " -i "no" myPrintMotd
-            read -e -p " Subsystem ( sftp    /usr/lib/ssh/sftp-server ) : " -i "sftp /usr/lib/ssh/sftp-server" mySubsystem
-            #read -e -p "X11Forwarding ( yes ) : " -i "yes" myX11Forwarding
-            #read -e -p "X11UseLocalhost ( yes ) : " -i "yes" myX11UseLocalhost
-
-            if [ -f /etc/ssh/sshd_config ]; then
-                sudo cp /etc/hostname /etc/hostname.backup.$(date +%d%b%Y_%H%M%S)
-            fi
-
-            temporaryConfig=~/sshd_config.temp
-            echo -e "## /etc/ssh/sshd_config\n" >  $temporaryConfig
-            echo "Port  $myPort" >> $temporaryConfig
-            echo "## Added localhost just incase sshd was started without a network infrastructure." >> $temporaryConfig
-            #echo "ListenAddress  127.0.0.1" >> $temporaryConfig
-            #echo "#ListenAddress  192.168.0.100" >> $temporaryConfig
-            #echo "#ListenAddress  10.42.0.1" >> $temporaryConfig
-            echo -e "$myListenAddresses" >> $temporaryConfig
-            echo "ListenAddress  $myListenAddress" >> $temporaryConfig
-            echo "PermitRootLogin   $myPermitRootLogin" >> $temporaryConfig
-            echo "AllowUsers   $myAllowUsers" >> $temporaryConfig
-            echo "AuthorizedKeysFile    $myAuthorizedKeysFile" >> $temporaryConfig
-            echo "ChallengeResponseAuthentication  $myChallengeResponseAuthentication" >> $temporaryConfig
-            echo "UsePAM  $myUsePAM" >> $temporaryConfig
-            echo "PrintMotd  $myPrintMotd" >> $temporaryConfig
-            echo "Subsystem  $mySubsystem" >> $temporaryConfig
-            #echo "X11Forwarding  $myX11Forwarding" >> $temporaryConfig
-            #echo "X11UseLocalhost  $myX11UseLocalhost" >> $temporaryConfig
-            echo "#MaxAuthTries  4" >> $temporaryConfig
-            echo "#ClientAliveInterval  180" >> $temporaryConfig
-
-            if [ -f $temporaryConfig ]; then
-                echo ""
-                ttyNestedString "Writing /etc/ssh/sshd_config ..." "${MODE_BOLD}$FG_MAGENTA"
-                sudo mv $temporaryConfig /etc/ssh/sshd_config
+                sudo sed '/quiet/c\GRUB_CMDLINE_LINUX_DEFAULT="net.ifnames=0"' /etc/default/grub > /tmp/grub.temp
                 sleep 3s
 
-                ## Preview Sshd Configs
+                sudo mv /tmp/grub.temp /etc/default/grub
+                sleep 3s
 
-                ttyBoldRow "Your SSHD Config." "$BG_MAGENTA"
-                echo ""
+                sudo update-grub
 
-                sudo cat /etc/ssh/sshd_config
-                echo ""
+                ttyNestedString "Debian will need to restart to reinitialize everything." "${MODE_BOLD}$FG_RED"
+                read -p "Press ENTER to reboot..." pauseEnter
 
-                ttyBoldRow "Take note of the SSHD Listen Addresses." "$BG_MAGENTA"
-                read -p "Done. Press Enter to continue ..." pauseEnter
+                sudo reboot
+                ;;
+
+            * )
+                ttyNestedString "Continuing without editing the interface names..." "${MODE_BOLD}$FG_GREEN"
+                ttyNestedString "Writing a delay script for ethernet connection at boot..." "${MODE_BOLD}$FG_GREEN"
+                ;;
+        esac
+    }
+
+    function Install_Network_Drivers {
+        ttyCenteredHeader "Network drivers" "-" "$FG_CYAN"
+        sleep 2s
+
+        sudo apt install -y linux-image-$(uname -r)
+        sudo apt install -y linux-headers-$(uname -r)
+
+        sudo apt install -y firmware-linux-free
+        sudo apt install -y firmware-linux-nonfree
+        sudo apt install -y firmware-iwlwifi
+
+        ## Detect and/or Display the wireless driver Chipset
+
+        lspci | grep "Broadcom" &>/dev/null
+        isBroadcom=$?
+
+        if [ $isBroadcom -eq 0 ]; then
+
+            ttyCenteredHeader "Broadcom Wifi" "." "$FG_YELLOW"
+            ttyNestedString "If you choose to install Broadcom drivers, the computer will restart after installation. You will need to run this script again if you want to complete the rest of the installation." "$FG_YELLOW"
+
+            ## check if driver is already installed
+            sudo dpkg-query --list broadcom-sta-dkms firmware-brcm80211 &>/dev/null
+
+            yn=$?
+            if [ $yn -eq 0 ]; then
+                promptString="Install the brcm80211 Broadcom wifi drivers? [ y/N ]: "
+                readInput=no
+            else
+                promptString="Install the brcm80211 Broadcom wifi drivers? [ Y/n ]: "
+                readInput=yes
             fi
-            ;;
-        * )
-            echo -e ""
-            ;;
 
-    esac
+            ttyPromptInput "Broadcom wifi drivers:" "$promptString" "$readInput" "$FG_GREEN" "$BG_GREEN"
 
-    echo "$STYLES_OFF"
-}
+            case $readInput in
+                [Yy]* )
+                    sudo apt install -y firmware-brcm80211
+                    sudo apt install -y broadcom-sta-dkms
 
-function Delay_SSHD_Interface {
+                    ttyNestedString "I recommend restarting the computer now." "$FG_RED"
+                    ttyNestedString "Note: You will need to run the installer again. On the next pass the option to install brcm80211 will be default to \"no\" for convenience." "$FG_RED"
 
-    ttyCenteredHeader "SSHD Boot Delay Script" "-" "$FG_CYAN"
-    sleep 1
+                    promptString="Restart the computer now? [ Y/n ]: "
+                    ttyPromptInput "Restart:" "$promptString" "yes" "$FG_GREEN" "$BG_GREEN"
 
-    ## Workaround to prevent errors related to sshd.service starting before a network is available
-    ## sudo systemctl edit sshd
-    sudo mkdir -p /etc/systemd/system/ssh.service.d
+                    case $readInput in
+                        [Yy]* )
+                            sudo reboot
+                        ;;
+                    esac
+                    ;;
+            esac
 
-    temporaryConfig=~/wait_conf.temp
+        fi
+    }
 
-    echo '[Unit]' > $temporaryConfig
-    echo 'Wants=network-online.target' >> $temporaryConfig
-    echo 'After=network-online.target' >> $temporaryConfig
+    function Install_Packages {
+        ttyCenteredHeader "Installing applications focused on sshd access point configuration" "-" "$FG_CYAN"
+        sleep 2s
 
-    if [ -f $temporaryConfig ]; then
-        ttyNestedString "Writing /etc/systemd/system/ssh.service.d/wait.conf ..." "${MODE_BOLD}$FG_GREEN"
-        sudo mv $temporaryConfig /etc/systemd/system/ssh.service.d/wait.conf
+        sudo apt update
+        sudo apt --fix-broken install
+        sudo apt update
+
+        ## Install network drivers
+        Install_Network_Drivers
+
+        sudo apt install -y resolvconf
+
+        sudo apt install -y dnsmasq
+        sudo apt install -y iptables
+        sudo apt install -y hostapd
+        sudo apt install -y ifplugd
+
+        sudo apt install -y openssh-server
+    }
+
+    function Write_Network_Interfaces {
+        mywlan=$1
+        myeth=$2
+
+        ttyCenteredHeader "Network Interface IPs" "-" "$FG_CYAN"
+        sleep 2s
+
+        tempFile=~/interfaces
+        #destinationFile=/etc/network/interfaces
+        destinationFile=/etc/network/interfaces.d/setup
+
+        echo -e "## $destinationFile \
+        \n \
+        \n## #############################################################################\
+        \n## Class network addresses           net mask      net mask/bits  # of subnets\
+        \n## A     10.x.x.x                    255.0.0.0     /8             1\
+        \n## B     172.16.x.x — 172.31.x.x     255.255.0.0   /16            16\
+        \n## C     192.168.0.x — 192.168.255.x 255.255.255.0 /24            256\
+        \n## #############################################################################\
+        \n## Note:\
+        \n## If one of these addresses is assigned to a host, then that host must not\
+        \n## access the Internet directly but must access it through a gateway that acts\
+        \n## as a proxy for individual services\
+        \n## #############################################################################\
+        \n \
+        \nauto lo\
+        \niface lo inet loopback\
+        \n \
+        \nauto $myeth\
+        \n#allow-auto $myeth\
+        \n#allow-hotplug $myeth\
+        \niface $myeth inet dhcp\
+        \n#iface $myeth inet static\
+        \n#    address 192.168.1.100\
+        \n#    netmask 255.255.255.0\
+        \n#    broadcast 192.168.1.255\
+        \n#    gateway 192.168.1.1\
+        \n#    #dns-domain localhost\
+        \n#    #dns-nameservers 192.168.1.2\
+        \n \
+        \nauto $mywlan\
+        \niface $mywlan inet static\
+        \n    address 10.42.0.1\
+        \n    netmask 255.0.0.0\
+        \n    wireless-channel 1\
+        \n    wireless-mod ad-hoc\
+        \n \
+        \n    ## Wifi using the wpasupplicant package\
+        \n    #wpa-ssid ATT123\
+        \n    #wpa-psk MYPASSPHRASE" > $tempFile
+
+        cat $tempFile
+
+        promptString="Apply the above network interface config file? [ Y/n ]: "
+        readInput=yes
+        ttyPromptInput "Configure $destinationFile" "$promptString" "$readInput" "$FG_GREEN" "$BG_GREEN"
+
+        case $readInput in
+            [Yy]* )
+                if [ -f $destinationFile ]; then
+                    sudo cp $destinationFile $destinationFile.backup.$(date +%d%b%Y_%H%M%S)
+                fi
+
+                sudo mv $tempFile $destinationFile
+                ;;
+        esac
+    }
+
+    function Write_Hostapd_Conf {
+        ## https://wiki.debian.org/hostap
+        ## aptitude install hostap-utils wireless-tools
+
+        mywlan=$1
+        myssid=$2
+        mypassword=$3
+
+        ttyCenteredHeader "Hostapd Wireless Access Point" "-" "$FG_CYAN"
+        sleep 2s
+
+        tempFile=~/hostapd.conf
+        destinationFile=/etc/hostapd/hostapd.conf
+
+        echo -e "## $destinationFile\
+        \n \
+        \ninterface=$mywlan\
+        \ndriver=nl80211\
+        \nssid=$myssid\
+        \nhw_mode=g\
+        \nchannel=1\
+        \nmacaddr_acl=0\
+        \nauth_algs=1\
+        \nignore_broadcast_ssid=0\
+        \nwpa=2\
+        \n#wpa=3\
+        \nwpa_passphrase=$mypassword\
+        \nwpa_key_mgmt=WPA-PSK\
+        \nwpa_pairwise=TKIP\
+        \nrsn_pairwise=CCMP" > $tempFile
+
+        cat $tempFile
+
+        promptString="Apply the above access point configuration file? [ Y/n ]: "
+        readInput=yes
+        ttyPromptInput "Configure $destinationFile" "$promptString" "$readInput" "$FG_GREEN" "$BG_GREEN"
+
+        case $readInput in
+            [Yy]* )
+                if [ -f $destinationFile ]; then
+                    sudo cp $destinationFile $destinationFile.backup.$(date +%d%b%Y_%H%M%S)
+                fi
+
+                sudo mv $tempFile $destinationFile
+                ;;
+        esac
+    }
+
+    function Write_Dnsmasq_Conf {
+        ## https://wiki.debian.org/dnsmasq
+        ## apt-get install dnsmasq
+
+        mywlan=$1
+        myeth=$2
+
+        ttyCenteredHeader "Dnsmasq" "-" "$FG_CYAN"
+
+        tempFile=~/dnsmasq.conf
+        destinationFile=/etc/dnsmasq.conf
+
+        echo -e "## $destinationFile \
+        \n \
+        \ninterface=$mywlan\
+        \n \
+        \n## Ip range for clients\
+        \n#dhcp-range=10.42.0.0,10.42.0.8,12h\
+        \ndhcp-range=$mywlan,10.42.0.1,10.42.0.24,12h\
+        \n \
+        \n## Router ip\
+        \n#dhcp-option=3,10.42.0.1 " > $tempFile
+
+        cat $tempFile
+
+        promptString="Apply the above dnsmasq configuration file? [ Y/n ]: "
+        readInput=yes
+        ttyPromptInput "Configure $destinationFile" "$promptString" "$readInput" "$FG_GREEN" "$BG_GREEN"
+
+        case $readInput in
+            [Yy]* )
+                if [ -f $destinationFile ]; then
+                    sudo cp $destinationFile $destinationFile.backup.$(date +%d%b%Y_%H%M%S)
+                    sudo cp /etc/default/hostapd /etc/default/hostapd.backup.$(date +%d%b%Y_%H%M%S)
+                fi
+
+                sudo mv $tempFile $destinationFile
+
+                sudo sed '/DAEMON_CONF=""/c\DAEMON_CONF="/etc/hostapd/hostapd.conf"' /etc/default/hostapd > ~/default_hostapd
+
+                if [ -f ~/init_d_hostapd ]; then
+                    sudo mv ~/default_hostapd /etc/default/hostapd
+                fi
+                ;;
+        esac
+    }
+
+    function Init_Hotspot_Interfaces {
+        mywlan=$1
+
+        ttyCenteredHeader "Initialize Hotspot Interfaces" "-" "$FG_CYAN"
+
+        sudo ip link set $mywlan up
+        sudo systemctl stop dnsmasq
+        sudo systemctl stop hostapd
+        sudo systemctl unmask hostapd
+        sudo systemctl enable hostapd
+        sudo systemctl restart hostapd
+        sudo systemctl enable dnsmasq
+        sudo systemctl restart dnsmasq
+    }
+
+    function Customize_HostSshd {
+        ttyCenteredHeader "Customize SSH Configuration" "-" "$FG_CYAN"
         sleep 3s
 
-        ttyNestedString "Writing daemon-reload ..." "${MODE_BOLD}$FG_GREEN"
-        sudo systemctl daemon-reload
-        sleep 3s
-    fi
-}
+        promptString="Edit the ssh config file, sshd_config? [ Y/n ] : "
+        readInput=yes
+        ttyPromptInput "Customize /etc/ssh/sshd_config" "$promptString" "$readInput" "$FG_GREEN" "$BG_GREEN"
 
-function Write_Configs {
+        myListenAddresses=$( ip -o -4 addr show | awk '{print $4}' | cut -d/ -f1 | awk '{print "ListenAddress "$1}' )
+        sleep 1s
 
-    ttyCenteredHeader "Write Configuration Scripts" "-" "$FG_CYAN"
-    ttyNestedString "Current interface names and ip's:" "$FG_YELLOW"
-    echo -e "$FG_YELLOW"
-    ip a
-    echo "$STYLES_OFF"
+        case $readInput in
+            [Yy]* )
+                sudo systemctl stop sshd
 
-    ## ethernet interface name
-    myeth=$(ls /sys/class/net | grep -E "eth")
+                ## Listen address
+                ttyCenteredHeader "SSHD Listen address candidates" "." "$FG_YELLOW"
+                echo -e "${FG_YELLOW}"
+                ip -o -4 addr show
+                echo "${STYLES_OFF}${FG_CYAN}"
+                read -e -p " ListenAddress ( 10.42.0.1 ) : " -i "10.42.0.1" myListenAddress
+                read -e -p " Port ( 22 ) : " -i "22" myPort
 
-    if [ -z $myeth ]; then
-        myeth=$(ls /sys/class/net | grep -E "enp")
+                read -e -p " PermitRootLogin ( no ) : " -i "no" myPermitRootLogin
+                read -e -p " AllowUsers ( mezcel ) : " -i "mezcel" myAllowUsers
+                read -e -p " AuthorizedKeysFile ( .ssh/authorized_keys ) : " -i ".ssh/authorized_keys" myAuthorizedKeysFile
+                read -e -p " ChallengeResponseAuthentication ( no ) : " -i "no" myChallengeResponseAuthentication
+                read -e -p " UsePAM ( yes ) : " -i "yes" myUsePAM
+                read -e -p " PrintMotd ( no ) : " -i "no" myPrintMotd
+                read -e -p " Subsystem ( sftp    /usr/lib/ssh/sftp-server ) : " -i "sftp /usr/lib/ssh/sftp-server" mySubsystem
+                #read -e -p "X11Forwarding ( yes ) : " -i "yes" myX11Forwarding
+                #read -e -p "X11UseLocalhost ( yes ) : " -i "yes" myX11UseLocalhost
+
+                if [ -f /etc/ssh/sshd_config ]; then
+                    sudo cp /etc/hostname /etc/hostname.backup.$(date +%d%b%Y_%H%M%S)
+                fi
+
+                temporaryConfig=~/sshd_config.temp
+                echo -e "## /etc/ssh/sshd_config\n" >  $temporaryConfig
+                echo "Port  $myPort" >> $temporaryConfig
+                echo "## Added localhost just incase sshd was started without a network infrastructure." >> $temporaryConfig
+                #echo "ListenAddress  127.0.0.1" >> $temporaryConfig
+                #echo "#ListenAddress  192.168.0.100" >> $temporaryConfig
+                #echo "#ListenAddress  10.42.0.1" >> $temporaryConfig
+                echo -e "$myListenAddresses" >> $temporaryConfig
+                echo "ListenAddress  $myListenAddress" >> $temporaryConfig
+                echo "PermitRootLogin   $myPermitRootLogin" >> $temporaryConfig
+                echo "AllowUsers   $myAllowUsers" >> $temporaryConfig
+                echo "AuthorizedKeysFile    $myAuthorizedKeysFile" >> $temporaryConfig
+                echo "ChallengeResponseAuthentication  $myChallengeResponseAuthentication" >> $temporaryConfig
+                echo "UsePAM  $myUsePAM" >> $temporaryConfig
+                echo "PrintMotd  $myPrintMotd" >> $temporaryConfig
+                echo "Subsystem  $mySubsystem" >> $temporaryConfig
+                #echo "X11Forwarding  $myX11Forwarding" >> $temporaryConfig
+                #echo "X11UseLocalhost  $myX11UseLocalhost" >> $temporaryConfig
+                echo "#MaxAuthTries  4" >> $temporaryConfig
+                echo "#ClientAliveInterval  180" >> $temporaryConfig
+
+                if [ -f $temporaryConfig ]; then
+                    echo ""
+                    ttyNestedString "Writing /etc/ssh/sshd_config ..." "${MODE_BOLD}$FG_MAGENTA"
+                    sudo mv $temporaryConfig /etc/ssh/sshd_config
+                    sleep 3s
+
+                    ## Preview Sshd Configs
+
+                    ttyHighlightRow "Your SSHD Config." "$BG_MAGENTA"
+                    echo ""
+
+                    sudo cat /etc/ssh/sshd_config
+                    echo ""
+
+                    ttyHighlightRow "Take note of the SSHD Listen Addresses." "$BG_MAGENTA"
+                    read -p "Done. Press Enter to continue ..." pauseEnter
+                fi
+                ;;
+            * )
+                echo -e ""
+                ;;
+
+        esac
+
+        echo "$STYLES_OFF"
+    }
+
+    function Delay_SSHD_Interface {
+        ttyCenteredHeader "SSHD Boot Delay Script" "-" "$FG_CYAN"
+        sleep 1
+
+        ## Workaround to prevent errors related to sshd.service starting before a network is available
+        ## sudo systemctl edit sshd
+        sudo mkdir -p /etc/systemd/system/ssh.service.d
+
+        temporaryConfig=~/wait_conf.temp
+
+        echo '[Unit]' > $temporaryConfig
+        echo 'Wants=network-online.target' >> $temporaryConfig
+        echo 'After=network-online.target' >> $temporaryConfig
+
+        if [ -f $temporaryConfig ]; then
+            ttyNestedString "Writing /etc/systemd/system/ssh.service.d/wait.conf ..." "${MODE_BOLD}$FG_GREEN"
+            sudo mv $temporaryConfig /etc/systemd/system/ssh.service.d/wait.conf
+            sleep 3s
+
+            ttyNestedString "Writing daemon-reload ..." "${MODE_BOLD}$FG_GREEN"
+            sudo systemctl daemon-reload
+            sleep 3s
+        fi
+    }
+
+    function Write_Configs {
+        ttyCenteredHeader "Write Configuration Scripts" "-" "$FG_CYAN"
+        ttyNestedString "Current interface names and ip's:" "$FG_YELLOW"
+        echo -e "$FG_YELLOW"
+        ip a
+        echo "$STYLES_OFF"
+
+        ## ethernet interface name
+        myeth=$(ls /sys/class/net | grep -E "eth")
 
         if [ -z $myeth ]; then
-            myeth=$(ls /sys/class/net | grep -E "en")
+            myeth=$(ls /sys/class/net | grep -E "enp")
+
+            if [ -z $myeth ]; then
+                myeth=$(ls /sys/class/net | grep -E "en")
+            fi
         fi
-    fi
 
-    if [ -z $myeth ]; then
-        myeth=eth0
-    fi
+        if [ -z $myeth ]; then
+            myeth=eth0
+        fi
 
-    ttyBoldRow "Verify or Customize Interface names for the Host SSID." "$BG_GREEN"
+        ttyHighlightRow "Verify or Customize Interface names for the Host SSID." "$BG_GREEN"
 
-    promptString="Enter eth interface name. [ ${FG_GREEN}$myeth${STYLES_OFF} ]: "
-    read -e -p "$promptString" -i "$myeth" myeth
+        promptString="Enter eth interface name. [ ${FG_GREEN}$myeth${STYLES_OFF} ]: "
+        read -e -p "$promptString" -i "$myeth" myeth
 
-    ## wireless interface name
-    mywlan=$(ls /sys/class/net | grep -E "wl")
+        ## wireless interface name
+        mywlan=$(ls /sys/class/net | grep -E "wl")
 
-    if [ -z $mywlan ]; then
-        mywlan=wlan0
-    fi
+        if [ -z $mywlan ]; then
+            mywlan=wlan0
+        fi
 
-    promptString="Enter wlan interface name. [ ${FG_GREEN}$mywlan${STYLES_OFF} ]: "
-    read -e -p "$promptString" -i "$mywlan" mywlan
+        promptString="Enter wlan interface name. [ ${FG_GREEN}$mywlan${STYLES_OFF} ]: "
+        read -e -p "$promptString" -i "$mywlan" mywlan
 
-    myssid=$(hostname)-hostapd
+        myssid=$(hostname)-hostapd
 
-    promptString="Enter a hotspot SSID name. [ ${FG_GREEN}$myssid${STYLES_OFF} ]: "
-    read -e -p "$promptString" -i "$myssid" myssid
+        promptString="Enter a hotspot SSID name. [ ${FG_GREEN}$myssid${STYLES_OFF} ]: "
+        read -e -p "$promptString" -i "$myssid" myssid
 
-    mypassword=password1234
-    promptString="Enter a SSID password for $myssid. [ ${FG_GREEN}$mypassword${STYLES_OFF} ]: "
-    read -e -p "$promptString" -i "$mypassword" mypassword
+        mypassword=password1234
+        promptString="Enter a SSID password for $myssid. [ ${FG_GREEN}$mypassword${STYLES_OFF} ]: "
+        read -e -p "$promptString" -i "$mypassword" mypassword
 
-    ######
+        ######
 
-    Write_Network_Interfaces $mywlan $myeth
+        Write_Network_Interfaces $mywlan $myeth
 
-    Write_Hostapd_Conf $mywlan $myssid $mypassword
+        Write_Hostapd_Conf $mywlan $myssid $mypassword
 
-    Write_Dnsmasq_Conf $mywlan $myeth
+        Write_Dnsmasq_Conf $mywlan $myeth
 
-    Init_Hotspot_Interfaces $mywlan
+        Init_Hotspot_Interfaces $mywlan
 
-    Customize_HostSshd
-    #Delay_SSHD_Interface
-
+        Customize_HostSshd
+        #Delay_SSHD_Interface
+    }
 }
 
 function MAIN_SCRIPT {
@@ -725,15 +713,19 @@ function MAIN_SCRIPT {
     Install_Packages
 
     Write_Configs
-
 }
 
 ## #############################################################################
-## RUN
+## Configure Adhoc Wifi
 ## #############################################################################
+
+## Initialize
 
 Decorative_Formatting
 Tput_Colors
+Configure_Router
+
+## RUN
 
 ttyCenteredHeader "Wireless Adhoc SSHD Server Access Point" "#" "$FG_MAGENTA"
 sleep 1

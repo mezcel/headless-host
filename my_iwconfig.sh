@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ## #####################################################################################################################
-## About:        This script will prompt the user to connect to a wireless network ssid and make a launcher script to 
+## About:        This script will prompt the user to connect to a wireless network ssid and make a launcher script to
 ##                  log into known wpa_supplicant ssid configurations.
 ## Instructions: Run this script in the root account to make a new wpa_supplicant account profile.
 ##               Run this script in a user account to generate a script which logs in/out of known ssids.
@@ -79,7 +79,7 @@ function turn_on_wifi {
 
     ## turn on wifi hardware
     echo -e "${FG_CYAN}(step 2 of 4)${FG_NoColor}\tSwitch ON the Wifi hardware ...\t\t${FG_GREEN}processing ...${FG_NoColor}\n"
-    
+
     echo -e "\t\tip link set $myInterface down ..."
     sudo ip link set $myInterface down
     sleep 3s
@@ -160,11 +160,11 @@ function define_wpa_credentials {
 
     if [ -f /etc/wpa_supplicant/wpa_supplicant_$myssid.conf ]; then
         promptString="${promptTab}${FG_RED}$myssid has a wpa_supplicant.conf, overwrite it? [ Y/n ]:${FG_NoColor} "
-        read -e -p "$promptString" -i "yes" yn
+        read -e -p "$promptString" -i "no" yn
         case $yn in
             [Yy]* )
                 sudo cp /etc/wpa_supplicant/wpa_supplicant_$myssid.conf /etc/wpa_supplicant/wpa_supplicant_$myssid.conf.backup.$(date +%d%b%Y_%H%M%S)
-                
+
                 read -p "${promptTab}Enter Wifi password: " mypw
                 echo ""
 
@@ -404,7 +404,7 @@ function make_launcher_script {
     echo '    wifiON' >> ~/$laucherSriptName.sh
     echo '}' >> ~/$laucherSriptName.sh
     echo "" >> ~/$laucherSriptName.sh
-    
+
     ## #########################################################################
     ##  Dependency Check
     ## #########################################################################
@@ -483,7 +483,7 @@ function make_launcher_script {
 
     chmod +x ~/$laucherSriptName.sh
 
-    
+
     ## turn wifi back off
     sleep 5
     bash ~/$laucherSriptName.sh down

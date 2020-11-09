@@ -250,7 +250,7 @@ function Configure_Apt {
                     fi
                     ;;
                 [Nn]* )
-                    ttyNestedString "Canceled importing an additional custom off line Apt mirror repository." "$MODE_BOLD$FG_RED"
+                    ttyNestedString "Canceled importing off-line Apt mirror." "$MODE_BOLD$FG_RED"
                     sleep 1
                     ;;
                 * )

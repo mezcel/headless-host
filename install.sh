@@ -161,7 +161,9 @@ function Decorative_Formatting {
 
 function Install_Configurations {
     function Set_Sudo_User {
-        if [ $(whoami) == "root" ]; then
+        me=$(whoami)
+
+        if [ $me = "root" ]; then
             adduser mezcel sudo
             usermod -aG sudo mezcel
 
@@ -179,6 +181,8 @@ function Install_Configurations {
                     sleep 1s
                     ;;
             esac
+        else
+            ttyCenteredHeader "Only \"root\" can edit the /etc/sudoers file from this script." "!" "$FG_YELLOW"
         fi
     }
 

@@ -192,7 +192,7 @@ function Configure_Tty_Environment {
                 ttyNestedString "The current user profile, \"$me\", may not have the appropriate \"sudo\" permissions yet. If you know this account does not have sudo privileges, login as \"root\" and manually edit the /etc/sudoers file to elevate this profile's permissions." "$FG_RED"
                 ttyNestedString "This script will terminate now so you can take the corrective actions to elevate this user profile's permissions privileges to sudo." "$MODE_BOLD$FG_RED"
             else
-                ttyNestedString "The user account $me, is recognized as being a member of the sudo group." "$MODE_BOLD$FG_GREEN"
+                ttyNestedString "The \"$me\" user account is recognized as a member of sudo group." "$MODE_BOLD$FG_GREEN"
             fi
         fi
     }
@@ -426,8 +426,8 @@ function Configure_Tty_Environment {
 
         ## install vim nerdtree
         if [ -d ~/.vim/pack/vendor/start/nerdtree ]; then
-            ttyNestedString "Sourcing NERDTree scripts with vim ..." "$MODE_BOLD$FG_GREEN"
-            sleep 1s
+            ttyNestedString "Sourcing NERDTree scripts though Vim ..." "$MODE_BOLD$FG_GREEN"
+            sleep 4s
             sudo vim -u NONE -c "helptags ~/.vim/pack/vendor/start/nerdtree/doc" -c q
             sleep 1s
         fi
@@ -573,7 +573,7 @@ function Configure_Tty_Environment {
         mkdir -p ~/.swp/
         mkdir -p ~/.undo/
 
-        ttyNestedString "Finished Populating home Directory Configs." "$MODE_BOLD$FG_GREEN"
+        ttyNestedString "Finished Populating home Directory Configs." "$MODE_BOLD$FG_YELLOW"
     }
 }
 

@@ -182,11 +182,18 @@ function Install_Configurations {
                     ;;
             esac
         else
-            ttyCenteredHeader "Only \"root\" can edit the /etc/sudoers file from this script." "!" "$FG_YELLOW"
+            sudo cat /etc/sudoers | grep $me $>/dev/null
+            isSudo=$?
+
+            if [ $isSudo -ne 0 ]; then
+                ttyCenteredHeader "Only \"root\" can edit the /etc/sudoers file from this script." "!" "$FG_YELLOW"
+                ttyNestedString "The current user, $me, profile may not have \"sudo\" permissions yet. If you know this account does not have sudo privileges, login as \"root\" and manually edit the /etc/sudoers file to elevate this profile's permissions." "$FG_YELLOW"
+            fi
         fi
     }
 
     function Decorate_MotdIssue {
+        ttyCenteredHeader "Decorating issue and motd" "-" "$FG_CYAN"
 
         ## ANSI Escape Sequence: Terminal Color Codes
 
@@ -426,7 +433,7 @@ function Install_Configurations {
                     ;;
             esac
         else
-            ttyCenteredHeader "Skel file was not edited" "!" "$FG_RED"
+            ttyCenteredHeader "Skel directory was not edited" "!" "$FG_RED"
             ttyNestedString "This script will only edit the /etc/skel directory if this script is ran from the \"root\" account." "$FG_RED"
             sleep 2s
         fi
@@ -458,7 +465,7 @@ function Install_Home {
         esac
 
         echo ""
-        ttyCenteredHeader "DONE" "!" "$FG_GREEN"
+        ttyCenteredHeader "DONE" "#" "$FG_GREEN"
         ttyNestedString "Finished running: $selectionString" "$FG_CYAN"
     }
 

@@ -420,8 +420,6 @@ function Configure_Tty_Environment {
             sudo vim -u NONE -c "helptags ~/.vim/pack/vendor/start/nerdtree/doc" -c q
             sleep 1s
         fi
-
-        sleep 5s
     }
 
     function Home_Directory {

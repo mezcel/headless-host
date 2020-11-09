@@ -172,8 +172,14 @@ function Configure_Desktop_Environment {
         thisScriptPath=$(pwd)
 
         cd ~/suckless/st
+        ttyCenteredHeader "Installing Simple Terminal (st)" "." "$FG_MAGENTA"
+        sleep 1s
         sudo make clean install && cd ~/suckless/dmenu
+        ttyCenteredHeader "Installing Dmenu" "." "$FG_MAGENTA"
+        sleep 1s
         sudo make clean install && cd ~/suckless/dwm
+        ttyCenteredHeader "Installing Dynamic Window Manager (dwm)" "." "$FG_MAGENTA"
+        sleep 1s
         sudo make clean install && cd $thisScriptPath
         sleep 5s
     }

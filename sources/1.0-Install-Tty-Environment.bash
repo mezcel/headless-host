@@ -167,7 +167,7 @@ function Configure_Tty_Environment {
     function Set_User_Permission {
         me=$(whoami)
 
-        if [ $me == "root" ]; then
+        if [ $me = "root" ]; then
             readInput=yes
             promptString="Give a user (sudo/sudoer) privilege? [ y/N ]: "
             ttyHighlightRow "Edit super user:" "$promptString" "$readInput" "$FG_YELLOW"
@@ -182,6 +182,18 @@ function Configure_Tty_Environment {
                     sudo usermod -a -G sudo $readInput
                     ;;
             esac
+        
+        else
+            sudo cat /etc/sudoers | grep "$me" &>/dev/null
+            isSudo=$?
+
+            if [ $isSudo -ne 0 ]; then
+                ttyCenteredHeader "The $me profile is not a member of the sudo group" "!" "$FG_RED"
+                ttyNestedString "The current user profile, \"$me\", may not have the appropriate \"sudo\" permissions yet. If you know this account does not have sudo privileges, login as \"root\" and manually edit the /etc/sudoers file to elevate this profile's permissions." "$FG_RED"
+                ttyNestedString "This script will terminate now so you can take the corrective actions to elevate this user profile's permissions privileges to sudo." "$MODE_BOLD$FG_RED"
+            else
+                ttyNestedString "$me, is recognized as being a member of the sudo group." "$MODE_BOLD$FG_GREEN"
+            fi
         fi
     }
 
@@ -394,6 +406,7 @@ function Configure_Tty_Environment {
 
         if [ ! -d ~/.vim/pack/vendor/start/nerdtree ]; then
             ttyNestedString "Importing NERDTree ..." "$MODE_BOLD$FG_GREEN"
+            ttyNestedString "Importing NERDTree ..." "$MODE_BOLD$FG_GREEN"
             if [ ! -d ./home/.vim/pack/vendor/start/nerdtree ]; then
                 ttyNestedString "Cloning https://github.com/preservim/nerdtree.git ..." "$MODE_BOLD$FG_GREEN"
                 sleep 1s
@@ -427,7 +440,7 @@ function Configure_Tty_Environment {
         ## This function assumes the script is running as source when launched from the headless-host root directory.
         ## I manually chmod 777 just in case files were transferred from somewhere secure before imported into user's root
 
-        ttyCenteredHeader "Dot Files" "." "$FG_CYAN"
+        ttyCenteredHeader "Dot Files (TTY)" "." "$FG_CYAN"
         ttyNestedString "Populating home Directory Configs ..." "$MODE_BOLD$FG_YELLOW"
         sleep 2s
 

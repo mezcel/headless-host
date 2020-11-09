@@ -182,12 +182,15 @@ function Install_Configurations {
                     ;;
             esac
         else
-            sudo cat /etc/sudoers | grep $me $>/dev/null
+            sudo cat /etc/sudoers | grep "$me" &>/dev/null
             isSudo=$?
 
             if [ $isSudo -ne 0 ]; then
-                ttyCenteredHeader "Only \"root\" can edit the /etc/sudoers file from this script." "!" "$FG_YELLOW"
-                ttyNestedString "The current user, $me, profile may not have \"sudo\" permissions yet. If you know this account does not have sudo privileges, login as \"root\" and manually edit the /etc/sudoers file to elevate this profile's permissions." "$FG_YELLOW"
+                ttyCenteredHeader "The $me profile is not a member of the sudo group" "!" "$FG_RED"
+                ttyNestedString "The current user profile, \"$me\", may not have the appropriate \"sudo\" permissions yet. If you know this account does not have sudo privileges, login as \"root\" and manually edit the /etc/sudoers file to elevate this profile's permissions." "$FG_RED"
+                ttyNestedString "This script will terminate now so you can take the corrective actions to elevate this user profile's permissions privileges to sudo." "$MODE_BOLD$FG_RED"
+            else
+                ttyNestedString "$me, is recognized as being a member of the sudo group." "$MODE_BOLD$FG_GREEN"
             fi
         fi
     }

@@ -299,7 +299,7 @@ function Configure_Desktop_Environment {
         ## Home Directory Configs
         ## This function assumes the script is running as source when launched from the headless-host root directory.
 
-        ttyCenteredHeader "Dot Files" "." "$FG_CYAN"
+        ttyCenteredHeader "Dot Files (Desktop Environment)" "." "$FG_CYAN"
         ttyNestedString "Populating home Directory Configs and dot files..." "$FG_YELLOW"
         sleep 2s
         
@@ -335,9 +335,8 @@ function Configure_Desktop_Environment {
         mkdir -p ~/.backup/
         mkdir -p ~/.swp/
         mkdir -p ~/.undo/
-
-        ttyNestedString "Finished Populating home Directory Configs." "$FG_GREEN"
-        sleep 2
+        
+        sleep 1
     }
 
     function Desktop_Audio {

@@ -192,7 +192,7 @@ function Configure_Tty_Environment {
                 ttyNestedString "The current user profile, \"$me\", may not have the appropriate \"sudo\" permissions yet. If you know this account does not have sudo privileges, login as \"root\" and manually edit the /etc/sudoers file to elevate this profile's permissions." "$FG_RED"
                 ttyNestedString "This script will terminate now so you can take the corrective actions to elevate this user profile's permissions privileges to sudo." "$MODE_BOLD$FG_RED"
             else
-                ttyNestedString "$me, is recognized as being a member of the sudo group." "$MODE_BOLD$FG_GREEN"
+                ttyNestedString "The user account $me, is recognized as being a member of the sudo group." "$MODE_BOLD$FG_GREEN"
             fi
         fi
     }
@@ -405,8 +405,6 @@ function Configure_Tty_Environment {
         sleep 1s
 
         if [ ! -d ~/.vim/pack/vendor/start/nerdtree ]; then
-            ttyNestedString "Importing NERDTree ..." "$MODE_BOLD$FG_GREEN"
-            ttyNestedString "Importing NERDTree ..." "$MODE_BOLD$FG_GREEN"
             if [ ! -d ./home/.vim/pack/vendor/start/nerdtree ]; then
                 ttyNestedString "Cloning https://github.com/preservim/nerdtree.git ..." "$MODE_BOLD$FG_GREEN"
                 sleep 1s
@@ -428,7 +426,7 @@ function Configure_Tty_Environment {
 
         ## install vim nerdtree
         if [ -d ~/.vim/pack/vendor/start/nerdtree ]; then
-            ttyNestedString "Importing NERDTree ..." "$MODE_BOLD$FG_GREEN"
+            ttyNestedString "Sourcing NERDTree scripts with vim ..." "$MODE_BOLD$FG_GREEN"
             sleep 1s
             sudo vim -u NONE -c "helptags ~/.vim/pack/vendor/start/nerdtree/doc" -c q
             sleep 1s

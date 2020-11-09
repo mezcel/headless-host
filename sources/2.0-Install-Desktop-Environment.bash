@@ -165,7 +165,7 @@ function Decorative_Formatting {
 
 function Configure_Desktop_Environment {
     function Install_DWM {
-        ttyCenteredHeader "Install DWM" "." "$FG_CYAN"
+        ttyCenteredHeader "Compile Suckless Environment" "-" "$FG_CYAN"
         sleep 2s
 
         ## variable used to cd back to the directory
@@ -174,18 +174,21 @@ function Configure_Desktop_Environment {
         cd ~/suckless/st
         ttyCenteredHeader "Installing Simple Terminal (st)" "." "$FG_MAGENTA"
         sleep 1s
+
         sudo make clean install && cd ~/suckless/dmenu
         ttyCenteredHeader "Installing Dmenu" "." "$FG_MAGENTA"
         sleep 1s
+
         sudo make clean install && cd ~/suckless/dwm
         ttyCenteredHeader "Installing Dynamic Window Manager (dwm)" "." "$FG_MAGENTA"
         sleep 1s
+
         sudo make clean install && cd $thisScriptPath
         sleep 5s
     }
 
     function Suckless_Patches {
-        ttyCenteredHeader "Installing suckless dependencies" "-" "$FG_CYAN"
+        ttyCenteredHeader "Installing Suckless dependencies" "-" "$FG_CYAN"
         sleep 2s
 
         sudo apt update
@@ -214,6 +217,7 @@ function Configure_Desktop_Environment {
         ttyNestedString "Importing ~/suckless ..." "$MODE_BOLD$FG_GREEN"
         sleep 1s
         sudo cp -rf --no-preserve=mode ./suckless ~/
+        sleep 2s
         sudo chmod -R 777 ~/suckless/*
         #sudo cp -rf --no-preserve=mode ./home/terminalsexy ~/
 
@@ -225,19 +229,19 @@ function Configure_Desktop_Environment {
         ttyNestedString "Writing ~/.fehbg ..." "$MODE_BOLD$FG_GREEN"
         sleep 1s
         echo -e "feh --bg-fill ~/.config/openbox/wcrr.png \n" > ~/.fehbg
+        sleep 1s
 
         if [ -f ~/.xinitrc ]; then
             ttyNestedString "Backing up ~/.xinitrc ..." "$MODE_DIM$FG_YELLOW"
             sleep 1s
             cp ~/.xinitrc ~/.xinitrc.backup.$(date +%d%b%Y_%H%M%S)
+            sleep 1s
         fi
 
         echo -e "bash ~/.fehbg &\nexec ~/suckless/dwm/dwm" > ~/.xinitrc
         echo -e "bash ~/.fehbg & \nexec ~/suckless/dwm/dwm" > ~/.xinitrc_dwm
         echo "exec openbox-session" > ~/.xinitrc_openbox
 
-        ## Build DWM
-        Install_DWM
     }
 
     function Optional_Openbox {
@@ -412,5 +416,8 @@ Desktop_Applications
 Optional_Openbox
 Desktop_Audio
 
+## DWM
 Suckless_Patches
+Install_DWM
+
 Home_Directory

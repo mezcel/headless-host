@@ -161,12 +161,10 @@ function Decorative_Formatting {
         printf "$STYLES_OFF\n"
         sleep 1
     }
-
 }
 
 function Configure_Desktop_Environment {
     function Install_DWM {
-
         ttyCenteredHeader "Install DWM" "." "$FG_CYAN"
         sleep 2s
 
@@ -181,7 +179,6 @@ function Configure_Desktop_Environment {
     }
 
     function Suckless_Patches {
-
         ttyCenteredHeader "Installing suckless dependencies" "-" "$FG_CYAN"
         sleep 2s
 
@@ -207,7 +204,9 @@ function Configure_Desktop_Environment {
         sudo apt install -y xvkbd
         sudo apt install -y libgcr-3-dev
         sudo apt install -y suckless-tools
-
+        
+        ttyNestedString "Importing ~/suckless ..." "$MODE_BOLD$FG_GREEN"
+        sleep 1s
         sudo cp -rf --no-preserve=mode ./suckless ~/
         sudo chmod -R 777 ~/suckless/*
         #sudo cp -rf --no-preserve=mode ./home/terminalsexy ~/
@@ -217,9 +216,13 @@ function Configure_Desktop_Environment {
         #git clone git://git.suckless.org/st ~/suckless/factory-default/st
         #git clone https://git.suckless.org/slstatus ~/suckless/factory-default/slstatus
 
+        ttyNestedString "Writing ~/.fehbg ..." "$MODE_BOLD$FG_GREEN"
+        sleep 1s
         echo -e "feh --bg-fill ~/.config/openbox/wcrr.png \n" > ~/.fehbg
 
         if [ -f ~/.xinitrc ]; then
+            ttyNestedString "Backing up ~/.xinitrc ..." "$MODE_DIM$FG_YELLOW"
+            sleep 1s
             cp ~/.xinitrc ~/.xinitrc.backup.$(date +%d%b%Y_%H%M%S)
         fi
 
@@ -293,7 +296,9 @@ function Configure_Desktop_Environment {
         ttyCenteredHeader "Dot Files" "." "$FG_CYAN"
         ttyNestedString "Populating home Directory Configs and dot files..." "$FG_YELLOW"
         sleep 2s
-
+        
+        ttyNestedString "Importing ~/.config ..." "$MODE_BOLD$FG_GREEN"
+        sleep 1s
         sudo cp -rf --no-preserve=mode ./home/.config ~/
         sudo chmod -R 777 ~/.config/*
         #sudo chmod 777 ~/.config/geany/geany.conf

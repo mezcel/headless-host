@@ -230,10 +230,15 @@ function Install_Configurations {
         issueFile=/etc/issue
 
         ## make a safety backup of /etc/issue
+        ttyNestedString "Backing up $issueFile ..." "$MODE_DIM$FG_YELLOW"
+        sleep 1s
+
         sudo cp $issueFile $issueFile.backup_$(date +%d%b%Y%H%S) &>/dev/null
+        sleep 1s
 
         ## customize issue
-        ttyNestedString "Decorating /etc/issue ..." "$MODE_BOLD$FG_GREEN"
+        ttyNestedString "Decorating $issueFile ..." "$MODE_BOLD$FG_GREEN"
+        sleep 1s
 
         sudo cp $issueFile $issueTemp &>/dev/null
         sleep 1s
@@ -252,15 +257,22 @@ function Install_Configurations {
 
         ## /etc/motd
         ttyNestedString "Decorating /etc/issue ..." "$MODE_BOLD$FG_GREEN"
+        sleep 1s
 
         motdTemp=~/motd.temp
         motdFile=/etc/motd
 
         ## make a safety backup of /etc/motd
+        ttyNestedString "Backing up $motdFile ..." "$MODE_DIM$FG_YELLOW"
+        sleep 1s
+
         sudo cp $motdFile $motdFile.backup_$(date +%d%b%Y%H%S) &>/dev/null
         sleep 1s
 
         ## customize issue
+        ttyNestedString "Decorating $motdFile ..." "$MODE_BOLD$FG_GREEN"
+        sleep 1s
+
         sudo cp $motdFile $motdTemp &>/dev/null
         sleep 1s
 
@@ -269,6 +281,7 @@ function Install_Configurations {
         sleep 1
 
         sudo mv $motdTemp $motdFile &>/dev/null
+        sleep 1s
     }
 
     function Make_Bashrc_Alias {
@@ -279,7 +292,7 @@ function Install_Configurations {
         homeBash=~/$bashFile
         sleep 1s
 
-        ttyNestedString "Updating ~/.basrc alias' ..." "$MODE_BOLD$FG_GREEN"
+        ttyCenteredHeader "Adding the \"hh\" alias to ~/.bashrc" "#" "$FG_GREEN"
 
         ## make executable bash in home dir
         cp $bashFilePath $homeBash
@@ -290,6 +303,7 @@ function Install_Configurations {
         tempBashrc=$origianlBashrc.temp
 
         ## make a safety backup of ~/.bashrc
+        ttyNestedString "Backing up $origianlBashrc ..." "$MODE_DIM$FG_YELLOW"
         cp $origianlBashrc $backupBashrc
         cp $origianlBashrc $tempBashrc
 
@@ -313,6 +327,7 @@ function Install_Configurations {
         echo -e "$aliasautoString" >> $tempBashrc
 
         ## Make the temp file the ~/.bashrc file
+        ttyNestedString "Writing the new $origianlBashrc ..." "$MODE_BOLD$FG_GREEN"
         sudo mv $tempBashrc $origianlBashrc
         sleep 1
 

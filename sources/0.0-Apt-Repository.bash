@@ -173,12 +173,14 @@ function Configure_Apt {
 
         if [ -f $debRepo/$indexZip ]; then
             ttyNestedString "Removing previous $debRepo/$indexZip ..." "$MODE_BOLD$FG_YELLOW"
+            sleep 1
 
             sudo rm $debRepo/$indexZip
             sleep 2s
         fi
 
         ttyNestedString "Indexing the $debRepo/$indexZip local off-line Debian mirror repository. This will take \"a moment\" up to \"a while\" ..." "$MODE_BOLD$FG_GREEN"
+        sleep 1
 
         sudo dpkg-scanpackages $debRepo | gzip > $debRepo/$indexZip
         sleep 2s
@@ -193,7 +195,12 @@ function Configure_Apt {
         fi
 
         ## Copy my personally defined list which has my mirrors commented out
+        ttyNestedString "Backing up /etc/apt/sources.list ..." "$MODE_DIM$FG_YELLOW"
+        sleep 1s
         sudo cp /etc/apt/sources.list /etc/apt/sources.list.backup.$(date +%d%b%Y_%H%M%S)
+        
+        ttyNestedString "Writing /etc/apt/sources.list ..." "$MODE_BOLD$FG_GREEN"
+        sleep 1s
         sudo cp scripts/extra_drivers/sources.list /etc/apt/sources.list
         sleep 1s
 
@@ -225,6 +232,7 @@ function Configure_Apt {
             fi
 
             ttyPromptInput "Personal Apt Mirror Repository:" "$promptString" "$readInput" "$FG_GREEN" "$BG_GREEN"
+            sleep 1
 
             case $readInput in
                 [Yy]* )
@@ -247,6 +255,7 @@ function Configure_Apt {
                     ;;
                 * )
                     ttyNestedString "You did not enter a \"y\" or \"n\" response. Exited. Done." "$MODE_BOLD$FG_RED"
+                    sleep 1
                     exit
                     ;;
             esac
@@ -259,10 +268,19 @@ function Configure_Apt {
             case $readInput in
                 [Yy]* )
                     if [ -f /etc/apt/sources.list ]; then
+                        ttyNestedString "Backing up /etc/apt/sources.list ..." "$MODE_DIM$FG_YELLOW"
+                        sleep 1s
+
                         sudo cp /etc/apt/sources.list /etc/apt/sources.list.backup.$(date +%d%b%Y_%H%M%S)
+                        sleep 1s
                     fi
+                    
+                    ttyNestedString "Writing /etc/apt/sources.list ..." "$MODE_BOLD$FG_GREEN"
+                    sleep 1s
 
                     sudo cp $(dirname $)/scripts/extra_drivers/sources.list /etc/apt/sources.list
+                    sleep 1s
+
                     sudo apt update
                     ;;
             esac
@@ -275,6 +293,7 @@ function Configure_Apt {
                 [Yy]* )
                     sudo vi /etc/apt/sources.list
                     sleep 1s
+
                     sudo apt update
                     ;;
             esac

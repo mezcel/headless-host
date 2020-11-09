@@ -398,11 +398,13 @@ function Configure_Tty_Environment {
                 git clone https://github.com/preservim/nerdtree.git ~/.vim/pack/vendor/start/nerdtree
                 sleep 2s
             elif [ -d ./home/.vim/pack/vendor/start/nerdtree ]; then
-                sudo mkdir -p ~/.vim/pack/vendor/start
-                #sudo #chmod -R 777 ./home/.vim/pack/vendor/start/nerdtree
+                mkdir -p ~/.vim/pack/vendor/start
+                #sudo chmod -R 777 ./home/.vim/pack/vendor/start/nerdtree
+                sleep 1s
 
                 sudo cp -rf --no-preserve=mode ./home/.vim/pack/vendor/start/nerdtree ~/.vim/pack/vendor/start/
-                sudo #chmod -R 777 ~/.vim/pack/vendor/start/
+                sleep 1s
+                sudo chmod -R 777 ~/.vim/pack/vendor/start/
                 sleep 2s
             fi
         fi
@@ -431,19 +433,19 @@ function Configure_Tty_Environment {
         if [ -d ./home/.config/vifm ]; then
             sudo cp -rf --no-preserve=mode ./home/.config/vifm ~/.config/
             sleep 1s
-            sudo #chmod -R 777 ~/.config/vifm/*
+            sudo chmod -R 777 ~/.config/vifm/*
         fi
 
         if [ -d ./home/Music ]; then
             sudo cp -rf --no-preserve=mode ./home/Music ~/
             sleep 1s
-            sudo #chmod -R 777 ~/Music/*
+            sudo chmod -R 777 ~/Music/*
         fi
 
         if [ -d ./home/Images ]; then
             sudo cp -rf --no-preserve=mode ./home/Images ~/
             sleep 1s
-            sudo #chmod -R 777 ~/Images/*
+            sudo chmod -R 777 ~/Images/*
         fi
 
         if [ -f ./home/.tmux.conf ]; then
@@ -483,7 +485,7 @@ function Configure_Tty_Environment {
             fi
             sudo cp -rf --no-preserve=mode ./home/.vim ~/
             sleep 1s
-            sudo #chmod -R 777 ~/.vim/*
+            sudo chmod -R 777 ~/.vim/*
             #sudo chmod 777 ~/.vim/colors/*
         fi
 
@@ -503,7 +505,7 @@ function Configure_Tty_Environment {
         if [ -d ./home/.oh-my-bash ]; then
             sudo cp -rf --no-preserve=mode ./home/.oh-my-bash ~/
             sleep 1s
-            sudo #chmod -R 777 ~/.oh-my-bash
+            sudo chmod -R 777 ~/.oh-my-bash
             sudo cp ~/.oh-my-bash/templates/bashrc.osh-template ~/.bashrc
         fi
 

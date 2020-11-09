@@ -361,11 +361,10 @@ function Install_Configurations {
             skellDir=/etc/skel/headless-host
 
             mkdir -p $skellDir
-            #chmod -R 777 $skellDir
 
             cp -rf --no-preserve=mode . $skellDir
             sleep 1
-            #chmod -R 777 $skellDir
+            chmod -R 777 $skellDir
 
             ## make a headless-hot skel
             ttyNestedString "A fresh headless-host directory was placed in /etc/skel." "$FG_YELLOW"
@@ -380,6 +379,7 @@ function Install_Configurations {
                     ttyNestedString "Preexisting users:" "$FG_MAGENTA"
                     #demoUser=mezcel
                     demoUser=$(ls /home)
+                    echo $demoUser
                     readInput=$(echo $demoUser | awk '{print $1}')
                     sleep 1s
 
@@ -394,7 +394,7 @@ function Install_Configurations {
                         if [ $isUserHH -ne 0 ]; then
                             cp -rf --no-preserve=mode $skellDir /home/$readInput/headless-host
                             sleep 1
-                            #chmod -R 777 /home/$readInput/headless-host
+                            sudo chmod -R 777 /home/$readInput/headless-host
                             ttyNestedString "/home/$readInput/headless-host was created." "$FG_YELLOW"
                         else
                             ttyNestedString "\t\"headless-host\" appears to exist somewhere in the \"$readInput\" account." "$MODE_DIM$FG_YELLOW"
@@ -407,7 +407,8 @@ function Install_Configurations {
                     ;;
             esac
         else
-            ttyCenteredHeader "This script will only edit the /etc/skel directory if this script is ran from the \"root\" account." "!" "$FG_RED"
+            ttyCenteredHeader "Skel file was not edited" "!" "$FG_RED"
+            ttyNestedString "This script will only edit the /etc/skel directory if this script is ran from the \"root\" account." "$FG_RED"
             sleep 2s
         fi
     }

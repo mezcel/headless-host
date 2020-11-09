@@ -209,7 +209,7 @@ function Configure_Desktop_Environment {
         sudo apt install -y suckless-tools
 
         sudo cp -rf --no-preserve=mode ./suckless ~/
-        sudo #chmod -R 777 ~/suckless/*
+        sudo chmod -R 777 ~/suckless/*
         #sudo cp -rf --no-preserve=mode ./home/terminalsexy ~/
 
         ## Original DWM Source
@@ -295,7 +295,7 @@ function Configure_Desktop_Environment {
         sleep 2s
 
         sudo cp -rf --no-preserve=mode ./home/.config ~/
-        sudo #chmod -R 777 ~/.config/*
+        sudo chmod -R 777 ~/.config/*
         #sudo chmod 777 ~/.config/geany/geany.conf
         #sudo chmod 777 ~/.config/gtk-2.0/*
         #sudo chmod 777 ~/.config/gtk-3.0/*

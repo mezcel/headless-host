@@ -548,10 +548,7 @@ function Configure_Tty_Environment {
 
             sudo cp -rf --no-preserve=mode ./home/terminalsexy ~/
             sleep 1s
-            #chmod 777 -R ~/terminalsexy/*
-            #sudo chmod 777 ~/terminalsexy/Linux_Console/*
-            #sudo chmod 777 ~/terminalsexy/st/*
-            #sudo chmod 777 ~/terminalsexy/Xresources/*
+            sudo chmod 777 -R ~/terminalsexy
         fi
 
         ## oh-my-bash

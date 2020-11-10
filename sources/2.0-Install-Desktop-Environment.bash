@@ -307,18 +307,17 @@ function Configure_Desktop_Environment {
         ttyNestedString "Populating home Directory Configs and dot files..." "$FG_YELLOW"
         sleep 2s
         
-        ttyNestedString "Importing ~/.config ..." "$MODE_BOLD$FG_GREEN"
-        sleep 1s
-        sudo cp -rf --no-preserve=mode ./home/.config ~/
-        sudo chmod -R 777 ~/.config/*
-        #sudo chmod 777 ~/.config/geany/geany.conf
-        #sudo chmod 777 ~/.config/gtk-2.0/*
-        #sudo chmod 777 ~/.config/gtk-3.0/*
-        #sudo chmod 777 ~/.config/openbox/*
-        #sudo chmod 777 ~/.config/tint2/*
+        if [ -d ./home/.config  ]; then
+            ttyNestedString "Importing ~/.config ..." "$MODE_BOLD$FG_GREEN"
+            sleep 1s
+            sudo cp -rf --no-preserve=mode ./home/.config ~/
+            sudo chmod -R 777 ~/.config/*
+        fi
 
         if [ -f ~/.bashrc ]; then
             if [ -f ~/terminalsexy/Xresources/myNord.light ]; then
+                ttyNestedString "Applying a light nord theme to ~/.Xresources ..." "$MODE_BOLD$FG_GREEN"
+
                 ## Light Xterm theme
                 cp ~/terminalsexy/Xresources/myNord.light ~/.Xresources
 

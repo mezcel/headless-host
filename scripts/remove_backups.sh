@@ -10,7 +10,7 @@ sudo rm ~/.vimrc.backup*
 sudo rm ~/.tmux.conf.backup*
 sudo rm ~/.bashrc.backup*
 sudo rm ~/.toprc.backup*
-sudo rm ~/xinitrc.backup*
+sudo rm ~/.xinitrc.backup*
 
 sudo rm /etc/issue.backup*
 sudo rm /etc/motd.backup*

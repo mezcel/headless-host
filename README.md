@@ -43,12 +43,11 @@ This project package will install and configure the following:
 
 ---
 
-## Official Debian Links
+## Official Links
 
-* [debian.org](https://www.debian.org)
-* [Debian News](https://www.debian.org/News/)
-* [iso-hybrid](https://cdimage.debian.org/debian-cd/current-live/amd64/iso-hybrid/)
-* [iso-dvd](https://cdimage.debian.org/debian-cd/current/amd64/iso-dvd/)
+| Debian/ISO | Github | Drivers |
+|---|---|---|
+| <ul><li>[debian.org](https://www.debian.org)</li><li>[Debian News](https://www.debian.org/News/)</li><li>[iso-hybrid](https://cdimage.debian.org/debian-cd/current-live/amd64/iso-hybrid/)</li><li>[iso-dvd](https://cdimage.debian.org/debian-cd/current/amd64/iso-dvd/)</li></ul> | <ul><li>[NERDTree](https://github.com/preservim/nerdtree)</li><li>[lightline](https://github.com/itchyny/lightline.vim)</li><li>[ohmybash](https://ohmybash.nntoan.com/)</li><li>[powerline](https://github.com/powerline/powerline)</li><li>[vifm](https://github.com/vifm)</li><li>[geany-themes](https://github.com/geany/geany-themes)</li></ul> | <ul><li>[firmware-iwlwifi ]( http://ftp.us.debian.org/debian/pool/non-free/f/firmware-nonfree/firmware-iwlwifi_20190114-2_all.deb )</li><li>[initramfs-tools](http://ftp.us.debian.org/debian/pool/main/i/initramfs-tools/initramfs-tools_0.133+deb10u1_all.deb)</li><li>broadcom-sta-dkms (6.30.223.271-10~bpo9+1) [ stretch backport ]( http://ftp.us.debian.org/debian/pool/non-free/b/broadcom-sta/broadcom-sta-dkms_6.30.223.271-10~bpo9+1_all.deb )</li><li>broadcom-sta-dkms_6.30.223.271-10_all.deb [ buster ](http://ftp.us.debian.org/debian/pool/non-free/b/broadcom-sta/broadcom-sta-dkms_6.30.223.271-10_all.deb)</li></ul>|
 
 ---
 

@@ -192,7 +192,7 @@ function Install_Configurations {
                 sleep 3s
                 exit
             else
-                ttyNestedString "The \"$me\" user account is recognized as a member of sudo group." "$MODE_BOLD$FG_GREEN"
+                ttyNestedString "The \"$me\" user account is recognized as a member of the sudo group." "$MODE_BOLD$FG_GREEN"
             fi
         fi
     }

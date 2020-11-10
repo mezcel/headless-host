@@ -43,13 +43,17 @@ function Tput_Colors {
 
 function Make_Directories {
     ## My Git project directories
+    existingUser=$(cat ~/.gitconfig | grep "name" | awk '{print $4}')
+    if [ -z $existingUser ]; then
+        existingUser=mezcel
+    fi
 
-    githubDirectory=~/github/$(whoami)
+    githubDirectory=~/github/$existingUser
 	promptString="${FG_GREEN}Where should Github directories be stored? [ ${FG_CYAN}$githubDirectory${FG_GREEN} ]: ${STYLES_OFF}"
 
     read -e -p "$promptString" -i "$githubDirectory" githubDirectory
-    
-    gistDirectory=~/gist.github/$(whoami)
+
+    gistDirectory=~/gist.github/existingUser
 	promptString="${FG_GREEN}Where should Gist directories be stored? [ ${FG_CYAN}$gistDirectory${FG_GREEN} ]: ${STYLES_OFF}"
 
     read -e -p "$promptString" -i "$gistDirectory" gistDirectory
@@ -178,7 +182,7 @@ function Greeter {
 
 function Main {
     ## Primary function
-    
+
     command -v git &>/dev/null
 
     if [ $? -eq 0 ]; then

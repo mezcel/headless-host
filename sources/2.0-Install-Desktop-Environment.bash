@@ -147,16 +147,16 @@ function Decorative_Formatting {
 
         width=$( tput cols )
         if [ $width -gt 80 ]; then width=80; fi
-        width=$(($width - 1))
+        width=$(($width - 3))
 
         strLength=${#str}
 
         highlightLength=$(( $width-$strLength ))
 
-        printf "$tputBgColor$FG_BLACK $str"
+        printf "$tputBgColor$FG_BLACK═ $str "
         for (( i=0; i<$highlightLength; i++ ))
         do
-           printf "$tputBgColor "
+           printf "$tputBgColor═"
         done
         printf "$STYLES_OFF\n"
     }
@@ -178,22 +178,22 @@ function Decorative_Formatting {
 
 function Configure_Desktop_Environment {
     function Install_DWM {
-        ttyCenteredHeader "Compile Suckless Environment" "-" "$FG_CYAN"
+        ttyCenteredHeader "Compile Suckless Environment" "╌" "$FG_CYAN"
         sleep 2s
 
         ## variable used to cd back to the directory
         thisScriptPath=$(pwd)
 
         cd ~/suckless/st
-        ttyCenteredHeader "Installing Simple Terminal (st)" "." "$FG_MAGENTA"
+        ttyCenteredHeader "Installing Simple Terminal (st)" "┅" "$FG_MAGENTA"
         sleep 1s
 
         sudo make clean install && cd ~/suckless/dmenu
-        ttyCenteredHeader "Installing Dmenu" "." "$FG_MAGENTA"
+        ttyCenteredHeader "Installing Dmenu" "┅" "$FG_MAGENTA"
         sleep 1s
 
         sudo make clean install && cd ~/suckless/dwm
-        ttyCenteredHeader "Installing Dynamic Window Manager (dwm)" "." "$FG_MAGENTA"
+        ttyCenteredHeader "Installing Dynamic Window Manager (dwm)" "┅" "$FG_MAGENTA"
         sleep 1s
 
         sudo make clean install && cd $thisScriptPath
@@ -201,7 +201,7 @@ function Configure_Desktop_Environment {
     }
 
     function Suckless_Patches {
-        ttyCenteredHeader "Installing Suckless dependencies" "-" "$FG_CYAN"
+        ttyCenteredHeader "Installing Suckless dependencies" "╌" "$FG_CYAN"
         sleep 2s
 
         sudo apt update
@@ -265,7 +265,7 @@ function Configure_Desktop_Environment {
 
     function Desktop_Applications {
 
-        ttyCenteredHeader "Installing gtk and other desktop environment tools" "." "$FG_CYAN"
+        ttyCenteredHeader "Installing gtk and other desktop environment tools" "┅" "$FG_CYAN"
         sleep 2s
 
         ## Xorg DE apps
@@ -316,7 +316,7 @@ function Configure_Desktop_Environment {
         ## Home Directory Configs
         ## This function assumes the script is running as source when launched from the headless-host root directory.
 
-        ttyCenteredHeader "Dot Files (Desktop Environment)" "." "$FG_CYAN"
+        ttyCenteredHeader "Dot Files (Desktop Environment)" "┅" "$FG_CYAN"
         ttyNestedString "Populating home Directory Configs and dot files..." "$FG_YELLOW"
         sleep 2s
 
@@ -357,7 +357,7 @@ function Configure_Desktop_Environment {
 
     function Desktop_Audio {
 
-        ttyCenteredHeader "Desktop Audio" "-" "$FG_CYAN"
+        ttyCenteredHeader "Desktop Audio" "╌" "$FG_CYAN"
 
         #sudo dpkg-query --list alsa-utils pavucontrol vlc libdvd-pkg libdvd-pkg
         command -v pulseaudio &>/dev/null
@@ -421,7 +421,7 @@ Configure_Desktop_Environment
 
 ## RUN
 
-ttyCenteredHeader "Desktop Environment" "#" "$FG_MAGENTA"
+ttyCenteredHeader "Desktop Environment" "░" "$FG_MAGENTA"
 sleep 2s
 
 Desktop_Applications

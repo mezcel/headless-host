@@ -147,16 +147,16 @@ function Decorative_Formatting {
 
         width=$( tput cols )
         if [ $width -gt 80 ]; then width=80; fi
-        width=$(($width - 1))
+        width=$(($width - 3))
 
         strLength=${#str}
 
         highlightLength=$(( $width-$strLength ))
 
-        printf "$tputBgColor$FG_BLACK $str"
+        printf "$tputBgColor$FG_BLACK═ $str "
         for (( i=0; i<$highlightLength; i++ ))
         do
-           printf "$tputBgColor "
+           printf "$tputBgColor═"
         done
         printf "$STYLES_OFF\n"
     }
@@ -201,7 +201,7 @@ function Configure_Tty_Environment {
             isSudo=$?
 
             if [ $isSudo -ne 0 ]; then
-                ttyCenteredHeader "The $me profile is not a member of the sudo group" "!" "$FG_RED"
+                ttyCenteredHeader "The $me profile is not a member of the sudo group" "▞" "$FG_RED"
                 ttyNestedString "The current user profile, \"$me\", may not have the appropriate \"sudo\" permissions yet. If you know this account does not have sudo privileges, login as \"root\" and manually edit the /etc/sudoers file to elevate this profile's permissions." "$FG_RED"
                 ttyNestedString "This script will terminate now so you can take the corrective actions to elevate this user profile's permissions privileges to sudo." "$MODE_BOLD$FG_RED"
                 sleep 3s
@@ -213,7 +213,7 @@ function Configure_Tty_Environment {
     }
 
     function Install_Network_Drivers {
-        ttyCenteredHeader "Network drivers" "-" "$FG_CYAN"
+        ttyCenteredHeader "Network drivers" "╌" "$FG_CYAN"
         sleep 2s
 
         sudo apt install -y linux-image-$(uname -r)
@@ -229,7 +229,7 @@ function Configure_Tty_Environment {
         isBroadcom=$?
 
         if [ $isBroadcom -eq 0 ]; then
-            ttyCenteredHeader "Broadcom Wifi" "." "$FG_YELLOW"
+            ttyCenteredHeader "Broadcom Wifi" "┅" "$FG_YELLOW"
             ttyNestedString "If you choose to install Broadcom drivers, the computer will restart after installation." "$FG_YELLOW"
 
             ## check if driver is already installed
@@ -269,7 +269,7 @@ function Configure_Tty_Environment {
     }
 
     function Terminal_Applications {
-        ttyCenteredHeader "Installing applications focused on terminal productivity" "-" "$FG_CYAN"
+        ttyCenteredHeader "Installing applications focused on terminal productivity" "╌" "$FG_CYAN"
         sleep 2s
 
         sudo apt update
@@ -313,7 +313,7 @@ function Configure_Tty_Environment {
         #sudo apt install -y git
         sudo apt install -y tlp
 
-        ttyCenteredHeader "Autoremove network-manager" "." "$FG_CYAN"
+        ttyCenteredHeader "Autoremove network-manager" "┅" "$FG_CYAN"
         sudo apt remove -y network-manager
         sudo apt -y autoremove
 
@@ -325,7 +325,7 @@ function Configure_Tty_Environment {
         mkdir -p ~/.swp/
         mkdir -p ~/.undo/
 
-        ttyCenteredHeader "Autoremove nano" "." "$FG_CYAN"
+        ttyCenteredHeader "Autoremove nano" "┅" "$FG_CYAN"
         sudo apt remove -y nano
         sudo apt purge -y nano
         sudo apt -y autoremove
@@ -337,7 +337,7 @@ function Configure_Tty_Environment {
         command -v git &>/dev/null
 
         if [ $? -eq 0 ]; then
-            ttyCenteredHeader "Git Configuration: ~/.gitconfig" "-" "$FG_CYAN"
+            ttyCenteredHeader "Git Configuration: ~/.gitconfig" "╌" "$FG_CYAN"
 
             ## Set ~/.gitconfig
             if [ ! -f ~/.gitconfig ]; then
@@ -369,7 +369,7 @@ function Configure_Tty_Environment {
 
     function Terminal_Audio {
 
-        ttyCenteredHeader "Audio" "-" "$FG_CYAN"
+        ttyCenteredHeader "Audio" "╌" "$FG_CYAN"
 
         #sudo dpkg-query --list alsa-utils pavucontrol
         command -v pulseaudio &>/dev/null
@@ -416,7 +416,7 @@ function Configure_Tty_Environment {
     }
 
     function Set_Nerdtree {
-        ttyCenteredHeader "NERDTree" "." "$FG_YELLOW"
+        ttyCenteredHeader "NERDTree" "┅" "$FG_YELLOW"
         sleep 1s
 
         if [ ! -d ~/.vim/pack/vendor/start/nerdtree ]; then
@@ -453,7 +453,7 @@ function Configure_Tty_Environment {
         ## This function assumes the script is running as source when launched from the headless-host root directory.
         ## I manually chmod 777 just in case files were transferred from somewhere secure before imported into user's root
 
-        ttyCenteredHeader "Dot Files (TTY)" "." "$FG_CYAN"
+        ttyCenteredHeader "Dot Files (TTY)" "┅" "$FG_CYAN"
         ttyNestedString "Populating home Directory Configs ..." "$MODE_BOLD$FG_YELLOW"
         sleep 2s
 
@@ -601,7 +601,7 @@ Configure_Tty_Environment
 
 ## RUN
 
-ttyCenteredHeader "Install a TTY environment " "#" "$FG_MAGENTA"
+ttyCenteredHeader "Install a TTY environment " "░" "$FG_MAGENTA"
 sleep 2s
 
 Terminal_Applications

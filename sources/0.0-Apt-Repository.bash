@@ -148,16 +148,16 @@ function Decorative_Formatting {
 
         width=$( tput cols )
         if [ $width -gt 80 ]; then width=80; fi
-        width=$(($width - 1))
+        width=$(($width - 3))
 
         strLength=${#str}
 
         highlightLength=$(( $width-$strLength ))
 
-        printf "$tputBgColor$FG_BLACK $str"
+        printf "$tputBgColor$FG_BLACK═ $str "
         for (( i=0; i<$highlightLength; i++ ))
         do
-           printf "$tputBgColor "
+           printf "$tputBgColor═"
         done
         printf "$STYLES_OFF\n"
     }
@@ -223,7 +223,7 @@ function Configure_Apt {
 
     function setup_apt_repo {
 
-        ttyCenteredHeader "Import a directory of personally curated Apt mirror repository .deb's" "-" "$FG_MAGENTA"
+        ttyCenteredHeader "Import a directory of personally curated Apt mirror repository .deb's" "╌" "$FG_MAGENTA"
         sleep 2
 
         pingIp=google.com
@@ -328,7 +328,7 @@ Configure_Apt
 
 ## RUN
 
-ttyCenteredHeader "Setup an Apt Mirror Repository" "#" "$FG_MAGENTA"
+ttyCenteredHeader "Setup an Apt Mirror Repository" "░" "$FG_MAGENTA"
 sleep 2s
 
 setup_apt_repo

@@ -147,16 +147,16 @@ function Decorative_Formatting {
 
         width=$( tput cols )
         if [ $width -gt 80 ]; then width=80; fi
-        width=$(($width - 1))
+        width=$(($width - 3))
 
         strLength=${#str}
 
         highlightLength=$(( $width-$strLength ))
 
-        printf "$tputBgColor$FG_BLACK $str"
+        printf "$tputBgColor$FG_BLACK═ $str "
         for (( i=0; i<$highlightLength; i++ ))
         do
-           printf "$tputBgColor "
+           printf "$tputBgColor═"
         done
         printf "$STYLES_OFF\n"
     }
@@ -190,7 +190,7 @@ function Get_Networking_Applications {
     }
 
     function Install_Network_Drivers {
-        ttyCenteredHeader "Networking drivers" "." "$FG_CYAN"
+        ttyCenteredHeader "Networking drivers" "┅" "$FG_CYAN"
         sleep 2s
 
         sudo apt install -y linux-image-$(uname -r)
@@ -207,7 +207,7 @@ function Get_Networking_Applications {
 
         if [ $isBroadcom -eq 0 ]; then
 
-            ttyCenteredHeader "Broadcom Wifi" "." "$FG_YELLOW"
+            ttyCenteredHeader "Broadcom Wifi" "┅" "$FG_YELLOW"
             ttyNestedString "If you choose to install Broadcom drivers, the computer will restart after installation." "$FG_YELLOW"
 
             ## check if driver is already installed
@@ -254,7 +254,7 @@ function Get_Networking_Applications {
         ## Install network drivers
         Install_Network_Drivers
 
-        ttyCenteredHeader "Networking application packages" "-" "$FG_CYAN"
+        ttyCenteredHeader "Networking application packages" "╌" "$FG_CYAN"
         sleep 2s
 
         sudo apt install -y resolvconf
@@ -290,7 +290,7 @@ Get_Networking_Applications
 
 ## RUN
 
-ttyCenteredHeader "Networking packages" "#" "$FG_MAGENTA"
+ttyCenteredHeader "Networking packages" "░" "$FG_MAGENTA"
 sleep 2s
 
 networking_applications

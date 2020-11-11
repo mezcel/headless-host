@@ -143,16 +143,16 @@ function Decorative_Formatting {
 
         width=$( tput cols )
         if [ $width -gt 80 ]; then width=80; fi
-        width=$(($width - 1))
+        width=$(($width - 3))
 
         strLength=${#str}
 
         highlightLength=$(( $width-$strLength ))
 
-        printf "$tputBgColor$FG_BLACK $str"
+        printf "$tputBgColor$FG_BLACK═ $str "
         for (( i=0; i<$highlightLength; i++ ))
         do
-           printf "$tputBgColor "
+           printf "$tputBgColor═"
         done
         printf "$STYLES_OFF\n"
     }
@@ -199,7 +199,7 @@ function Install_Configurations {
             isSudo=$?
 
             if [ $isSudo -ne 0 ]; then
-                ttyCenteredHeader "The $me profile is not a member of the sudo group" "!" "$FG_RED"
+                ttyCenteredHeader "The $me profile is not a member of the sudo group" "▞" "$FG_RED"
                 ttyNestedString "The current user profile, \"$me\", may not have the appropriate \"sudo\" permissions yet. If you know this account does not have sudo privileges, login as \"root\" and manually edit the /etc/sudoers file to elevate this profile's permissions." "$FG_RED"
                 ttyNestedString "This script will terminate now so you can take the corrective actions to elevate this user profile's permissions privileges to sudo." "$MODE_BOLD$FG_RED"
                 sleep 3s
@@ -211,7 +211,7 @@ function Install_Configurations {
     }
 
     function Decorate_MotdIssue {
-        ttyCenteredHeader "Decorating issue and motd" "-" "$FG_CYAN"
+        ttyCenteredHeader "Decorating issue and motd" "╌" "$FG_CYAN"
 
         ## ANSI Escape Sequence: Terminal Color Codes
 
@@ -321,7 +321,7 @@ function Install_Configurations {
         homeBash=~/$bashFile
         sleep 1s
 
-        ttyCenteredHeader "Adding the \"hh\" alias to ~/.bashrc" "#" "$FG_GREEN"
+        ttyCenteredHeader "Adding the \"hh\" alias to ~/.bashrc" "░" "$FG_GREEN"
 
         ## make executable bash in home dir
         cp $bashFilePath $homeBash
@@ -369,7 +369,7 @@ function Install_Configurations {
         ## It is just an info display commemorating the headless-host install
         ## It will link to a bash script which will provide further options to take.
 
-        ttyCenteredHeader "Create the \"hh\" alias." "." "$FG_YELLOW"
+        ttyCenteredHeader "Create the \"hh\" alias." "┅" "$FG_YELLOW"
         ttyNestedString "I made a bash script to quickly launch common process from the terminal." "$FG_YELLOW"
         ttyNestedString "If you want, I will put the \"headless-host-alias.bash\" file into ~/ and make an \"hh\" alias in the ~/.bashrc" "$FG_YELLOW"
 
@@ -400,7 +400,7 @@ function Install_Configurations {
         me=$(whoami)
 
         if [ $me == "root" ]; then
-            ttyCenteredHeader "Shared Resources" "-" "$FG_Cyan"
+            ttyCenteredHeader "Shared Resources" "╌" "$FG_Cyan"
 
             skellDir=/etc/skel/headless-host
 
@@ -451,7 +451,7 @@ function Install_Configurations {
                     ;;
             esac
         else
-            ttyCenteredHeader "Skel directory was not edited" "!" "$FG_RED"
+            ttyCenteredHeader "Skel directory was not edited" "▞" "$FG_RED"
             ttyNestedString "This script will only edit the /etc/skel directory if this script is ran from the \"root\" account." "$FG_RED"
             sleep 2s
         fi
@@ -460,14 +460,14 @@ function Install_Configurations {
 
 function Install_Home {
     function Welcome_Header {
-        ttyCenteredHeader "headless-host ( A distro installer and server setup script )" "#" "$FG_CYAN"
-        echo -e "$MODE_BOLD $FG_CYAN \
-        \nAbout: \
-        \n\tThis package will configure the following on a Debian (Buster) +10.5. \
+        ttyCenteredHeader "headless-host ( A distro installer and server setup script )" "░" "$FG_CYAN"
+        echo -e "$FG_CYAN \
+        \n${MODE_BOLD}About:${STYLES_OFF} \
+        \n\t${FG_CYAN}This package will configure the following on a Debian (Buster) +10.5. \
         \n\t* Personal Apt mirror repo, Adhoc wifi, TTY and desktop environments. \
-        \nSource: \
-        \n\thttps://github.com/mezcel/headless-host.git $STYLES_OFF"
-        ttyHR "#" "$FG_CYAN"
+        \n${MODE_BOLD}Source:$STYLES_OFF \
+        \n\t${FG_CYAN}https://github.com/mezcel/headless-host.git $STYLES_OFF"
+        #ttyHR "░" "$FG_CYAN"
     }
 
     function Done_Message {
@@ -483,23 +483,22 @@ function Install_Home {
         esac
 
         echo ""
-        ttyCenteredHeader "DONE" "_" "$FG_GREEN"
+        ttyCenteredHeader "DONE" "▚" "$FG_GREEN"
         ttyNestedString "Finished running: $selectionString" "$FG_CYAN"
     }
 
     function Home_Menu_Prompt {
-        ttyCenteredHeader "Installer Menu" "-" "$FG_MAGENTA"
-        echo -e "${FG_MAGENTA}${MODE_BEGIN_UNDERLINE}Select a menu item:${MODE_EXIT_UNDERLINE} \
-        \n \
-        \n  1. Import a personally curated Apt repository of Deb's \
-        \n  2. Install a TTY environment ${MODE_BOLD} \
-        \n  3. Install a TTY environment with a minimally themed Desktop environment. ${STYLES_OFF}$FG_MAGENTA \
-        \n  4. Install a TTY with configured SSH server and Ad-hoc wifi. \
+        ttyCenteredHeader "Installer Menu" "═" "$FG_MAGENTA"
+        echo -e "${MODE_BOLD}${FG_MAGENTA}${MODE_BEGIN_UNDERLINE}Select a menu item number:${MODE_EXIT_UNDERLINE} \
+        \n ${STYLES_OFF}\
+        \n  ${FG_MAGENTA}${MODE_BOLD}1.${STYLES_OFF} ${FG_MAGENTA}Import a personally curated Apt repository of Deb's \
+        \n  ${FG_MAGENTA}${MODE_BOLD}2.${STYLES_OFF} ${FG_MAGENTA}Install a TTY environment ${MODE_BOLD} \
+        \n  ${FG_MAGENTA}${MODE_BOLD}3. ${FG_MAGENTA}Install a TTY environment with a minimally themed Desktop environment. ${STYLES_OFF}$FG_MAGENTA \
+        \n  ${FG_MAGENTA}${MODE_BOLD}4.${STYLES_OFF} ${FG_MAGENTA}Install a TTY with configured SSH server and Ad-hoc wifi. \
         \n     ${FG_RED}WARNING: My networking configurations may break existing connectivity.$FG_MAGENTA \
-        \n  5. Perform 1, 2, & 4  ( TUI with Networking Ad-hoc Sshd ) \
-        \n  6. Perform All \
-        \n  q. Quit. \
-        \n $STYLES_OFF"
+        \n  ${FG_MAGENTA}${MODE_BOLD}5.${STYLES_OFF} ${FG_MAGENTA}Perform 1, 2, & 4  ( TUI with Networking Ad-hoc Sshd ) \
+        \n  ${FG_MAGENTA}${MODE_BOLD}6.${STYLES_OFF} ${FG_MAGENTA}Perform All \
+        \n  ${FG_MAGENTA}${MODE_BOLD}q.${STYLES_OFF} ${FG_MAGENTA}Quit.\n $STYLES_OFF"
 
         ttyPromptInput "Installer Scripts:" "Select a menu number? [ 1-6 ]: " "3" "$FG_GREEN" "$BG_GREEN"
 
@@ -565,12 +564,8 @@ function Install_Home {
                 Skel_HeadlessHost
                 Done_Message $installNo
                 ;;
-            [Qq]* ) ## Quit installer
-                ttyCenteredHeader "Exited Installer" "_" "$FG_RED"
-                exit
-                ;;
             * ) ## Quit installer
-                ttyCenteredHeader "Exited Installer" "_" "$FG_RED"
+                ttyCenteredHeader "Exited Installer" "▞" "$FG_RED"
                 exit
                 ;;
         esac
@@ -584,10 +579,11 @@ function main {
     Install_Configurations
     Install_Home
 
+    Tput_Colors
+    sudo clear
+
     ## Prompts
 
-    Tput_Colors
-    clear
     Welcome_Header
     Home_Menu_Prompt
 }

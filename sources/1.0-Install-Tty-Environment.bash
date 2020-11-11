@@ -7,7 +7,7 @@
 function Decorative_Formatting {
     ## Decorative tty colors
     function Tput_Colors {
-        ## Foreground Color using ANSI escape provided though tput
+        ## Foreground Color using ANSI escape provided through tput
 
         FG_BLACK=$(tput setaf 0)
         FG_RED=$(tput setaf 1)
@@ -19,7 +19,7 @@ function Decorative_Formatting {
         FG_WHITE=$(tput setaf 7)
         FG_NoColor=$(tput sgr0)
 
-        ## Background Color using ANSI escape provided though tput
+        ## Background Color using ANSI escape provided through tput
 
         BG_BLACK=$(tput setab 0)
         BG_RED=$(tput setab 1)
@@ -31,7 +31,7 @@ function Decorative_Formatting {
         BG_WHITE=$(tput setab 7)
         BG_NoColor=$(tput sgr0)
 
-        ## set mode using ANSI escape provided though tput
+        ## set mode using ANSI escape provided through tput
 
         MODE_BOLD=$(tput bold)
         MODE_DIM=$(tput dim)
@@ -41,7 +41,7 @@ function Decorative_Formatting {
         MODE_ENTER_STANDOUT=$(tput smso)
         MODE_EXIT_STANDOUT=$(tput rmso)
 
-        # clear styles using ANSI escape provided though tput
+        # clear styles using ANSI escape provided through tput
 
         STYLES_OFF=$(tput sgr0)
         FGBG_NoColor=$(tput sgr0)
@@ -441,7 +441,7 @@ function Configure_Tty_Environment {
 
         ## install vim nerdtree
         if [ -d ~/.vim/pack/vendor/start/nerdtree ]; then
-            ttyNestedString "Sourcing NERDTree scripts though Vim ..." "$MODE_BOLD$FG_GREEN"
+            ttyNestedString "Sourcing NERDTree scripts through Vim ..." "$MODE_BOLD$FG_GREEN"
             sleep 4s
             sudo vim -u NONE -c "helptags ~/.vim/pack/vendor/start/nerdtree/doc" -c q
             sleep 1s

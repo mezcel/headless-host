@@ -7,7 +7,7 @@
 function Decorative_Formatting {
     ## Decorative tty colors
     function Tput_Colors {
-        ## Foreground Color using ANSI escape provided though tput
+        ## Foreground Color using ANSI escape provided through tput
 
         FG_BLACK=$(tput setaf 0)
         FG_RED=$(tput setaf 1)
@@ -19,7 +19,7 @@ function Decorative_Formatting {
         FG_WHITE=$(tput setaf 7)
         FG_NoColor=$(tput sgr0)
 
-        ## Background Color using ANSI escape provided though tput
+        ## Background Color using ANSI escape provided through tput
 
         BG_BLACK=$(tput setab 0)
         BG_RED=$(tput setab 1)
@@ -31,7 +31,7 @@ function Decorative_Formatting {
         BG_WHITE=$(tput setab 7)
         BG_NoColor=$(tput sgr0)
 
-        ## set mode using ANSI escape provided though tput
+        ## set mode using ANSI escape provided through tput
 
         MODE_BOLD=$(tput bold)
         MODE_DIM=$(tput dim)
@@ -41,7 +41,7 @@ function Decorative_Formatting {
         MODE_ENTER_STANDOUT=$(tput smso)
         MODE_EXIT_STANDOUT=$(tput rmso)
 
-        # clear styles using ANSI escape provided though tput
+        # clear styles using ANSI escape provided through tput
 
         STYLES_OFF=$(tput sgr0)
         FGBG_NoColor=$(tput sgr0)
@@ -178,24 +178,22 @@ function Decorative_Formatting {
 
 function Configure_Desktop_Environment {
     function Install_DWM {
-        ttyCenteredHeader "Compile Suckless Environment" "╌" "$FG_CYAN"
+        ttyCenteredHeader "Compile Suckless Environment" "▃" "$FG_CYAN"
         sleep 2s
 
         ## variable used to cd back to the directory
         thisScriptPath=$(pwd)
 
-        cd ~/suckless/st
         ttyCenteredHeader "Installing Simple Terminal (st)" "┅" "$FG_MAGENTA"
-        sleep 1s
-
+        sleep 2s && cd ~/suckless/st
         sudo make clean install && cd ~/suckless/dmenu
+
         ttyCenteredHeader "Installing Dmenu" "┅" "$FG_MAGENTA"
-        sleep 1s
-
+        sleep 2s && cd ~/suckless/dwm
         sudo make clean install && cd ~/suckless/dwm
-        ttyCenteredHeader "Installing Dynamic Window Manager (dwm)" "┅" "$FG_MAGENTA"
-        sleep 1s
 
+        ttyCenteredHeader "Installing Dynamic Window Manager (dwm)" "┅" "$FG_MAGENTA"
+        sleep 2s && cd ~/suckless/dwm
         sudo make clean install && cd $thisScriptPath
         sleep 5s
     }
@@ -227,6 +225,9 @@ function Configure_Desktop_Environment {
         sudo apt install -y libgcr-3-dev
         sudo apt install -y suckless-tools
 
+        ttyCenteredHeader "Importing DE Patches" "┅" "$FG_CYAN"
+        sleep 2s
+
         ttyNestedString "Importing ~/suckless ..." "$MODE_BOLD$FG_GREEN"
         sleep 1s
         sudo cp -rf --no-preserve=mode ./suckless ~/
@@ -251,9 +252,11 @@ function Configure_Desktop_Environment {
             sleep 1s
         fi
 
-        echo -e "bash ~/.fehbg &\nexec ~/suckless/dwm/dwm" > ~/.xinitrc
-        echo -e "bash ~/.fehbg & \nexec ~/suckless/dwm/dwm" > ~/.xinitrc_dwm
+        ## xinit
+        echo -e "bash ~/.fehbg && xrdb ~/.Xresources & \
+        \nexec ~/suckless/dwm/dwm" > ~/.xinitrc_dwm
         echo "exec openbox-session" > ~/.xinitrc_openbox
+        cp ~/.xinitrc_dwm ~/.xinitrc
 
     }
 

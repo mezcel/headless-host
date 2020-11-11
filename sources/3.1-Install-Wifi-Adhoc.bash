@@ -166,10 +166,10 @@ function Decorative_Formatting {
 
         highlightLength=$(( $width-$strLength ))
 
-        printf "$tputBgColor$FG_BLACK═ $str "
+        printf "$tputBgColor$FG_BLACK= $str "
         for (( i=0; i<$highlightLength; i++ ))
         do
-           printf "$tputBgColor═"
+           printf "$tputBgColor="
         done
         printf "$STYLES_OFF\n"
     }
@@ -192,7 +192,7 @@ function Decorative_Formatting {
 function Configure_Router {
     function About_Message {
         ## Cover page about information
-        ttyCenteredHeader "About" "╌" "$FG_GREEN"
+        ttyCenteredHeader "About" "-" "$FG_GREEN"
         ttyNestedString "- This script intended to setup Debian server as a wireless sshd acces point. This script will write config scripts for: Hostapd, Dnsmasq, SSH Server, Network interface names and IP" "$FG_GREEN"
         ttyNestedString "- Official Debian Guidance: https://www.debian.org/doc/manuals/debian-reference/ch05.en.html" "$FG_CYAN"
 
@@ -243,7 +243,7 @@ function Configure_Router {
     function Write_Grub_Defaults {
         ## Make wifi = wlan0, and ethernet=eth0 instead of however else the kernel decided to name them.
 
-        ttyCenteredHeader "GRUB Network Interface Names" "┅" "$FG_CYAN"
+        ttyCenteredHeader "GRUB Network Interface Names" "+" "$FG_CYAN"
 
         ttyNestedString "You can update grub to recognize Wifi and Ethernet interfaces as \"wlan0\" and \"eth0\", instead of however else the kernel decided to name them by default. The computer will need to reboot after any GRUB alterations." "$FG_YELLOW"
 
@@ -288,7 +288,7 @@ function Configure_Router {
     }
 
     function Install_Network_Drivers {
-        ttyCenteredHeader "Network drivers" "╌" "$FG_CYAN"
+        ttyCenteredHeader "Network drivers" "-" "$FG_CYAN"
         sleep 2s
 
         sudo apt install -y linux-image-$(uname -r)
@@ -305,7 +305,7 @@ function Configure_Router {
 
         if [ $isBroadcom -eq 0 ]; then
 
-            ttyCenteredHeader "Broadcom Wifi" "┅" "$FG_YELLOW"
+            ttyCenteredHeader "Broadcom Wifi" "+" "$FG_YELLOW"
             ttyNestedString "If you choose to install Broadcom drivers, the computer will restart after installation. You will need to run this script again if you want to complete the rest of the installation." "$FG_YELLOW"
 
             ## check if driver is already installed
@@ -345,7 +345,7 @@ function Configure_Router {
     }
 
     function Install_Packages {
-        ttyCenteredHeader "Installing applications focused on sshd access point configuration" "╌" "$FG_CYAN"
+        ttyCenteredHeader "Installing applications focused on sshd access point configuration" "-" "$FG_CYAN"
         sleep 2s
 
         sudo apt update
@@ -369,7 +369,7 @@ function Configure_Router {
         mywlan=$1
         myeth=$2
 
-        ttyCenteredHeader "Network Interface IPs" "╌" "$FG_CYAN"
+        ttyCenteredHeader "Network Interface IPs" "-" "$FG_CYAN"
         sleep 2s
 
         tempFile=~/interfaces
@@ -441,7 +441,7 @@ function Configure_Router {
         myssid=$2
         mypassword=$3
 
-        ttyCenteredHeader "Hostapd Wireless Access Point" "╌" "$FG_CYAN"
+        ttyCenteredHeader "Hostapd Wireless Access Point" "-" "$FG_CYAN"
         sleep 2s
 
         tempFile=~/hostapd.conf
@@ -488,7 +488,7 @@ function Configure_Router {
         mywlan=$1
         myeth=$2
 
-        ttyCenteredHeader "Dnsmasq" "╌" "$FG_CYAN"
+        ttyCenteredHeader "Dnsmasq" "-" "$FG_CYAN"
 
         tempFile=~/dnsmasq.conf
         destinationFile=/etc/dnsmasq.conf
@@ -531,7 +531,7 @@ function Configure_Router {
     function Init_Hotspot_Interfaces {
         mywlan=$1
 
-        ttyCenteredHeader "Initialize Hotspot Interfaces" "╌" "$FG_CYAN"
+        ttyCenteredHeader "Initialize Hotspot Interfaces" "-" "$FG_CYAN"
 
         sudo ip link set $mywlan up
         sudo systemctl stop dnsmasq
@@ -544,7 +544,7 @@ function Configure_Router {
     }
 
     function Customize_HostSshd {
-        ttyCenteredHeader "Customize SSH Configuration" "╌" "$FG_CYAN"
+        ttyCenteredHeader "Customize SSH Configuration" "-" "$FG_CYAN"
         sleep 3s
 
         promptString="Edit the ssh config file, sshd_config? [ Y/n ] : "
@@ -559,7 +559,7 @@ function Configure_Router {
                 sudo systemctl stop sshd
 
                 ## Listen address
-                ttyCenteredHeader "SSHD Listen address candidates" "┅" "$FG_YELLOW"
+                ttyCenteredHeader "SSHD Listen address candidates" "+" "$FG_YELLOW"
                 echo -e "${FG_YELLOW}"
                 ip -o -4 addr show
                 echo "${STYLES_OFF}${FG_CYAN}"
@@ -629,7 +629,7 @@ function Configure_Router {
     }
 
     function Delay_SSHD_Interface {
-        ttyCenteredHeader "SSHD Boot Delay Script" "╌" "$FG_CYAN"
+        ttyCenteredHeader "SSHD Boot Delay Script" "-" "$FG_CYAN"
         sleep 1
 
         ## Workaround to prevent errors related to sshd.service starting before a network is available
@@ -654,7 +654,7 @@ function Configure_Router {
     }
 
     function Write_Configs {
-        ttyCenteredHeader "Write Configuration Scripts" "╌" "$FG_CYAN"
+        ttyCenteredHeader "Write Configuration Scripts" "-" "$FG_CYAN"
         ttyNestedString "Current interface names and ip's:" "$FG_YELLOW"
         echo -e "$FG_YELLOW"
         ip a

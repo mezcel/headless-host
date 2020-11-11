@@ -154,10 +154,10 @@ function Decorative_Formatting {
 
         highlightLength=$(( $width-$strLength ))
 
-        printf "$tputBgColor$FG_BLACK═ $str "
+        printf "$tputBgColor$FG_BLACK= $str "
         for (( i=0; i<$highlightLength; i++ ))
         do
-           printf "$tputBgColor═"
+           printf "$tputBgColor="
         done
         printf "$STYLES_OFF\n"
     }
@@ -223,7 +223,7 @@ function Configure_Apt {
 
     function setup_apt_repo {
 
-        ttyCenteredHeader "Import a directory of personally curated Apt mirror repository .deb's" "╌" "$FG_MAGENTA"
+        ttyCenteredHeader "Import a directory of personally curated Apt mirror repository .deb's" "-" "$FG_MAGENTA"
         sleep 2
 
         pingIp=google.com

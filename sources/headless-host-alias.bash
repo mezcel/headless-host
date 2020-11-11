@@ -151,10 +151,10 @@ function Decorative_Formatting {
 
         highlightLength=$(( $width-$strLength ))
 
-        printf "$tputBgColor$FG_BLACK $str"
+        printf "$tputBgColor$FG_BLACK= $str"
         for (( i=0; i<$highlightLength; i++ ))
         do
-           printf "$tputBgColor "
+           printf "$tputBgColor="
         done
         printf "$STYLES_OFF\n"
     }

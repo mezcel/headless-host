@@ -149,10 +149,10 @@ function Decorative_Formatting {
 
         highlightLength=$(( $width-$strLength ))
 
-        printf "$tputBgColor$FG_BLACK═ $str "
+        printf "$tputBgColor$FG_BLACK= $str "
         for (( i=0; i<$highlightLength; i++ ))
         do
-           printf "$tputBgColor═"
+           printf "$tputBgColor="
         done
         printf "$STYLES_OFF\n"
     }
@@ -211,7 +211,7 @@ function Install_Configurations {
     }
 
     function Decorate_MotdIssue {
-        ttyCenteredHeader "Decorating issue and motd" "╌" "$FG_CYAN"
+        ttyCenteredHeader "Decorating issue and motd" "-" "$FG_CYAN"
 
         ## ANSI Escape Sequence: Terminal Color Codes
 
@@ -369,7 +369,7 @@ function Install_Configurations {
         ## It is just an info display commemorating the headless-host install
         ## It will link to a bash script which will provide further options to take.
 
-        ttyCenteredHeader "Create the \"hh\" alias." "┅" "$FG_YELLOW"
+        ttyCenteredHeader "Create the \"hh\" alias." "+" "$FG_YELLOW"
         ttyNestedString "I made a bash script to quickly launch common process from the terminal." "$FG_YELLOW"
         ttyNestedString "If you want, I will put the \"headless-host-alias.bash\" file into ~/ and make an \"hh\" alias in the ~/.bashrc" "$FG_YELLOW"
 
@@ -400,7 +400,7 @@ function Install_Configurations {
         me=$(whoami)
 
         if [ $me == "root" ]; then
-            ttyCenteredHeader "Shared Resources" "╌" "$FG_Cyan"
+            ttyCenteredHeader "Shared Resources" "-" "$FG_Cyan"
 
             skellDir=/etc/skel/headless-host
 
@@ -488,7 +488,7 @@ function Install_Home {
     }
 
     function Home_Menu_Prompt {
-        ttyCenteredHeader "Installer Menu" "═" "$FG_MAGENTA"
+        ttyCenteredHeader "Installer Menu" "-" "$FG_MAGENTA"
         echo -e "${MODE_BOLD}${FG_MAGENTA}${MODE_BEGIN_UNDERLINE}Select a menu item number:${MODE_EXIT_UNDERLINE} \
         \n ${STYLES_OFF}\
         \n  ${FG_MAGENTA}${MODE_BOLD}1.${STYLES_OFF} ${FG_MAGENTA}Import a personally curated Apt repository of Deb's \
@@ -580,7 +580,9 @@ function main {
     Install_Home
 
     Tput_Colors
+    ttyHighlightRow "Login into headless-host installer" "$BG_BLUE"
     sudo clear
+
 
     ## Prompts
 

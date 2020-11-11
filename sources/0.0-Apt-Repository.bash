@@ -50,7 +50,10 @@ function Decorative_Formatting {
     function ttyCenter {
         str="$1"
         tputFgColor=$2
-        width=80
+
+        width=$( tput cols )
+        if [ $width -gt 80 ]; then width=80; fi
+
         strLength=${#str}
         centerCol=$(( ( width/2 )-( strLength / 2 ) ))
 
@@ -65,7 +68,10 @@ function Decorative_Formatting {
         hrChar=$1
         tputFgColor=$2
 
-        width=80
+
+        width=$( tput cols )
+        if [ $width -gt 80 ]; then width=80; fi
+
         for (( i=0; i<$width; i++ ))
         do
            printf "$tputFgColor$hrChar"
@@ -82,7 +88,10 @@ function Decorative_Formatting {
 
         strLength="${#str}"
         preString=" "
-        ttyMaxCols=79
+
+        ttyMaxCols=$( tput cols )
+        if [ $ttyMaxCols -gt 80 ]; then ttyMaxCols=80; fi
+        ttyMaxCols=$(($ttyMaxCols-1))
 
         charCount=0
         isFrstLine=1
@@ -92,8 +101,10 @@ function Decorative_Formatting {
             charCount=$(($charCount+${#i}+1))
 
             if [ $isFrstLine -ne 1 ]; then
-                ttyMaxCols=79
-                ttyMaxCols=$(($ttyMaxCols-4))
+                ttyMaxCols=$( tput cols )
+                if [ $ttyMaxCols -gt 80 ]; then ttyMaxCols=80; fi
+                ttyMaxCols=$(($ttyMaxCols-5))
+
                 preString="    "
             else
                 preString=" "
@@ -135,7 +146,10 @@ function Decorative_Formatting {
         str=$1
         tputBgColor=$2
 
-        width=79
+        width=$( tput cols )
+        if [ $width -gt 80 ]; then width=80; fi
+        width=$(($width - 1))
+
         strLength=${#str}
 
         highlightLength=$(( $width-$strLength ))
@@ -185,7 +199,7 @@ function Configure_Apt {
         sudo dpkg-scanpackages $debRepo | gzip > $debRepo/$indexZip
         sleep 2s
 
-        if [ -f $debRepo/$indexZip ]; then        
+        if [ -f $debRepo/$indexZip ]; then
             ttyNestedString "Overwriting existing $customSourceList, and writing a new one ..." "$MODE_BOLD$FG_YELLOW"
             sleep 1s
 
@@ -198,7 +212,7 @@ function Configure_Apt {
         ttyNestedString "Backing up /etc/apt/sources.list ..." "$MODE_DIM$FG_YELLOW"
         sleep 1s
         sudo cp /etc/apt/sources.list /etc/apt/sources.list.backup.$(date +%d%b%Y_%H%M%S)
-        
+
         ttyNestedString "Writing /etc/apt/sources.list ..." "$MODE_BOLD$FG_GREEN"
         sleep 1s
         sudo cp scripts/extra_drivers/sources.list /etc/apt/sources.list
@@ -274,7 +288,7 @@ function Configure_Apt {
                         sudo cp /etc/apt/sources.list /etc/apt/sources.list.backup.$(date +%d%b%Y_%H%M%S)
                         sleep 1s
                     fi
-                    
+
                     ttyNestedString "Writing /etc/apt/sources.list ..." "$MODE_BOLD$FG_GREEN"
                     sleep 1s
 

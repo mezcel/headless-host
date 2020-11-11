@@ -50,7 +50,10 @@ function Decorative_Formatting {
     function ttyCenter {
         str="$1"
         tputFgColor=$2
-        width=80
+
+        width=$( tput cols )
+        if [ $width -gt 80 ]; then width=80; fi
+
         strLength=${#str}
         centerCol=$(( ( width/2 )-( strLength / 2 ) ))
 
@@ -65,7 +68,9 @@ function Decorative_Formatting {
         hrChar=$1
         tputFgColor=$2
 
-        width=80
+        width=$( tput cols )
+        if [ $width -gt 80 ]; then width=80; fi
+
         for (( i=0; i<$width; i++ ))
         do
            printf "$tputFgColor$hrChar"
@@ -82,7 +87,10 @@ function Decorative_Formatting {
 
         strLength="${#str}"
         preString=" "
-        ttyMaxCols=79
+
+        ttyMaxCols=$( tput cols )
+        if [ $ttyMaxCols -gt 80 ]; then ttyMaxCols=80; fi
+        ttyMaxCols=$(($ttyMaxCols-1))
 
         charCount=0
         isFrstLine=1
@@ -92,8 +100,10 @@ function Decorative_Formatting {
             charCount=$(($charCount+${#i}+1))
 
             if [ $isFrstLine -ne 1 ]; then
-                ttyMaxCols=79
-                ttyMaxCols=$(($ttyMaxCols-4))
+                ttyMaxCols=$( tput cols )
+                if [ $ttyMaxCols -gt 80 ]; then ttyMaxCols=80; fi
+                ttyMaxCols=$(($ttyMaxCols-5))
+
                 preString="    "
             else
                 preString=" "
@@ -135,7 +145,10 @@ function Decorative_Formatting {
         str=$1
         tputBgColor=$2
 
-        width=79
+        width=$( tput cols )
+        if [ $width -gt 80 ]; then width=80; fi
+        width=$(($width - 1))
+
         strLength=${#str}
 
         highlightLength=$(( $width-$strLength ))
@@ -213,7 +226,7 @@ function Configure_Desktop_Environment {
         sudo apt install -y xvkbd
         sudo apt install -y libgcr-3-dev
         sudo apt install -y suckless-tools
-        
+
         ttyNestedString "Importing ~/suckless ..." "$MODE_BOLD$FG_GREEN"
         sleep 1s
         sudo cp -rf --no-preserve=mode ./suckless ~/
@@ -306,7 +319,7 @@ function Configure_Desktop_Environment {
         ttyCenteredHeader "Dot Files (Desktop Environment)" "." "$FG_CYAN"
         ttyNestedString "Populating home Directory Configs and dot files..." "$FG_YELLOW"
         sleep 2s
-        
+
         if [ -d ./home/.config  ]; then
             ttyNestedString "Importing ~/.config ..." "$MODE_BOLD$FG_GREEN"
             sleep 1s
@@ -338,7 +351,7 @@ function Configure_Desktop_Environment {
         mkdir -p ~/.backup/
         mkdir -p ~/.swp/
         mkdir -p ~/.undo/
-        
+
         sleep 1
     }
 

@@ -50,7 +50,10 @@ function Decorative_Formatting {
     function ttyCenter {
         str="$1"
         tputFgColor=$2
-        width=80
+
+        width=$( tput cols )
+        if [ $width -gt 80 ]; then width=80; fi
+
         strLength=${#str}
         centerCol=$(( ( width/2 )-( strLength / 2 ) ))
 
@@ -65,7 +68,9 @@ function Decorative_Formatting {
         hrChar=$1
         tputFgColor=$2
 
-        width=80
+        width=$( tput cols )
+        if [ $width -gt 80 ]; then width=80; fi
+
         for (( i=0; i<$width; i++ ))
         do
            printf "$tputFgColor$hrChar"
@@ -82,7 +87,10 @@ function Decorative_Formatting {
 
         strLength="${#str}"
         preString=" "
-        ttyMaxCols=79
+
+        ttyMaxCols=$( tput cols )
+        if [ $ttyMaxCols -gt 80 ]; then ttyMaxCols=80; fi
+        ttyMaxCols=$(($ttyMaxCols-1))
 
         charCount=0
         isFrstLine=1
@@ -92,8 +100,10 @@ function Decorative_Formatting {
             charCount=$(($charCount+${#i}+1))
 
             if [ $isFrstLine -ne 1 ]; then
-                ttyMaxCols=79
-                ttyMaxCols=$(($ttyMaxCols-4))
+                ttyMaxCols=$( tput cols )
+                if [ $ttyMaxCols -gt 80 ]; then ttyMaxCols=80; fi
+                ttyMaxCols=$(($ttyMaxCols-5))
+
                 preString="    "
             else
                 preString=" "
@@ -135,7 +145,10 @@ function Decorative_Formatting {
         str=$1
         tputBgColor=$2
 
-        width=79
+        width=$( tput cols )
+        if [ $width -gt 80 ]; then width=80; fi
+        width=$(($width - 1))
+
         strLength=${#str}
 
         highlightLength=$(( $width-$strLength ))
@@ -182,7 +195,7 @@ function Configure_Tty_Environment {
                     sudo usermod -a -G sudo $readInput
                     ;;
             esac
-        
+
         else
             sudo cat /etc/sudoers | grep "$me" &>/dev/null
             isSudo=$?
@@ -416,7 +429,7 @@ function Configure_Tty_Environment {
                 mkdir -p ~/.vim/pack/vendor/start
                 #sudo chmod -R 777 ./home/.vim/pack/vendor/start/nerdtree
                 sleep 1s
-                
+
                 ttyNestedString "Copying ~/.vim/pack/vendor/start/nerdtree from headless-host.git repo  ..." "$MODE_BOLD$FG_GREEN"
                 sleep 1s
                 sudo cp -rf --no-preserve=mode ./home/.vim/pack/vendor/start/nerdtree ~/.vim/pack/vendor/start/
@@ -557,7 +570,7 @@ function Configure_Tty_Environment {
             sleep 1s
             sudo cp -rf --no-preserve=mode ./home/.oh-my-bash ~/
             sleep 1s
-            
+
             ttyNestedString "Importing ~/.oh-my-bash ..." "$MODE_BOLD$FG_GREEN"
             sleep 1s
             sudo chmod -R 777 ~/.oh-my-bash

@@ -1,72 +1,201 @@
 #!/bin/bash
 
-## #####################################################################################################################
-## About:        This script will prompt the user to connect to a wireless network ssid and make a launcher script to
+## #############################################################################
+## About:        This script will prompt the user to connect to a wireless
+##               network ssid and make a launcher script to
 ##                  log into known wpa_supplicant ssid configurations.
-## Instructions: Run this script in the root account to make a new wpa_supplicant account profile.
-##               Run this script in a user account to generate a script which logs in/out of known ssids.
-## Source Code:  https://raw.githubusercontent.com/mezcel/headless-host/master/my_iwconfig.sh
-## Dependency:   Requires the net-tools .deb package on Debian
-## #####################################################################################################################
+## Instructions: Run this script in the root account to make a new
+##                  wpa_supplicant account profile.
+##               Run this script in a user account to generate a script which
+##                  logs in/out of known ssids.
+## Source Code:  https://github.com/mezcel/headless-host/my_iwconfig.sh
+## Dependency:   Requires wpa_supplicant and net-tools on Debian
+## #############################################################################
 
-function tput_color_variables {
-    ## Foreground Color using ANSI escape
+function Decorative_Formatting {
+    ## Decorative tty colors
+    function Tput_Colors {
+        ## Foreground Color using ANSI escape provided through tput
 
-    FG_BLACK=$(tput setaf 0)
-    FG_RED=$(tput setaf 1)
-    FG_GREEN=$(tput setaf 2)
-    FG_YELLOW=$(tput setaf 3)
-    FG_BLUE=$(tput setaf 4)
-    FG_MAGENTA=$(tput setaf 5)
-    FG_CYAN=$(tput setaf 6)
-    FG_WHITE=$(tput setaf 7)
-    FG_NoColor=$(tput sgr0)
+        FG_BLACK=$(tput setaf 0)
+        FG_RED=$(tput setaf 1)
+        FG_GREEN=$(tput setaf 2)
+        FG_YELLOW=$(tput setaf 3)
+        FG_BLUE=$(tput setaf 4)
+        FG_MAGENTA=$(tput setaf 5)
+        FG_CYAN=$(tput setaf 6)
+        FG_WHITE=$(tput setaf 7)
+        FG_NoColor=$(tput sgr0)
 
-    ## Background Color using ANSI escape
+        ## Background Color using ANSI escape provided through tput
 
-    BG_BLACK=$(tput setab 0)
-    BG_RED=$(tput setab 1)
-    BG_GREEN=$(tput setab 2)
-    BG_YELLOW=$(tput setab 3)
-    BG_BLUE=$(tput setab 4)
-    BG_MAGENTA=$(tput setab 5)
-    BG_CYAN=$(tput setab 6)
-    BG_WHITE=$(tput setab 7)
-    BG_NoColor=$(tput sgr0)
+        BG_BLACK=$(tput setab 0)
+        BG_RED=$(tput setab 1)
+        BG_GREEN=$(tput setab 2)
+        BG_YELLOW=$(tput setab 3)
+        BG_BLUE=$(tput setab 4)
+        BG_MAGENTA=$(tput setab 5)
+        BG_CYAN=$(tput setab 6)
+        BG_WHITE=$(tput setab 7)
+        BG_NoColor=$(tput sgr0)
 
-    ## set mode using ANSI escape
+        ## set mode using ANSI escape provided through tput
 
-    MODE_BOLD=$(tput bold)
-    MODE_DIM=$(tput dim)
-    MODE_BEGIN_UNDERLINE=$(tput smul)
-    MODE_EXIT_UNDERLINE=$(tput rmul)
-    MODE_REVERSE=$(tput rev)
-    MODE_ENTER_STANDOUT=$(tput smso)
-    MODE_EXIT_STANDOUT=$(tput rmso)
+        MODE_BOLD=$(tput bold)
+        MODE_DIM=$(tput dim)
+        MODE_BEGIN_UNDERLINE=$(tput smul)
+        MODE_EXIT_UNDERLINE=$(tput rmul)
+        MODE_REVERSE=$(tput rev)
+        MODE_ENTER_STANDOUT=$(tput smso)
+        MODE_EXIT_STANDOUT=$(tput rmso)
 
-    ## no text formatting
+        # clear styles using ANSI escape provided through tput
 
-    FGBG_NoColor=$(tput sgr0)
-    STYLES_OFF=$(tput sgr0)
+        STYLES_OFF=$(tput sgr0)
+        FGBG_NoColor=$(tput sgr0)
+    }
+
+    function ttyCenter {
+        str="$1"
+        tputFgColor=$2
+
+        width=$( tput cols )
+        if [ $width -gt 80 ]; then width=80; fi
+
+        strLength=${#str}
+        centerCol=$(( ( width/2 )-( strLength / 2 ) ))
+
+        for (( i=0; i<=$centerCol; i++ ))
+        do
+           printf " "
+        done
+        printf "$MODE_BOLD$tputFgColor$str$STYLES_OFF\n"
+    }
+
+    function ttyHR {
+        hrChar=$1
+        tputFgColor=$2
+
+        width=$( tput cols )
+        if [ $width -gt 80 ]; then width=80; fi
+
+        for (( i=0; i<$width; i++ ))
+        do
+           printf "$tputFgColor$hrChar"
+        done
+        printf "$STYLES_OFF\n"
+    }
+
+    function ttyNestedString {
+        str=$1
+        tputFgColor=$2
+
+        strArray=($str)
+        lineArray=()
+
+        strLength="${#str}"
+        preString=" "
+
+        ttyMaxCols=$( tput cols )
+        if [ $ttyMaxCols -gt 80 ]; then ttyMaxCols=80; fi
+        ttyMaxCols=$(($ttyMaxCols-1))
+
+        charCount=0
+        isFrstLine=1
+
+        printf "$tputFgColor"
+        for i in "${strArray[@]}"; do
+            charCount=$(($charCount+${#i}+1))
+
+            if [ $isFrstLine -ne 1 ]; then
+                ttyMaxCols=$( tput cols )
+                if [ $ttyMaxCols -gt 80 ]; then ttyMaxCols=80; fi
+                ttyMaxCols=$(($ttyMaxCols-5))
+
+                preString="    "
+            else
+                preString=" "
+            fi
+
+            if [ $charCount -lt $ttyMaxCols ]; then
+                ## append lineArray
+                lineArray+=("$i")
+            else
+                echo "$preString${lineArray[*]}"
+
+                isFrstLine=0
+                lineArray=()
+                lineArray+=("$i")
+                charCount=${#i}
+            fi
+        done
+
+        if [ $isFrstLine -ne 1 ]; then
+            preString="    "
+        else
+            preString=" "
+        fi
+
+        printf "$preString${lineArray[*]}\n$STYLES_OFF"
+    }
+
+    function ttyCenteredHeader {
+        str=$1
+        borderChar=$2
+        tputFgColor=$3
+
+        ttyHR "$borderChar" "$tputFgColor"
+        ttyCenter "$str" "$tputFgColor"
+        ttyHR "$borderChar" "$tputFgColor"
+    }
+
+    function ttyHighlightRow {
+        str=$1
+        tputBgColor=$2
+
+        width=$( tput cols )
+        if [ $width -gt 80 ]; then width=80; fi
+        width=$(($width - 3))
+
+        strLength=${#str}
+
+        highlightLength=$(( $width-$strLength ))
+
+        printf "$tputBgColor$FG_BLACK= $str "
+        for (( i=0; i<$highlightLength; i++ ))
+        do
+           printf "$tputBgColor="
+        done
+        printf "$STYLES_OFF\n"
+    }
+
+    function ttyPromptInput {
+        promptTitle=$1
+        promptString=$2
+        defaultAnswer=$3
+        tputFgColor=$4
+        tputBgColor=$5
+
+        ttyHighlightRow "$promptTitle" "$tputBgColor"
+
+        read -e -p " $tputFgColor$promptString$STYLES_OFF" -i "$defaultAnswer" readInput
+        printf "$STYLES_OFF\n"
+        sleep 1
+    }
 }
 
 function greeting {
-    echo "$FG_MAGENTA"
-    echo "## ##########################################################################################################"
-    echo "## About:        This script will prompt the user to connect to a wireless network ssid and make a launcher"
-    echo "##                   script to manage existing wpa_supplicant ssid configurations."
-    echo "##"
-    echo "## Source Code:  https://raw.githubusercontent.com/mezcel/headless-host/master/my_iwconfig.sh"
-    echo "## Dependency:   Requires the net-tools.deb & wireless-tools.deb package for Debian."
-    echo "## ##########################################################################################################"
-    echo "$FG_NoColor"
+    ttyCenteredHeader "Generate a wpa_supplicant launcher script" "░" "$FG_MAGENTA"
+    ttyNestedString "This script will prompt the user to connect to a wireless network ssid and make a launcher script to manage existing wpa_supplicant ssid configurations." "$FG_MAGENTA"
 }
 
 function driver_information {
-    echo -e "${FG_YELLOW}## Network Drivers\nlspci:"
-    lspci -vnn | grep Network
-    lspci -vnn | grep Ethernet
-    echo -e "$FG_NoColor"
+    ttyHighlightRow "Existing Network Drivers" "$BG_YELLOW"
+    netDrivers=$(lspci -vnn | grep Network)
+    ethDrivers=$(lspci -vnn | grep Ethernet)
+    sleep 1s
+    ttyNestedString "$netDrivers" "$FG_YELLOW"
+    ttyNestedString "$ethDrivers" "$FG_YELLOW"
 }
 
 function turn_on_wifi {
@@ -81,14 +210,11 @@ function turn_on_wifi {
     echo -e "${FG_CYAN}(step 2 of 4)${FG_NoColor}\tSwitch ON the Wifi hardware ...\t\t${FG_GREEN}processing ...${FG_NoColor}\n"
 
     echo -e "\t\tip link set $myInterface down ..."
-    sudo ip link set $myInterface down
-    sleep 3s
+    sudo ip link set $myInterface down && sleep 2s
 
     echo -e "\t\tip link set $myInterface up ...\n"
-    sudo ip link set $myInterface up
-    sleep 2s
+    sudo ip link set $myInterface up && sleep 3s
 
-    sleep 2s
 }
 
 function select_ssid {
@@ -96,8 +222,9 @@ function select_ssid {
     ## list available SSID's
     echo -e "${FG_CYAN}(step 3 of 4)${FG_NoColor}\tIdentify available Wifi SSIDs ...\t${FG_GREEN}processing ...${FG_NoColor}\n"
 
+    ssidArr=()
     ssidArr=($(ps -u | sudo iw dev $myInterface scan | grep SSID | awk '{print $2}'))
-    sleep 2s
+    sleep 3s
 
     echo -e "\t\t${MODE_BEGIN_UNDERLINE}List of available SSID's:${MODE_EXIT_UNDERLINE}"
     count=0
@@ -110,11 +237,21 @@ function select_ssid {
 
     ## Select which SSID to connect to
     echo -e "\n${FG_CYAN}(step 4 of 4)${FG_NoColor}\tSelecting an SSID ...\t\t\t${FG_GREEN}user input ...${FG_NoColor}\n"
+
     promptTab=$(echo -e "\t\t")
+
     read -p "${promptTab}Enter the number representing the desired SSID? [ 0 - $(( ${#ssidArr[@]} - 1 )) ]: " ssidNo
 
     echo ""
-    read -e -p "${promptTab}Connect to ${MODE_BOLD}${ssidArr[$ssidNo]}${FG_NoColor} ? [ Y/n ]: " -i "yes" yn
+    ssidName=${ssidArr[$ssidNo]}
+    if [ ${#ssidName} -gt 1 ]; then
+        read -e -p "${promptTab}Connect to ${MODE_BOLD}$ssidName${FG_NoColor} ? [ Y/n ]: " -i "yes" yn
+    else
+        echo "Aborted script. Bad SSID selection."
+        ttyCenteredHeader "Aborted script" "░" "$FG_RED"
+        ttyNestedString "Script terminated because of a bad SSID name." "$FG_RED"
+        exit
+    fi
 
     case $yn in
         [Yy]* )
@@ -122,14 +259,14 @@ function select_ssid {
             ;;
         * )
             ## abort script
-            echo -e "\n${FG_RED}Aborted script.\nDone.${FG_NoColor} "
+            ttyCenteredHeader "Aborted script" "░" "$FG_RED"
             exit
             ;;
     esac
 }
 
 function set_ethernet_connection {
-    echo -e "\t\tEthernet port is set to automatically connect to a network\n"
+    ttyNestedString "Setting ethernet port to automatically connect to available wired networks (hotplug) ..." "$MODE_BOLD$FG_GREEN"
     myEthernetInterface=$(ls /sys/class/net/ | grep -E enp)
 
     #sudo ifdown $myEthernetInterface
@@ -158,10 +295,14 @@ function define_wpa_credentials {
     echo ""
     read -e -p "${promptTab}Enter SSID: [ ${FG_CYAN}$myssid${FG_NoColor} ]: " -i "$myssid" myssid
 
+    ttyCenteredHeader "Writing wpa_supplicant launcher script" "-" "$FG_GREEN"
+
     if [ -f /etc/wpa_supplicant/wpa_supplicant_$myssid.conf ]; then
-        promptString="${promptTab}${FG_RED}$myssid has a wpa_supplicant.conf, overwrite it? [ Y/n ]:${FG_NoColor} "
-        read -e -p "$promptString" -i "no" yn
-        case $yn in
+        promptString="$myssid has a wpa_supplicant.conf, overwrite it? [ y/N ]: "
+        readInput=no
+        ttyPromptInput "Overwrite duplicate SSID Configs" "$promptString" "$readInput" "$FG_RED" "$BG_RED"
+
+        case $readInput in
             [Yy]* )
                 sudo cp /etc/wpa_supplicant/wpa_supplicant_$myssid.conf /etc/wpa_supplicant/wpa_supplicant_$myssid.conf.backup.$(date +%d%b%Y_%H%M%S)
 
@@ -203,304 +344,365 @@ function define_wpa_credentials {
     fi
 }
 
-function connect_to_network {
-    ## Do the do
-
-    sudo dhclient $myInterface
-    echo ""
-    sleep 1s
-
-    ## echo verify connectivity
-    sudo iw dev $myInterface link
-    echo ""
-
-    command -v ping &>/dev/null
-    if [ $? -eq 0 ]; then
-        sudo ping -c3 google.com
-    fi
-    echo ""
-}
-
 function package_manager_reminder {
-    echo -e "$FG_MAGENTA\n### Package Manager Repository Lists ###\n"
-    echo -e "Debian:\n\tDependancy: net-tools \n\tUpdate \"/etc/apt/sources.list\" as necessary.\n\tExample: echo \"deb http://ftp.us.debian.org/debian/ buster main contrib non-free\" >> /etc/apt/sources.list\n\tExample: echo \"deb-src http://ftp.us.debian.org/debian/ buster main contrib non-free\" >> /etc/apt/sources.list"
-    echo "$FGBG_NoColor"
+    ttyHighlightRow "(Reminder) Apt package manager mirror list" "$BG_BLUE"
+
+    ttyNestedString "Update \"/etc/apt/sources.list\" as necessary." "$MODE_BOLD$FG_BLUE"
+    ttyNestedString "Example:" "$MODE_BOLD$FG_BLUE"
+    ttyNestedString "\"deb http://ftp.us.debian.org/debian/ buster main contrib non-free\" >> /etc/apt/sources.list" "$FG_BLUE"
+    ttyNestedString "\"deb-src http://ftp.us.debian.org/debian/ buster main contrib non-free\" >> /etc/apt/sources.list" "$FG_BLUE"
+    echo ""
 }
 
 function make_launcher_script {
-
-    ## #########################################################################
-    ## wifi launcher script name
-    ## #########################################################################
-
     laucherSriptName=launch_$myInterface_$myssid
 
     echo -e "${FG_CYAN}"
     echo -e "(Finishing)${FG_NoColor}\tMaking a wifi launcher script ...\t${FG_GREEN}~/$laucherSriptName.sh"
     echo -e "${FG_NoColor}"
 
-    ## #########################################################################
-    ## shebang
-    ## #########################################################################
+echo '
+#!/bin/bash
 
-    echo '#!/bin/bash' > ~/$laucherSriptName.sh
-    echo "" >> ~/$laucherSriptName.sh
+inputFlag=$1
+thisFile=`basename $0`
 
-    ## #########################################################################
-    ## input args
-    ## #########################################################################
+function Decorative_Formatting {
+    ## Decorative tty colors
+    function Tput_Colors {
+        ## Foreground Color using ANSI escape provided through tput
 
-    echo 'inputFlag=$1' >> ~/$laucherSriptName.sh
-    echo 'thisFile=`basename $0`' >> ~/$laucherSriptName.sh
-    echo "" >> ~/$laucherSriptName.sh
+        FG_BLACK=$(tput setaf 0)
+        FG_RED=$(tput setaf 1)
+        FG_GREEN=$(tput setaf 2)
+        FG_YELLOW=$(tput setaf 3)
+        FG_BLUE=$(tput setaf 4)
+        FG_MAGENTA=$(tput setaf 5)
+        FG_CYAN=$(tput setaf 6)
+        FG_WHITE=$(tput setaf 7)
+        FG_NoColor=$(tput sgr0)
 
-    ## #########################################################################
-    ## function tput_colors
-    ## #########################################################################
+        ## Background Color using ANSI escape provided through tput
 
-    echo 'function tput_colors {' >> ~/$laucherSriptName.sh
-    echo '     ## Foreground Color using ANSI escape' >> ~/$laucherSriptName.sh
+        BG_BLACK=$(tput setab 0)
+        BG_RED=$(tput setab 1)
+        BG_GREEN=$(tput setab 2)
+        BG_YELLOW=$(tput setab 3)
+        BG_BLUE=$(tput setab 4)
+        BG_MAGENTA=$(tput setab 5)
+        BG_CYAN=$(tput setab 6)
+        BG_WHITE=$(tput setab 7)
+        BG_NoColor=$(tput sgr0)
 
-    echo '     FG_BLACK=$(tput setaf 0)' >> ~/$laucherSriptName.sh
-    echo '     FG_RED=$(tput setaf 1)' >> ~/$laucherSriptName.sh
-    echo '     FG_GREEN=$(tput setaf 2)' >> ~/$laucherSriptName.sh
-    echo '     FG_YELLOW=$(tput setaf 3)' >> ~/$laucherSriptName.sh
-    echo '     FG_BLUE=$(tput setaf 4)' >> ~/$laucherSriptName.sh
-    echo '     FG_MAGENTA=$(tput setaf 5)' >> ~/$laucherSriptName.sh
-    echo '     FG_CYAN=$(tput setaf 6)' >> ~/$laucherSriptName.sh
-    echo '     FG_WHITE=$(tput setaf 7)' >> ~/$laucherSriptName.sh
-    echo '     FG_NoColor=$(tput sgr0)' >> ~/$laucherSriptName.sh
+        ## set mode using ANSI escape provided through tput
 
-    echo '     ## Background Color using ANSI escape' >> ~/$laucherSriptName.sh
+        MODE_BOLD=$(tput bold)
+        MODE_DIM=$(tput dim)
+        MODE_BEGIN_UNDERLINE=$(tput smul)
+        MODE_EXIT_UNDERLINE=$(tput rmul)
+        MODE_REVERSE=$(tput rev)
+        MODE_ENTER_STANDOUT=$(tput smso)
+        MODE_EXIT_STANDOUT=$(tput rmso)
 
-    echo '     BG_BLACK=$(tput setab 0)' >> ~/$laucherSriptName.sh
-    echo '     BG_RED=$(tput setab 1)' >> ~/$laucherSriptName.sh
-    echo '     BG_GREEN=$(tput setab 2)' >> ~/$laucherSriptName.sh
-    echo '     BG_YELLOW=$(tput setab 3)' >> ~/$laucherSriptName.sh
-    echo '     BG_BLUE=$(tput setab 4)' >> ~/$laucherSriptName.sh
-    echo '     BG_MAGENTA=$(tput setab 5)' >> ~/$laucherSriptName.sh
-    echo '     BG_CYAN=$(tput setab 6)' >> ~/$laucherSriptName.sh
-    echo '     BG_WHITE=$(tput setab 7)' >> ~/$laucherSriptName.sh
-    echo '     BG_NoColor=$(tput sgr0)' >> ~/$laucherSriptName.sh
+        # clear styles using ANSI escape provided through tput
 
-    echo '     ## set mode using ANSI escape' >> ~/$laucherSriptName.sh
+        STYLES_OFF=$(tput sgr0)
+        FGBG_NoColor=$(tput sgr0)
+    }
 
-    echo '     MODE_BOLD=$(tput bold)' >> ~/$laucherSriptName.sh
-    echo '     MODE_DIM=$(tput dim)' >> ~/$laucherSriptName.sh
-    echo '     MODE_BEGIN_UNDERLINE=$(tput smul)' >> ~/$laucherSriptName.sh
-    echo '     MODE_EXIT_UNDERLINE=$(tput rmul)' >> ~/$laucherSriptName.sh
-    echo '     MODE_REVERSE=$(tput rev)' >> ~/$laucherSriptName.sh
-    echo '     MODE_ENTER_STANDOUT=$(tput smso)' >> ~/$laucherSriptName.sh
-    echo '     MODE_EXIT_STANDOUT=$(tput rmso)' >> ~/$laucherSriptName.sh
+    function ttyCenter {
+        str="$1"
+        tputFgColor=$2
 
-    echo '     # clear styles using ANSI escape' >> ~/$laucherSriptName.sh
+        width=$( tput cols )
+        if [ $width -gt 80 ]; then width=80; fi
 
-    echo '     STYLES_OFF=$(tput sgr0)' >> ~/$laucherSriptName.sh
-    echo '     FGBG_NoColor=$(tput sgr0)' >> ~/$laucherSriptName.sh
-    echo '}' >> ~/$laucherSriptName.sh
+        strLength=${#str}
+        centerCol=$(( ( width/2 )-( strLength / 2 ) ))
 
-    echo "" >> ~/$laucherSriptName.sh
+        for (( i=0; i<=$centerCol; i++ ))
+        do
+           printf " "
+        done
+        printf "$MODE_BOLD$tputFgColor$str$STYLES_OFF\n"
+    }
 
-    ## #########################################################################
-    ## function tryAgain
-    ## #########################################################################
+    function ttyHR {
+        hrChar=$1
+        tputFgColor=$2
 
-    echo 'function tryAgain {' >> ~/$laucherSriptName.sh
+        width=$( tput cols )
+        if [ $width -gt 80 ]; then width=80; fi
 
-    echo '    echo "$FG_RED"' >> ~/$laucherSriptName.sh
-    echo '    echo -e "\n!!! INPUT ERROR !!!\nYou entered: $inputFlag\n\tTry again."' >> ~/$laucherSriptName.sh
-    echo "" >> ~/$laucherSriptName.sh
-    echo '    echo "$FG_YELLOW"' >> ~/$laucherSriptName.sh
-    echo '    echo -e "\tType ( \"up\" or \"down\" or \"restart\" ), after the executable file name.\n\t\tExample: ./`basename $0` up\n\t\tExample: ./`basename $0` down\n\t\tExample: ./`basename $0` restart\n"' >> ~/$laucherSriptName.sh
+        for (( i=0; i<$width; i++ ))
+        do
+           printf "$tputFgColor$hrChar"
+        done
+        printf "$STYLES_OFF\n"
+    }
 
-    echo '    echo "$FG_NoColor"' >> ~/$laucherSriptName.sh
-    echo '    exit' >> ~/$laucherSriptName.sh
-    echo '}' >> ~/$laucherSriptName.sh
-    echo "" >> ~/$laucherSriptName.sh
+    function ttyNestedString {
+        str=$1
+        tputFgColor=$2
 
-    ## #########################################################################
-    ## function wifiON
-    ## #########################################################################
+        strArray=($str)
+        lineArray=()
 
-    echo 'function wifiON {' >> ~/$laucherSriptName.sh
-    echo '    echo -e "${BG_CYAN}${FG_BLACK}\nEnable SSID connection though wpa_supplicant.$FG_NoColor"' >> ~/$laucherSriptName.sh
+        strLength="${#str}"
+        preString=" "
 
-    echo '    echo -e "${FG_YELLOW}"' >> ~/$laucherSriptName.sh
-    echo "    echo -e \"\tLaunching dhclient with the wpa_supplicant configuration file: /etc/wpa_supplicant/wpa_supplicant_$myssid.conf\""  >> ~/$laucherSriptName.sh
-    echo '     echo -e "$FG_NoColor $FG_CYAN"' >> ~/$laucherSriptName.sh
+        ttyMaxCols=$( tput cols )
+        if [ $ttyMaxCols -gt 80 ]; then ttyMaxCols=80; fi
+        ttyMaxCols=$(($ttyMaxCols-1))
 
-    echo "    echo -e \"\tactivating $myInterface ...\"" >> ~/$laucherSriptName.sh
-    echo "" >> ~/$laucherSriptName.sh
+        charCount=0
+        isFrstLine=1
 
-    echo "    echo -e \"\tip link set $myInterface up ...\"" >> ~/$laucherSriptName.sh
-    echo "    sudo ip link set $myInterface up" >> ~/$laucherSriptName.sh
-    echo '    sleep 1s' >> ~/$laucherSriptName.sh
-    echo "" >> ~/$laucherSriptName.sh
+        printf "$tputFgColor"
+        for i in "${strArray[@]}"; do
+            charCount=$(($charCount+${#i}+1))
 
-    echo '    echo -e "${FG_CYAN}\tperform wpa_supplicant ... $FG_NoColor \n"' >> ~/$laucherSriptName.sh
-    echo "    sudo wpa_supplicant -B -c /etc/wpa_supplicant/wpa_supplicant_$myssid.conf -i $myInterface" >> ~/$laucherSriptName.sh
-    echo '    sleep 1s' >> ~/$laucherSriptName.sh
-    echo "" >> ~/$laucherSriptName.sh
+            if [ $isFrstLine -ne 1 ]; then
+                ttyMaxCols=$( tput cols )
+                if [ $ttyMaxCols -gt 80 ]; then ttyMaxCols=80; fi
+                ttyMaxCols=$(($ttyMaxCols-5))
 
-    echo '    echo $FG_CYAN' >> ~/$laucherSriptName.sh
-    echo "    echo -e \"\tenable dhclient with $myInterface ... \"" >> ~/$laucherSriptName.sh
-    echo '    echo $FG_NoColor' >> ~/$laucherSriptName.sh
-    echo "" >> ~/$laucherSriptName.sh
+                preString="    "
+            else
+                preString=" "
+            fi
 
-    echo "    sudo dhclient $myInterface" >> ~/$laucherSriptName.sh
+            if [ $charCount -lt $ttyMaxCols ]; then
+                ## append lineArray
+                lineArray+=("$i")
+            else
+                echo "$preString${lineArray[*]}"
 
-    echo '    sleep 1s' >> ~/$laucherSriptName.sh
-    echo '    echo -e "$FG_CYAN $MODE_DIM"' >> ~/$laucherSriptName.sh
-    echo '    ping -c3 google.com' >> ~/$laucherSriptName.sh
-    echo "" >> ~/$laucherSriptName.sh
+                isFrstLine=0
+                lineArray=()
+                lineArray+=("$i")
+                charCount=${#i}
+            fi
+        done
 
-    echo '    if [ $? -ne 0 ]; then' >> ~/$laucherSriptName.sh
-    echo '        echo "$FG_NoColor"' >> ~/$laucherSriptName.sh
-    echo '        echo -e "${BG_RED}${FG_BLACK}No Internet connection is available. $FG_NoColor"' >> ~/$laucherSriptName.sh
-    echo "        ## iw dev $myInterface station dump -v" >> ~/$laucherSriptName.sh
-    echo "        sudo iwconfig $myInterface | grep -i --color $myInterface" >> ~/$laucherSriptName.sh
-    echo "        sudo iwconfig $myInterface | grep -i --color signal" >> ~/$laucherSriptName.sh
-    echo '    else' >> ~/$laucherSriptName.sh
-    echo '        echo "$FG_NoColor"' >> ~/$laucherSriptName.sh
-    echo '        echo -e "${BG_GREEN}${FG_BLACK}You are now connected to wifi. $(date).$FG_NoColor\n"' >> ~/$laucherSriptName.sh
-    echo "        ## iw dev $myInterface station dump -v" >> ~/$laucherSriptName.sh
-    echo "        sudo iwconfig $myInterface | grep -i --color $myInterface" >> ~/$laucherSriptName.sh
-    echo "        sudo iwconfig $myInterface | grep -i --color signal" >> ~/$laucherSriptName.sh
-    echo '    fi' >> ~/$laucherSriptName.sh
+        if [ $isFrstLine -ne 1 ]; then
+            preString="    "
+        else
+            preString=" "
+        fi
 
-    echo '}' >> ~/$laucherSriptName.sh
-    echo "" >> ~/$laucherSriptName.sh
+        printf "$preString${lineArray[*]}\n$STYLES_OFF"
+    }
 
-    ## #########################################################################
-    ## function wifiOFF
-    ## #########################################################################
+    function ttyCenteredHeader {
+        str=$1
+        borderChar=$2
+        tputFgColor=$3
 
-    echo 'function wifiOFF {' >> ~/$laucherSriptName.sh
-    echo '    echo -e "${BG_RED}${FG_BLACK}\nKill existing wpa_supplicant connection.$FG_NoColor"' >> ~/$laucherSriptName.sh
-    echo '    sudo killall wpa_supplicant' >> ~/$laucherSriptName.sh
-    echo '    sleep 2s' >> ~/$laucherSriptName.sh
-    echo "" >> ~/$laucherSriptName.sh
+        ttyHR "$borderChar" "$tputFgColor"
+        ttyCenter "$str" "$tputFgColor"
+        ttyHR "$borderChar" "$tputFgColor"
+    }
 
-    echo '    echo "${FG_RED}"' >> ~/$laucherSriptName.sh
-    echo "    echo -e \"\tip link set $myInterface down ...\"" >> ~/$laucherSriptName.sh
-    echo '    echo "$FG_NoColor"' >> ~/$laucherSriptName.sh
-    echo "    sudo ip link set $myInterface down" >> ~/$laucherSriptName.sh
-    echo '    sleep 1s' >> ~/$laucherSriptName.sh
-    echo "" >> ~/$laucherSriptName.sh
+    function ttyHighlightRow {
+        str=$1
+        tputBgColor=$2
 
-    echo '    sleep 2s' >> ~/$laucherSriptName.sh
-    echo '    echo -e "${FG_GREEN}\tdisconnected from wifi ...\n\twifi is off ... $FG_NoColor"' >> ~/$laucherSriptName.sh
-    echo '}' >> ~/$laucherSriptName.sh
-    echo "" >> ~/$laucherSriptName.sh
+        width=$( tput cols )
+        if [ $width -gt 80 ]; then width=80; fi
+        width=$(($width - 3))
 
-    ## #########################################################################
-    ## function wifiRESTART
-    ## #########################################################################
+        strLength=${#str}
 
-    echo 'function wifiRESTART {' >> ~/$laucherSriptName.sh
-    echo '    echo -e "${BG_MAGENTA}${FG_BLACK}Restart existing SSID connection.$FG_NoColor"' >> ~/$laucherSriptName.sh
-    echo '    echo -e "${FG_MAGENTA}\n\tThe network will shutdown and then startup again, connecting to the default wireless ssid.$FG_NoColor"' >> ~/$laucherSriptName.sh
-    echo '    wifiOFF' >> ~/$laucherSriptName.sh
-    echo '    wifiON' >> ~/$laucherSriptName.sh
-    echo '}' >> ~/$laucherSriptName.sh
-    echo "" >> ~/$laucherSriptName.sh
+        highlightLength=$(( $width-$strLength ))
 
-    ## #########################################################################
-    ##  Dependency Check
-    ## #########################################################################
+        printf "$tputBgColor$FG_BLACK= $str "
+        for (( i=0; i<$highlightLength; i++ ))
+        do
+           printf "$tputBgColor="
+        done
+        printf "$STYLES_OFF\n"
+    }
 
-    echo 'function dependancy_check {' >> ~/$laucherSriptName.sh
-    echo "    if [ ! -f /etc/wpa_supplicant/wpa_supplicant_$myssid.conf ]; then" >> ~/$laucherSriptName.sh
-    echo '        echo -e "${FG_RED}"' >> ~/$laucherSriptName.sh
-    echo "        echo -e \"The wpa_supplicant ssid configuration file: /etc/wpa_supplicant/wpa_supplicant_$myssid.conf does not exist.\"" >> ~/$laucherSriptName.sh
-    echo '        echo -e "Create it using the my_iwconfig.sh script from the \"root\" account."' >> ~/$laucherSriptName.sh
-    echo '        echo -e "Then come back to this account and run my_iwconfig.sh again."' >> ~/$laucherSriptName.sh
-    echo '        echo -e "Then finally you can use this `basename $0` script in a user account."' >> ~/$laucherSriptName.sh
-    echo '        echo -e "$FG_NoColor"' >> ~/$laucherSriptName.sh
-    echo '        exit' >> ~/$laucherSriptName.sh
-    echo '    fi' >> ~/$laucherSriptName.sh
-    echo '}' >> ~/$laucherSriptName.sh
-    echo "" >> ~/$laucherSriptName.sh
+    function ttyPromptInput {
+        promptTitle=$1
+        promptString=$2
+        defaultAnswer=$3
+        tputFgColor=$4
+        tputBgColor=$5
 
-    ## #########################################################################
-    ##  Main Run: Wifi launcher Script
-    ## #########################################################################
+        ttyHighlightRow "$promptTitle" "$tputBgColor"
 
-    echo "## #######################" >> ~/$laucherSriptName.sh
-    echo "##  Run" >> ~/$laucherSriptName.sh
-    echo "## #######################" >> ~/$laucherSriptName.sh
-    echo "sudo clear" >> ~/$laucherSriptName.sh
-    echo "tput_colors" >> ~/$laucherSriptName.sh
-    echo "" >> ~/$laucherSriptName.sh
-
-    echo '## Log into a known SSID' >> ~/$laucherSriptName.sh
-    echo '## launch dhclient with a predefined wpa_supplicant' >> ~/$laucherSriptName.sh
-    echo "##    /etc/wpa_supplicant/wpa_supplicant_$myssid.conf" >> ~/$laucherSriptName.sh
-
-    echo 'echo "$FG_CYAN"' >> ~/$laucherSriptName.sh
-    echo 'echo "## ##########################################################################################################"' >> ~/$laucherSriptName.sh
-    echo 'echo "## About:        This script is a wpa_supplicant user interface."' >> ~/$laucherSriptName.sh
-    echo 'echo "##               It was generated by:"' >> ~/$laucherSriptName.sh
-    echo 'echo "##                   https://raw.githubusercontent.com/mezcel/headless-host/master/my_iwconfig.sh"' >> ~/$laucherSriptName.sh
-    echo "echo \"##               This script depends on /etc/wpa_supplicant/wpa_supplicant_$myssid.conf\"" >> ~/$laucherSriptName.sh
-    echo 'echo "##"' >> ~/$laucherSriptName.sh
-    echo 'echo "## Instructions: Enable  wifi | bash `basename $0` up"' >> ~/$laucherSriptName.sh
-    echo 'echo "##               Kill    wifi | bash `basename $0` down"' >> ~/$laucherSriptName.sh
-    echo 'echo "##               Restart wifi | bash `basename $0` restart"' >> ~/$laucherSriptName.sh
-    echo 'echo "##"' >> ~/$laucherSriptName.sh
-    echo 'echo "## Dependency:   Requires wpa_supplicant & the net-tools .deb package for Debian"' >> ~/$laucherSriptName.sh
-    echo 'echo "## ##########################################################################################################"' >> ~/$laucherSriptName.sh
-    echo 'echo "$FG_CYAN"' >> ~/$laucherSriptName.sh
-
-    echo "" >> ~/$laucherSriptName.sh
-    echo 'dependancy_check' >> ~/$laucherSriptName.sh
-    echo "" >> ~/$laucherSriptName.sh
-
-    echo 'if [ -z $inputFlag ]; then' >> ~/$laucherSriptName.sh
-    echo '    inputFlag="nothing" ## unset var' >> ~/$laucherSriptName.sh
-    echo '    tryAgain' >> ~/$laucherSriptName.sh
-    echo 'fi' >> ~/$laucherSriptName.sh
-    echo "" >> ~/$laucherSriptName.sh
-
-    echo 'case $inputFlag in' >> ~/$laucherSriptName.sh
-    echo '    "up" )' >> ~/$laucherSriptName.sh
-    echo '        wifiON' >> ~/$laucherSriptName.sh
-    echo '        ;;' >> ~/$laucherSriptName.sh
-    echo '    "down" )' >> ~/$laucherSriptName.sh
-    echo '        wifiOFF' >> ~/$laucherSriptName.sh
-    echo '        ;;' >> ~/$laucherSriptName.sh
-    echo '    "restart" )' >> ~/$laucherSriptName.sh
-    echo '        wifiRESTART' >> ~/$laucherSriptName.sh
-    echo '        ;;' >> ~/$laucherSriptName.sh
-    echo '    * )' >> ~/$laucherSriptName.sh
-    echo '        ## wrong input' >> ~/$laucherSriptName.sh
-    echo '        tryAgain' >> ~/$laucherSriptName.sh
-    echo '        ;;' >> ~/$laucherSriptName.sh
-    echo 'esac' >> ~/$laucherSriptName.sh
-    echo "" >> ~/$laucherSriptName.sh
-
-    echo 'echo -e "\ndone."' >> ~/$laucherSriptName.sh
-
-    chmod +x ~/$laucherSriptName.sh
-
-
-    ## turn wifi back off
-    sleep 5
-    bash ~/$laucherSriptName.sh down
+        read -e -p " $tputFgColor$promptString$STYLES_OFF" -i "$defaultAnswer" readInput
+        printf "$STYLES_OFF\n"
+        sleep 1
+    }
 }
 
-## #####################################################################################################################
+function Conn_Controlls {
+    function tryAgain {
+        ttyCenteredHeader "INPUT ERROR" "-" "$FG_RED"
+        ttyNestedString "You entered: ${STYLES_OFF}${MODE_BOLD}$inputFlag" "$FG_RED"
+        ttyNestedString "Type ( \"up\" or \"down\" or \"restart\" ), after the executable file name." "$FG_YELLOW"
+        echo ""
+        exit
+    }
+
+    function wifiON {
+        ttyCenteredHeader "Enabling an SSID wifi connection through wpa_supplicant." "-" "$FG_MAGENTA"
+        ttyNestedString "Launching dhclient with the wpa_supplicant configuration file: /etc/wpa_supplicant/wpa_supplicant_MY_SSID.conf" "$FG_YELLOW"
+        ttyHighlightRow "Activating MY_WLAN" "$BG_GREEN"
+        ttyNestedString "ip link set MY_WLAN up ..." "$MODE_BOLD$FG_GREEN"
+
+        sudo ip link set MY_WLAN up
+        sleep 1s
+
+        ttyNestedString "performing wpa_supplicant ..." "$MODE_BOLD$FG_GREEN"
+        sudo wpa_supplicant -B -c /etc/wpa_supplicant/wpa_supplicant_MY_SSID.conf -i MY_WLAN
+        sleep 1s
+
+        ttyNestedString "enabling dhclient with MY_WLAN ..." "$MODE_BOLD$FG_GREEN"
+        sudo dhclient MY_WLAN
+        sleep 1s
+
+        echo -e "$FG_BLUE $MODE_DIM"
+        ping -c3 google.com
+        echo -e "$STYLES_OFF"
+
+        if [ $? -ne 0 ]; then
+            ttyCenteredHeader "No Internet connection is available." "░" "$FG_GREEN"
+        else
+            ttyCenteredHeader "You are now connected to (MY_SSID) wifi." "░" "$FG_GREEN"
+        fi
+        sudo iwconfig MY_WLAN | grep -i --color MY_WLAN
+        sudo iwconfig MY_WLAN | grep -i --color signal
+    }
+
+    function wifiOFF {
+        ttyCenteredHeader "Kill existing wpa_supplicant connection." "-" "$FG_MAGENTA"
+        sudo killall wpa_supplicant
+        sleep 2s
+
+        ttyNestedString "ip link set MY_WLAN down ..." "$MODE_BOLD$FG_GREEN"
+        sudo ip link set MY_WLAN down
+        sleep 1s
+
+        sleep 2s
+        ttyCenteredHeader "You are now disconnected from (MY_SSID) wifi." "░" "$FG_YELLOW"
+    }
+
+    function wifiRESTART {
+
+        ttyCenteredHeader "Restart existing SSID connection." "-" "$FG_MAGENTA"
+        ttyNestedString "The network will shutdown from and reconnect to the default wireless ssid (MY_SSID)." "$FG_YELLOW"
+        sleep 1s
+
+        wifiOFF
+        wifiON
+    }
+
+    function dependancy_check {
+        if [ ! -f /etc/wpa_supplicant/wpa_supplicant_MY_SSID.conf ]; then
+
+            ttyCenteredHeader "Missing wpa_supplicant file" "-" "$FG_RED"
+            ttyNestedString "The wpa_supplicant ssid configuration file: /etc/wpa_supplicant/wpa_supplicant_MY_SSID.conf does not exist." "$FG_YELLOW"
+            ttyNestedString "Create that file by using the \"my_iwconfig.sh\" script while logged in from the \"root\" user account." "$FG_YELLOW"
+            ttyNestedString "After that script has run, log back into this \"$(whoami)\" account, and run `basename $0`." "$FG_YELLOW"
+
+            echo ""
+            exit
+        fi
+    }
+
+    function about {
+        ttyCenteredHeader "wpa_supplicant connection manager" "░" "$FG_CYAN"
+
+        #ttyNestedString "Installing applications focused on terminal productivity" "-" "$FG_CYAN"
+        echo -e "${FG_CYAN}${MODE_BOLD} About:\t\t${STYLES_OFF}${FG_CYAN}This script is a wpa_supplicant user interface."
+        echo -e "${FG_CYAN}${MODE_BOLD} Instructions: ${STYLES_OFF}"
+        echo -e "${FG_CYAN}\t\t${MODE_BEGIN_UNDERLINE}Enable${MODE_EXIT_UNDERLINE}  wifi |\tbash `basename $0` ${MODE_BOLD}up${STYLES_OFF}"
+        echo -e "${FG_CYAN}\t\t${MODE_BEGIN_UNDERLINE}Kill${MODE_EXIT_UNDERLINE}    wifi |\tbash `basename $0` ${MODE_BOLD}down${STYLES_OFF}"
+        echo -e "${FG_CYAN}\t\t${MODE_BEGIN_UNDERLINE}Restart${MODE_EXIT_UNDERLINE} wifi |\tbash `basename $0` ${MODE_BOLD}restart${STYLES_OFF}"
+        echo -e "${FG_CYAN}${MODE_BOLD} Dependency:\n\t\t${STYLES_OFF}${FG_CYAN}wpa_supplicant, net-tools, and the wpa_supplicant config file"
+        echo -e "${FG_CYAN}\t\t  ${MODE_BEGIN_UNDERLINE}/etc/wpa_supplicant/wpa_supplicant_MY_SSID.conf${MODE_EXIT_UNDERLINE}"
+        echo -e "${FG_CYAN}${MODE_BOLD} Git:\n\t\t${STYLES_OFF}${FG_CYAN}https://github.com/mezcel/headless-host/my_iwconfig.sh"
+
+    }
+}
+
+## ##################################################
+
+## Initialize
+
+Decorative_Formatting
+Tput_Colors
+Conn_Controlls
+
+## RUN
+
+ttyHighlightRow "Login into use the wpa_supplicant connection manager script." "$BG_BLUE"
+sudo clear
+about
+dependancy_check
+
+if [ -z $inputFlag ]; then
+    inputFlag="nothing" ## unset var
+    tryAgain
+fi
+
+case $inputFlag in
+    "up" )
+        wifiON
+        ;;
+    "down" )
+        wifiOFF
+        ;;
+    "restart" )
+        wifiRESTART
+        ;;
+    * )
+        ## wrong input
+        tryAgain
+        ;;
+esac
+
+echo -e "\ndone."
+
+' > ~/$laucherSriptName
+
+    sleep 2s
+    MY_WLAN=$$myInterface
+    MY_SSID=$ssidName
+
+    sed -i "s/MY_SSID/$MY_SSID/g" ~/$laucherSriptName.sh
+    sleep 2s
+
+    sed -i "s/MY_WLAN/$MY_WLAN/g" ~/$laucherSriptName.sh
+    sleep 2s
+
+
+}
+
+## #############################################################################
 ## Main
-## #####################################################################################################################
+## #############################################################################
 
 function main {
-    tput_color_variables
+    Decorative_Formatting
+    Tput_Colors
+
+    ttyHighlightRow "Login into use the wpa_supplicant connection script generator." "$BG_BLUE"
+    sudo clear
+    if [ $? -ne 0 ]; then echo "login failed"; exit; fi
     greeting
 
     me=$(whoami)
 
     ## show network divers
     driver_information
+
+
+    ttyCenteredHeader "Commencing wpa_supplicant script preparation" "-" "$FG_GREEN"
 
     ## wifi and ssid
     turn_on_wifi
@@ -509,14 +711,13 @@ function main {
     ## wpa_supplicant configs
 
     define_wpa_credentials
-    connect_to_network
     package_manager_reminder
 
     if [ ! -f /etc/wpa_supplicant/wpa_supplicant_$myssid.conf ]; then
-        ## Warning
-        echo -e "${FG_RED}\tWARNING: \
-        \n\t\tThe file /etc/wpa_supplicant/wpa_supplicant_$myssid.conf does not exist. \
-        \n\t\tRemidy this by running the `basename "$0"` while logged in from the \"root\" account.$FG_NoColor"
+        ## Warning msg
+        ttyCenteredHeader "Missing wpa_supplicant config" "-" "$FG_RED"
+        ttyNestedString "The file /etc/wpa_supplicant/wpa_supplicant_$myssid.conf does not exist. Remidy this by running the `basename "$0"` while logged in from the \"root\" account." "$FG_RED"
+
     fi
 
     ## quick launch script
@@ -527,8 +728,8 @@ function main {
 }
 
 
-################################################################################
+## #############################################################################
 ## Run
-################################################################################
+## #############################################################################
 
 main

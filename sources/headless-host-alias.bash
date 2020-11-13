@@ -243,7 +243,7 @@ function Alias_Arguments {
     function about {
         clear
 
-        ttyCenteredHeader "headless-host" "#" "$FG_CYAN"
+        ttyCenteredHeader "headless-host" "░" "$FG_CYAN"
         ttyNestedString "\"hh\" is a ~/.bashrc alias used to launch commonly used server administrative tasks. Enter \"hh\" followed by a shortcut letter or auto complete argument." "$FG_GREEN"
 
         boldLetter1=${FG_CYAN}${MODE_BOLD}
@@ -278,7 +278,7 @@ function Alias_Arguments {
         ## make an auto complete list in case one doesn't exist
         complete -W 'up down restart mount umount off edit alsamixer nvlc' hh
 
-        ttyHR "#" "$FG_CYAN"
+        ttyHR "░" "$FG_CYAN"
         echo ""
     }
 

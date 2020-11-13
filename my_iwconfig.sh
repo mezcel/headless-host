@@ -730,7 +730,7 @@ function main {
 Decorative_Formatting
 Tput_Colors
 
-ttyHighlightRow "Login into use the wpa_supplicant connection script generator." "$BG_BLUE"
+ttyHighlightRow "Login into use the wpa_supplicant connection script generator." "$BG_CYAN"
 
 sudo clear
 if [ $? -ne 0 ]; then echo "login failed"; exit; fi

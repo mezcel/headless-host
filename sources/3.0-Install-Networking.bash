@@ -179,7 +179,7 @@ function Decorative_Formatting {
 function Get_Networking_Applications {
     function Ask4NetworkManager {
         promptString="${FG_RED}Do you want to install NetworkManager? [ y/N ]: "
-        ttyPromptInput "NetworkManager" "$promptString" "NoThanks" "$FG_RED" "$BG_RED"
+        ttyPromptInput "NetworkManager" "$promptString" "NoWay" "$FG_RED" "$BG_RED"
 
         case $readInput in
             [Yy]* )
@@ -208,7 +208,8 @@ function Get_Networking_Applications {
         if [ $isBroadcom -eq 0 ]; then
 
             ttyCenteredHeader "Broadcom Wifi" "+" "$FG_YELLOW"
-            ttyNestedString "If you choose to install Broadcom drivers, the computer will restart after installation." "$FG_YELLOW"
+            ttyNestedString "If you choose to install Broadcom drivers, it is recommended that one restarts the computer." "$FG_YELLOW"
+            ttyNestedString "If you restart before this script finished, you will need to run this script again in order to pickup where you left off." "$FG_YELLOW"
 
             ## check if driver is already installed
             sudo dpkg-query --list broadcom-sta-dkms firmware-brcm80211 &>/dev/null
@@ -272,7 +273,7 @@ function Get_Networking_Applications {
 
     function Set_WpaSupplicant {
         promptString="Connect to an available wireless network? [ y/N ]: "
-        ttyPromptInput "Wifi SSID Connection (wpa_supplicant):" "$promptString" "not_now" "$FG_GREEN" "$BG_GREEN"
+        ttyPromptInput "Wifi SSID Connection (wpa_supplicant):" "$promptString" "perhaps_later" "$FG_GREEN" "$BG_GREEN"
 
         case $readInput in
             [Yy]* )
@@ -288,12 +289,25 @@ Decorative_Formatting
 Tput_Colors
 Get_Networking_Applications
 
-## RUN
-
+clear
 ttyCenteredHeader "Networking packages" "░" "$FG_MAGENTA"
 sleep 2s
 
-networking_applications
-Ask4NetworkManager
-Set_WpaSupplicant
+## RUN
+
+uname -v | grep "Debian" --color
+isDebian=$?
+
+if [ $isDebian -eq 0 ]; then
+
+    networking_applications
+    Ask4NetworkManager
+    Set_WpaSupplicant
+else
+    ## Cancel
+    echo ""
+    ttyCenteredHeader "Canceling Installation/Configuration" "░" "$FG_YELLOW"
+    ttyNestedString "This script was intended for dedicated Debian linux server machines. This script make assumptions appropriate for systems which installed the debian-live-10.x.x-amd64-standard.iso" "$FG_YELLOW"
+    sleep 2s
+fi
 

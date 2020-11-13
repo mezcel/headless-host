@@ -264,6 +264,7 @@ function Alias_Arguments {
         ttyAliasDescription "u" "p" "connect to wifi as defined by wpa_supplicant" "$defaultWifi"
         ttyAliasDescription "d" "own" "disconnect wifi" " "
         ttyAliasDescription "r" "eset" "restart wifi" " "
+        ttyAliasDescription "p" "ing" "ping network" "google.com"
         ttyAliasDescription "n" "vlc" "launch nvlc playlst" "$musicPlaylist"
         ttyAliasDescription "a" "lsamixer" "launch alsamixer" " "
         ttyAliasDescription "b" "attery" "view tlp battery state" " "
@@ -429,12 +430,12 @@ function Alias_Arguments {
             ## Delete previous reference to headless-host-alias.bash
             sed '/headless-host-alias.bash/c\' ~/.bashrc > ~/.bashrc.temp
             sleep 1s
-            sed 'alsamixer battery down edit mount nvlc off restart unmount up/c\' ~/.bashrc > ~/.bashrc.temp
+            sed 'alsamixer battery down edit mount nvlc off ping restart unmount up/c\' ~/.bashrc > ~/.bashrc.temp
             sleep 1
 
             echo -e "\n## Alias for headless-host-alias.bash" >> ~/.bashrc.temp
             echo "alias hh=\"bash $headlesshostPath\"" >> ~/.bashrc.temp
-            echo "complete -W \"alsamixer battery down edit mount nvlc off restart unmount up\" hh" >> ~/.bashrc.temp
+            echo "complete -W \"alsamixer battery down edit mount nvlc off ping restart unmount up\" hh" >> ~/.bashrc.temp
 
             sudo mv ~/.bashrc.temp ~/.bashrc
             sleep 1
@@ -443,7 +444,7 @@ function Alias_Arguments {
 
             ## alias autocomplete
             ## alsamixer battery down edit mount nvlc off restart unmount up
-            complete -W "alsamixer battery down edit mount nvlc off restart unmount up" hh
+            complete -W "alsamixer battery down edit mount nvlc off ping restart unmount up" hh
         fi
     }
 }
@@ -506,7 +507,9 @@ case "$1" in
         echo -e "${MODE_BOLD}${BG_BLUE}${FG_WHITE}\nView tlp battery status ...${STYLES_OFF}"
         tlp_battery
         ;;
-
+    p* ) ## ping
+        ping -c3 "google.com"
+        ;;
     off* ) ## off
         echo -e "${MODE_BOLD}${BG_BLUE}${FG_WHITE}\nShutdown computer ...${STYLES_OFF}"
         computer_off

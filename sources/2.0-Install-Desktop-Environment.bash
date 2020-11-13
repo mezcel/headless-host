@@ -260,6 +260,9 @@ function Configure_Desktop_Environment {
     }
 
     function Optional_Openbox {
+        ttyCenteredHeader "Installing Openbox" "+" "$FG_CYAN"
+        sleep 2s
+
         sudo apt install -y openbox
         sudo apt install -y tint2
         sudo apt install -y conky
@@ -305,11 +308,8 @@ function Configure_Desktop_Environment {
         ## light weight screensaver
         # sudo apt install xfishtank
 
-        ## If Not WLS
-        if [ $(uname -r | grep Microsoft &> /dev/null; echo $?) -ne 0 ]; then
-            sudo apt install -y iceweasel
-            sudo apt install -y firefox-esr
-        fi
+        sudo apt install -y iceweasel
+        sudo apt install -y firefox-esr
 
         sudo apt install -y gimp
     }
@@ -421,17 +421,30 @@ Decorative_Formatting
 Tput_Colors
 Configure_Desktop_Environment
 
-## RUN
-
+clear
 ttyCenteredHeader "Desktop Environment" "░" "$FG_MAGENTA"
 sleep 2s
 
-Desktop_Applications
-Optional_Openbox
-Desktop_Audio
+## RUN
 
-## DWM
-Suckless_Patches
-Install_DWM
+uname -a | grep "Debian" --color
+isDebian=$?
 
-Home_Directory
+if [ $isDebian -eq 0 ]; then
+
+    Desktop_Applications
+    Optional_Openbox
+    Desktop_Audio
+
+    ## DWM
+    Suckless_Patches
+    Install_DWM
+
+    Home_Directory
+else
+    ## Cancel
+    echo ""
+    ttyCenteredHeader "Canceling Installation/Configuration" "░" "$FG_YELLOW"
+    ttyNestedString "This script was intended for dedicated Debian linux server machines. This script make assumptions appropriate for systems which installed the debian-live-10.x.x-amd64-standard.iso" "$FG_YELLOW"
+    sleep 2s
+fi

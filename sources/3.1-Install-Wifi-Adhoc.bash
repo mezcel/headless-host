@@ -738,9 +738,21 @@ Decorative_Formatting
 Tput_Colors
 Configure_Router
 
+clear
+ttyCenteredHeader "Wireless Adhoc SSHD Server Access Point" "░" "$FG_MAGENTA"
+sleep 2
+
 ## RUN
 
-ttyCenteredHeader "Wireless Adhoc SSHD Server Access Point" "░" "$FG_MAGENTA"
-sleep 1
+uname -v | grep "Debian" --color
+isDebian=$?
 
-MAIN_SCRIPT
+if [ $isDebian -eq 0 ]; then
+    MAIN_SCRIPT
+else
+    ## Cancel
+    echo ""
+    ttyCenteredHeader "Canceling Installation/Configuration" "░" "$FG_YELLOW"
+    ttyNestedString "This script was intended for dedicated Debian linux server machines. This script make assumptions appropriate for systems which installed the debian-live-10.x.x-amd64-standard.iso" "$FG_YELLOW"
+    sleep 2s
+fi

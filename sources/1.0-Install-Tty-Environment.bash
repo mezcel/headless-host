@@ -230,7 +230,8 @@ function Configure_Tty_Environment {
 
         if [ $isBroadcom -eq 0 ]; then
             ttyCenteredHeader "Broadcom Wifi" "+" "$FG_YELLOW"
-            ttyNestedString "If you choose to install Broadcom drivers, the computer will restart after installation." "$FG_YELLOW"
+            ttyNestedString "If you choose to install Broadcom drivers, it is recommended that one restarts the computer." "$FG_YELLOW"
+            ttyNestedString "If you restart before this script finished, you will need to run this script again in order to pickup where you left off." "$FG_YELLOW"
 
             ## check if driver is already installed
             sudo dpkg-query --list broadcom-sta-dkms firmware-brcm80211 &>/dev/null
@@ -303,19 +304,16 @@ function Configure_Tty_Environment {
         sudo apt install -y highlight
 
         sudo apt install -y udiskie
+        sudo apt install -y tlp
+
+        sudo apt install -y pandoc
+
+        ttyCenteredHeader "Fonts" "." "$MODE_DIM$FG_CYAN"
+        sleep 2s
 
         sudo apt install -y fonts-ubuntu-family-console
         sudo apt install -y ttf-ubuntu-font-family
         sudo apt install -y fonts-inconsolata
-
-        sudo apt install -y pandoc
-
-        #sudo apt install -y git
-        sudo apt install -y tlp
-
-        ttyCenteredHeader "Autoremove network-manager" "+" "$FG_CYAN"
-        sudo apt remove -y network-manager
-        sudo apt -y autoremove
 
         #ranger --copy-config=all
         #ranger --clean
@@ -325,9 +323,18 @@ function Configure_Tty_Environment {
         mkdir -p ~/.swp/
         mkdir -p ~/.undo/
 
-        ttyCenteredHeader "Autoremove nano" "+" "$FG_CYAN"
+        ttyCenteredHeader "Remove network-manager" "." "$MODE_DIM$FG_CYAN"
+        sleep 2s
+
+        sudo apt remove -y network-manager
+        sudo apt purge -y network-manager
+
+        ttyCenteredHeader "Remove nano" "." "$MODE_DIM$FG_CYAN"
+        sleep 2s
+
         sudo apt remove -y nano
         sudo apt purge -y nano
+
         sudo apt -y autoremove
     }
 
@@ -420,13 +427,15 @@ function Configure_Tty_Environment {
         sleep 1s
 
         if [ ! -d ~/.vim/pack/vendor/start/nerdtree ]; then
+            mkdir -p ~/.vim/pack/vendor/start
+
             if [ ! -d ./home/.vim/pack/vendor/start/nerdtree ]; then
                 ttyNestedString "Cloning https://github.com/preservim/nerdtree.git ..." "$MODE_BOLD$FG_GREEN"
+                sleep 1s
                 sleep 1s
                 git clone https://github.com/preservim/nerdtree.git ~/.vim/pack/vendor/start/nerdtree
                 sleep 2s
             elif [ -d ./home/.vim/pack/vendor/start/nerdtree ]; then
-                mkdir -p ~/.vim/pack/vendor/start
                 #sudo chmod -R 777 ./home/.vim/pack/vendor/start/nerdtree
                 sleep 1s
 
@@ -589,6 +598,46 @@ function Configure_Tty_Environment {
     }
 }
 
+function Wsl_Terminal {
+    ttyCenteredHeader "Installing WSL terminal packages." "-" "$FG_CYAN"
+    sleep 2s
+
+    sudo apt install -y resolvconf
+
+    sudo apt install -y build-essential
+    sudo apt install -y debianutils
+    sudo apt install -y util-linux
+
+    sudo apt install -y bash
+    sudo apt install -y bash-completion
+    sudo apt install -y vim
+    sudo apt install -y tmux
+    sudo apt install -y ranger
+    sudo apt install -y vifm
+    sudo apt install -y htop
+    sudo apt install -y aspell
+    sudo apt install -y wget
+    sudo apt install -y curl
+    sudo apt install -y elinks
+    sudo apt install -y bc
+    sudo apt install -y dos2unix
+    sudo apt install -y unzip
+    sudo apt install -y dialog
+    sudo apt install -y highlight
+
+    sudo apt install -y pandoc
+
+    ## Home Directories
+    mkdir -p ~/Downloads
+
+    ## Vim cache
+    mkdir -p ~/.backup/
+    mkdir -p ~/.swp/
+    mkdir -p ~/.undo/
+
+    ttyNestedString "Finished Populating home Directory Configs." "$MODE_BOLD$FG_YELLOW"
+}
+
 ## #############################################################################
 ## Configure TTY Environment
 ## #############################################################################
@@ -599,14 +648,31 @@ Decorative_Formatting
 Tput_Colors
 Configure_Tty_Environment
 
-## RUN
-
+clear
 ttyCenteredHeader "Install a TTY environment " "░" "$FG_MAGENTA"
 sleep 2s
 
-Terminal_Applications
+## RUN
 
-Setup_Git
-Terminal_Audio
-Set_Nerdtree
-Home_Directory
+uname -v | grep "Debian" --color
+isDebian=$?
+
+if [ $isDebian -eq 0 ]; then
+    Terminal_Applications
+
+    Setup_Git
+    Terminal_Audio
+
+    Set_Nerdtree
+    Home_Directory
+else
+    uname -v | grep "Microsoft" --color
+    isMicrosoft=$?
+
+    if [ $isMicrosoft -eq 0 ]; then
+        Wsl_Terminal
+
+        Set_Nerdtree
+        Home_Directory
+    fi
+fi

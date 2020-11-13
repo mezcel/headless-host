@@ -355,13 +355,15 @@ function package_manager_reminder {
 }
 
 function make_launcher_script {
-    laucherSriptName=launch_$myInterface_$myssid
+    ## Write a wpa_supplicant connection manager script in the ~/ directory.
+
+    laucherSriptName=~/launch_$myInterface_$myssid.sh
 
     echo -e "${FG_CYAN}"
-    echo -e "(Finishing)${FG_NoColor}\tMaking a wifi launcher script ...\t${FG_GREEN}~/$laucherSriptName.sh"
+    echo -e "(Finishing)${FG_NoColor}\tMaking a wifi launcher script ...\t${FG_GREEN}$laucherSriptName"
     echo -e "${FG_NoColor}"
 
-echo '
+    echo '
 #!/bin/bash
 
 inputFlag=$1
@@ -640,8 +642,10 @@ Conn_Controlls
 
 ## RUN
 
-ttyHighlightRow "Login into use the wpa_supplicant connection manager script." "$BG_BLUE"
+ttyHighlightRow "Login into use the wpa_supplicant connection manager script." "$BG_CYAN"
 sudo clear
+if [ $? -ne 0 ]; then echo -e "\nAborted script.\n"; exit; fi
+
 about
 dependancy_check
 
@@ -667,17 +671,17 @@ case $inputFlag in
 esac
 
 echo -e "\ndone."
-
-' > ~/$laucherSriptName
-
+    ' > $laucherSriptName
     sleep 2s
-    MY_WLAN=$$myInterface
+
+    MY_WLAN=$myInterface
     MY_SSID=$ssidName
+    sleep 1s
 
-    sed -i "s/MY_SSID/$MY_SSID/g" ~/$laucherSriptName.sh
+    sed -i "s/MY_SSID/$MY_SSID/g" $laucherSriptName
     sleep 2s
 
-    sed -i "s/MY_WLAN/$MY_WLAN/g" ~/$laucherSriptName.sh
+    sed -i "s/MY_WLAN/$MY_WLAN/g" $laucherSriptName
     sleep 2s
 
 

@@ -26,15 +26,17 @@ This project package will install and configure the following:
   1. Burn a [debian-live-10.x.x-amd64-standard.iso](https://cdimage.debian.org/debian-cd/current-live/amd64/iso-hybrid/debian-live-10.6.0-amd64-standard.iso) onto a usb.
   2. Clone this repo onto the same usb ( *just for convenience* )
   3. After Debian is installed on the computer, copy [headless-host.git](https://github.com/mezcel/headless-host.git) onto that machine.
-      * Start with the "root" account because it will populate ```skel``` and ```wpa_supplicant``` files for other users.
-  4. Run ```bash install.sh``` and follow the prompts.
-     * **Note**: If "broadcom" is installed, the computer will restart, and you will need to re-run the installer again to complete the installation.
-      * Menu prompts will change depending on what software, files, or hardware is present.
+      * (Optional/Recommendation) The first time you run this script, do so within the "root" account because it will populate ```skel``` and ```wpa_supplicant``` files for other users.
+      * After new user accounts are created you have the option to run this again to configure the environment for that individual account.
+  4. Run the ```bash install.sh``` and follow the prompts.
+      * Each time the script is ran, menu prompts will change depending on what software, files, or hardware is present.
   5. When the installation is finished, the alias ```hh``` will be appended to ```~/.bashrc```.
-      * ```hh``` is just an alias to launch a helper script.
+      * ```hh``` is just an alias to launch another helper script I made.
       * ```hh``` use case example:
         ```sh
-        ## activate a wireless network interface & connect to a known ssid access point.
+        ## Use wpa_supplicant to activate a wireless network interface
+        ##  and connect to a known ssid access point.
+
         hh up
         ```
     6. The full/max intallation with take well over +15 minutes.
@@ -49,6 +51,13 @@ This project package will install and configure the following:
 |---|---|---|
 | <ul><li>[debian.org](https://www.debian.org)</li><li>[Debian News](https://www.debian.org/News/)</li><li>[iso-hybrid](https://cdimage.debian.org/debian-cd/current-live/amd64/iso-hybrid/)</li><li>[iso-dvd](https://cdimage.debian.org/debian-cd/current/amd64/iso-dvd/)</li></ul> | <ul><li>[NERDTree](https://github.com/preservim/nerdtree)</li><li>[lightline](https://github.com/itchyny/lightline.vim)</li><li>[ohmybash](https://ohmybash.nntoan.com/)</li><li>[powerline](https://github.com/powerline/powerline)</li><li>[vifm](https://github.com/vifm)</li><li>[geany-themes](https://github.com/geany/geany-themes)</li></ul> | <ul><li>[firmware-iwlwifi ]( http://ftp.us.debian.org/debian/pool/non-free/f/firmware-nonfree/firmware-iwlwifi_20190114-2_all.deb )</li><li>[initramfs-tools](http://ftp.us.debian.org/debian/pool/main/i/initramfs-tools/initramfs-tools_0.133+deb10u1_all.deb)</li><li>broadcom-sta-dkms (6.30.223.271-10~bpo9+1) [ stretch backport ]( http://ftp.us.debian.org/debian/pool/non-free/b/broadcom-sta/broadcom-sta-dkms_6.30.223.271-10~bpo9+1_all.deb )</li><li>broadcom-sta-dkms_6.30.223.271-10_all.deb [ buster ](http://ftp.us.debian.org/debian/pool/non-free/b/broadcom-sta/broadcom-sta-dkms_6.30.223.271-10_all.deb)</li></ul>|
 
+---
+
+## Primary Deb Packages Installed Through This Script
+
+| [TTY](sources/1.0-Install-Tty-Environment.bash) | [Desktop](sources/2.0-Install-Desktop-Environment.bash) | [Connectivity](sources/3.0-Install-Networking.bash) | [Adhoc Wifi](sources/3.1-Install-Wifi-Adhoc.bash) |
+|---|---|---|---|
+|<ul><li>linux-image-$(uname -r)</li><li>linux-headers-$(uname -r)</li><li>firmware-linux-free</li><li>firmware-linux-nonfree</li><li>firmware-iwlwifi</li><li>firmware-brcm80211</li><li>broadcom-sta-dkms</li><li>resolvconf</li><li>build-essential</li><li>debianutils</li><li>util-linux</li><li>bash</li><li>bash-completion</li><li>vim</li><li>tmux</li><li>ranger</li><li>vifm</li><li>htop</li><li>aspell</li><li>wget</li><li>curl</li><li>elinks</li><li>bc</li><li>dos2unix</li><li>unzip</li><li>dialog</li><li>highlight</li><li>udiskie</li><li>fonts-ubuntu-family-console</li><li>ttf-ubuntu-font-family</li><li>fonts-inconsolata</li><li>pandoc</li><li>tlp</li><li>git</li><li>alsa-utils</li><li>pavucontrol</li><li>vorbis-tools</li><li>mplayer</li></ul>|<ul><li>build-essential</li><li>git</li><li>xorg</li><li>xinit</li><li>arandr</li><li>libx11-dev</li><li>libxft-dev</li><li>libxinerama-dev</li><li>xclip</li><li>xvkbd</li><li>libgcr-3-dev</li><li>suckless-tools</li><li>openbox</li><li>tint2</li><li>conky</li><li>build-essential</li><li>libvte-dev</li><li>geany</li><li>geany-plugins</li><li>mousepad</li><li>zathura</li><li>pcmanfm</li><li>libfm-tools</li><li>libusbmuxd-tools</li><li>udiskie</li><li>xarchiver</li><li>gvfs</li><li>tumbler</li><li>ffmpegthumbnailer</li><li>xterm</li><li>openbox</li><li>tint2</li><li>conky</li><li>feh</li><li>gparted</li><li>iceweasel</li><li>firefox-esr</li><li>gimp</li><li>alsa-utils</li><li>pavucontrol</li><li>vlc</li><li>libdvd-pkg</li></ul>|<ul><li>network-manager</li><li>linux-image-$(uname -r)</li><li>linux-headers-$(uname -r)</li><li>firmware-linux-free</li><li>firmware-linux-nonfree</li><li>firmware-iwlwifi</li><li>firmware-brcm80211</li><li>broadcom-sta-dkms</li><li>resolvconf</li><li>build-essential</li><li>util-linux</li><li>elinks</li><li>w3m</li><li>git</li><li>curl</li><li>iputils-ping</li></ul>|<ul><li>linux-image-$(uname -r)</li><li>linux-headers-$(uname -r)</li><li>firmware-linux-free</li><li>firmware-linux-nonfree</li><li>firmware-iwlwifi</li><li>firmware-brcm80211</li><li>broadcom-sta-dkms</li><li>resolvconf</li><li>dnsmasq</li><li>iptables</li><li>hostapd</li><li>ifplugd</li><li>openssh-server</li></ul>|
 ---
 
 ## Unrelated Plugins

@@ -451,7 +451,7 @@ function Install_Configurations {
                     ;;
             esac
         else
-            ttyCenteredHeader "Skel directory was not edited" "▞" "$FG_RED"
+            ttyCenteredHeader "Skel directory was not edited" "," "$FG_RED"
             ttyNestedString "This script will only edit the /etc/skel directory if this script is ran from the \"root\" account." "$FG_RED"
             sleep 2s
         fi
@@ -483,7 +483,7 @@ function Install_Home {
         esac
 
         echo ""
-        ttyCenteredHeader "DONE" "▚" "$FG_GREEN"
+        ttyCenteredHeader "DONE" "░" "$FG_GREEN"
         ttyNestedString "Finished running: $selectionString" "$FG_CYAN"
     }
 
@@ -580,8 +580,10 @@ function main {
     Install_Home
 
     Tput_Colors
-    ttyHighlightRow "Login into headless-host installer" "$BG_BLUE"
+    ttyHighlightRow "Login into the headless-host installer ..." "$BG_BLUE"
+
     sudo clear
+    if [ $? -ne 0 ]; then echo "login failed"; exit; fi
 
 
     ## Prompts

@@ -753,6 +753,7 @@ else
     ## Cancel
     echo ""
     ttyCenteredHeader "Canceling Installation/Configuration" "░" "$FG_YELLOW"
-    ttyNestedString "This script was intended for dedicated Debian linux server machines. This script make assumptions appropriate for systems which installed the debian-live-10.x.x-amd64-standard.iso" "$FG_YELLOW"
-    sleep 2s
+    ttyNestedString "This script was intended for dedicated Debian linux server machines. This script makes assumptions appropriate for systems which installed the debian-live-10.x.x-amd64-standard.iso" "$FG_YELLOW"
+    echo ""
+    read -p "[Press ENTER to continue ...]" pauseEnter
 fi

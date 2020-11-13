@@ -692,20 +692,11 @@ echo -e "\ndone."
 ## #############################################################################
 
 function main {
-    Decorative_Formatting
-    Tput_Colors
-
-    ttyHighlightRow "Login into use the wpa_supplicant connection script generator." "$BG_BLUE"
-    sudo clear
-    if [ $? -ne 0 ]; then echo "login failed"; exit; fi
-    greeting
-
     me=$(whoami)
+    greeting
 
     ## show network divers
     driver_information
-
-
     ttyCenteredHeader "Commencing wpa_supplicant script preparation" "-" "$FG_GREEN"
 
     ## wifi and ssid
@@ -736,4 +727,27 @@ function main {
 ## Run
 ## #############################################################################
 
-main
+Decorative_Formatting
+Tput_Colors
+
+ttyHighlightRow "Login into use the wpa_supplicant connection script generator." "$BG_BLUE"
+
+sudo clear
+if [ $? -ne 0 ]; then echo "login failed"; exit; fi
+
+uname -v | grep "Debian" --color
+isDebian=$?
+
+if [ $isDebian -ne 0 ]; then
+    ## Cancel
+    echo ""
+    ttyCenteredHeader "Canceling Script" "░" "$FG_YELLOW"
+    ttyNestedString "This script was intended for dedicated Debian linux server machines. This script makes assumptions appropriate for systems which installed the debian-live-10.x.x-amd64-standard.iso" "$FG_YELLOW"
+    echo ""
+
+    exit
+else
+    main
+fi
+
+

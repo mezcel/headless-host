@@ -379,7 +379,7 @@ function Install_Configurations {
         case $readInput in
             [Yy]* )
                 aliasVar=hh
-                autocompleteString="alsamixer battery down edit mount nvlc off restart umount up"
+                autocompleteString="alsamixer battery down edit mount nvlc off ping restart umount up"
                 bashFile=headless-host-alias.bash
                 bashFilePath=$(pwd)/sources/headless-host-alias.bash
 

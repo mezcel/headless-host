@@ -253,7 +253,7 @@ function Configure_Desktop_Environment {
         fi
 
         ## xinit
-        echo -e "xsetroot -name \" headless-host 🗿 $(whoami) \"\n" > ~/.xintrc
+        echo -e "xsetroot -name \" headless-host ▷ $(whoami) \"\n" > ~/.xintrc
         echo -e "bash ~/.fehbg  &" >> ~/.xintrc
         echo -e "xrdb ~/.Xresources &\n" >> ~/.xintrc
 

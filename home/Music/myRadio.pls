@@ -2,27 +2,22 @@
 
 NumberOfEntries=14
 
-## Christian Metal ##
 File1=https://theblast-stream.theblast.fm/128
 Title1=TheBlast.FM - The Implosion
 Length1=-1
 
-## Christian Hiphop ##
 File2=http://62.210.24.124:8811/stream
 Title2=Kingdomgrindradio
 Length2=-1
 
-## Christian Talk Radio ##
 File3=http://ewtn-ice.streamguys1.com:80/english-aac
 Title3=EWTN Podcast Radio
 Length3=-1
 
-## Liquid Trap ##
 File4=http://ice1.somafm.com/fluid-128-aac
 Title4=SomaFM: Fluid: Drown in the electronic sound of instrumental hiphop, future soul and liquid trap.
 Length4=-1
 
-## DnB ##
 File6=http://5.39.71.159:8625/stream
 Title6=Futuredrumz.com Jungle Drum & Bass Radio
 Length6=-1
@@ -35,7 +30,6 @@ File8=http://stream.drumandbass.fm:9002
 Title8=drumandbass.fm
 Length8=-1
 
-## Somafm ##
 File9=http://ice4.somafm.com/sf1033-128-aac
 Title9=SomaFM: SF 10-33: Ambient music mixed with the sounds of San Francisco public safety radio traffic.
 Length9=-1

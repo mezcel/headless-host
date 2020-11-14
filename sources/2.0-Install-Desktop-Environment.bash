@@ -253,21 +253,25 @@ function Configure_Desktop_Environment {
         fi
 
         ## xinit
-        echo -e "xsetroot -name \" headless-host ▷ $(whoami) \"\n" > ~/.xintrc
-        echo -e "bash ~/.fehbg  &" >> ~/.xintrc
-        echo -e "xrdb ~/.Xresources &\n" >> ~/.xintrc
+        ttyNestedString "Writing ~/.xinitrc ..." "$MODE_BOLD$FG_GREEN"
 
-        echo -e "command -v dwm &>/dev/null" >> ~/.xintrc
-        echo -e "isDWM=$?\n" >> ~/.xintrc
+        echo -e "xsetroot -name \" headless-host ▷ $(whoami) \"\n" > ~/.xinitrc
+        echo -e "bash ~/.fehbg  &" >> ~/.xinitrc
+        echo -e "xrdb ~/.Xresources &\n" >> ~/.xinitrc
 
-        echo -e "command -v dwm &>/dev/null" >> ~/.xintrc
-        echo -e "isOpenbox=$?\n" >> ~/.xintrc
+        echo -e "command -v dwm &>/dev/null" >> ~/.xinitrc
+        echo -e "isDWM=\$?\n" >> ~/.xintrc
 
-        echo -e "if [ $isDWM -eq 0 ]; then" >> ~/.xintrc
-        echo -e "    exec ~/suckless/dwm/dwm" >> ~/.xintrc
-        echo -e "elif [ $isOpenbox -eq 0 ]; then" >> ~/.xintrc
-        echo -e "    exec openbox-session" >> ~/.xintrc
-        echo -e "fi" >> ~/.xintrc
+        echo -e "command -v dwm &>/dev/null" >> ~/.xinitrc
+        echo -e "isOpenbox=\$?\n" >> ~/.xintrc
+
+        echo -e "if [ \$isDWM -eq 0 ]; then" >> ~/.xinitrc
+        echo -e "    exec ~/suckless/dwm/dwm" >> ~/.xinitrc
+        echo -e "elif [ $isOpenbox -eq 0 ]; then" >> ~/.xinitrc
+        echo -e "    exec openbox-session" >> ~/.xinitrc
+        echo -e "fi" >> ~/.xinitrc
+
+        sleep 2s
 
     }
 
@@ -439,7 +443,7 @@ sleep 2s
 
 ## RUN
 
-uname -a | grep "Debian" --color
+uname -v | grep "Debian" --color
 isDebian=$?
 
 if [ $isDebian -eq 0 ]; then

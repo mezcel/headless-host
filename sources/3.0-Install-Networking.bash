@@ -178,8 +178,9 @@ function Decorative_Formatting {
 
 function Get_Networking_Applications {
     function Ask4NetworkManager {
+        readInput=Nope
         promptString="${FG_RED}Do you want to install NetworkManager? [ y/N ]: "
-        ttyPromptInput "NetworkManager" "$promptString" "NoWay" "$FG_RED" "$BG_RED"
+        ttyPromptInput "NetworkManager" "$promptString" "$readInput" "$FG_RED" "$BG_RED"
 
         case $readInput in
             [Yy]* )
@@ -272,8 +273,9 @@ function Get_Networking_Applications {
     }
 
     function Set_WpaSupplicant {
+        readInput=NotYet
         promptString="Connect to an available wireless network? [ y/N ]: "
-        ttyPromptInput "Wifi SSID Connection (wpa_supplicant):" "$promptString" "perhaps_later" "$FG_GREEN" "$BG_GREEN"
+        ttyPromptInput "Wifi SSID Connection (wpa_supplicant):" "$promptString" "$readInput" "$FG_GREEN" "$BG_GREEN"
 
         case $readInput in
             [Yy]* )

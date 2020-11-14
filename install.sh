@@ -167,6 +167,7 @@ function Decorative_Formatting {
         ttyHighlightRow "$promptTitle" "$tputBgColor"
 
         read -e -p " $tputFgColor$promptString$STYLES_OFF" -i "$defaultAnswer" readInput
+
         printf "$STYLES_OFF\n"
         sleep 1
     }
@@ -199,10 +200,11 @@ function Install_Configurations {
             isSudo=$?
 
             if [ $isSudo -ne 0 ]; then
-                ttyCenteredHeader "The $me profile is not a member of the sudo group" "▞" "$FG_RED"
+                ttyCenteredHeader "The $me profile is not a member of the sudo group" "-" "$FG_RED"
                 ttyNestedString "The current user profile, \"$me\", may not have the appropriate \"sudo\" permissions yet. If you know this account does not have sudo privileges, login as \"root\" and manually edit the /etc/sudoers file to elevate this profile's permissions." "$FG_RED"
                 ttyNestedString "This script will terminate now so you can take the corrective actions to elevate this user profile's permissions privileges to sudo." "$MODE_BOLD$FG_RED"
                 sleep 3s
+
                 exit
             else
                 ttyNestedString "The \"$me\" user account is recognized as a member of the sudo group." "$MODE_BOLD$FG_GREEN"
@@ -365,31 +367,37 @@ function Install_Configurations {
     }
 
     function Optional_Alias {
-        ## Option to add an alias to the (.bashrc) or .profile
-        ## It is just an info display commemorating the headless-host install
-        ## It will link to a bash script which will provide further options to take.
 
-        ttyCenteredHeader "Create the \"hh\" alias." "+" "$FG_YELLOW"
-        ttyNestedString "I made a bash script to quickly launch common process from the terminal." "$FG_YELLOW"
-        ttyNestedString "If you want, I will put the \"headless-host-alias.bash\" file into ~/ and make an \"hh\" alias in the ~/.bashrc" "$FG_YELLOW"
+        uname -v | grep "Debian" &>/dev/null
+        isDebian=$?
 
-        promptString="Add the \"hh\" alias ? [ Y/n ]: "
-        ttyPromptInput "Bash alias:" "$promptString" "yes" "$FG_GREEN" "$BG_GREEN"
+        if [ $isDebian -eq 0 ]; then
+            ## Option to add an alias to the (.bashrc) or .profile
+            ## It is just an info display commemorating the headless-host install
+            ## It will link to a bash script which will provide further options to take.
 
-        case $readInput in
-            [Yy]* )
-                aliasVar=hh
-                autocompleteString="alsamixer battery down edit mount nvlc off ping restart umount up"
-                bashFile=headless-host-alias.bash
-                bashFilePath=$(pwd)/sources/headless-host-alias.bash
+            ttyCenteredHeader "Create the \"hh\" alias." "+" "$FG_YELLOW"
+            ttyNestedString "I made a bash script to quickly launch common process from the terminal." "$FG_YELLOW"
+            ttyNestedString "If you want, I will put the \"headless-host-alias.bash\" file into ~/ and make an \"hh\" alias in the ~/.bashrc" "$FG_YELLOW"
 
-                if [ -f $bashFilePath ]; then
-                    Make_Bashrc_Alias $aliasVar "$autocompleteString" $bashFile $bashFilePath
-                else
-                    ttyNestedString "The \"hh\" alias requires a $bashFilePath script. That file path was not detected." "$FG_RED"
-                fi
-                ;;
-        esac
+            promptString="Add the \"hh\" alias ? [ Y/n ]: "
+            ttyPromptInput "Bash alias:" "$promptString" "yes" "$FG_GREEN" "$BG_GREEN"
+
+            case $readInput in
+                [Yy]* )
+                    aliasVar=hh
+                    autocompleteString="alsamixer battery down edit mount nvlc off ping restart umount up"
+                    bashFile=headless-host-alias.bash
+                    bashFilePath=$(pwd)/sources/headless-host-alias.bash
+
+                    if [ -f $bashFilePath ]; then
+                        Make_Bashrc_Alias $aliasVar "$autocompleteString" $bashFile $bashFilePath
+                    else
+                        ttyNestedString "The \"hh\" alias requires a $bashFilePath script. That file path was not detected." "$FG_RED"
+                    fi
+                    ;;
+            esac
+        fi
     }
 
     function Skel_HeadlessHost {

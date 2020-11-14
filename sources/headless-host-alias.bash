@@ -443,7 +443,7 @@ function Alias_Arguments {
             source ~/.bashrc
 
             ## alias autocomplete
-            ## alsamixer battery down edit mount nvlc off restart unmount up
+            ## alsamixer battery down edit mount nvlc off ping restart unmount up
             complete -W "alsamixer battery down edit mount nvlc off ping restart unmount up" hh
         fi
     }

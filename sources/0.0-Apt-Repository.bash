@@ -328,6 +328,7 @@ Configure_Apt
 
 ## RUN
 
+clear
 ttyCenteredHeader "Setup an Apt Mirror Repository" "░" "$FG_MAGENTA"
 sleep 2s
 

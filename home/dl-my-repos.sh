@@ -53,7 +53,7 @@ function Make_Directories {
 
     read -e -p "$promptString" -i "$githubDirectory" githubDirectory
 
-    gistDirectory=~/gist.github/existingUser
+    gistDirectory=~/gist.github/$existingUser
 	promptString="${FG_GREEN}Where should Gist directories be stored? [ ${FG_CYAN}$gistDirectory${FG_GREEN} ]: ${STYLES_OFF}"
 
     read -e -p "$promptString" -i "$gistDirectory" gistDirectory

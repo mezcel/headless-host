@@ -213,157 +213,169 @@ function Install_Configurations {
     }
 
     function Decorate_MotdIssue {
-        ttyCenteredHeader "Decorating issue and motd" "-" "$FG_CYAN"
 
-        ## ANSI Escape Sequence: Terminal Color Codes
+        uname -v | grep "Debian" &>/dev/null
+        isDebian=$?
 
-        txtblk='\e[0;30m' # Black - Regular
-        txtred='\e[0;31m' # Red
-        txtgrn='\e[0;32m' # Green
-        txtylw='\e[0;33m' # Yellow
-        txtblu='\e[0;34m' # Blue
-        txtpur='\e[0;35m' # Purple
-        txtcyn='\e[0;36m' # Cyan
-        txtwht='\e[0;37m' # White
+        if [ $isDebian -eq 0 ]; then
+            ttyCenteredHeader "Decorating issue and motd" "-" "$FG_CYAN"
 
-        bldblk='\e[1;30m' # Black - Bold
-        bldred='\e[1;31m' # Red
-        bldgrn='\e[1;32m' # Green
-        bldylw='\e[1;33m' # Yellow
-        bldblu='\e[1;34m' # Blue
-        bldpur='\e[1;35m' # Purple
-        bldcyn='\e[1;36m' # Cyan
-        bldwht='\e[1;37m' # White
+            ## ANSI Escape Sequence: Terminal Color Codes
 
-        unkblk='\e[4;30m' # Black - Underline
-        undred='\e[4;31m' # Red
-        undgrn='\e[4;32m' # Green
-        undylw='\e[4;33m' # Yellow
-        undblu='\e[4;34m' # Blue
-        undpur='\e[4;35m' # Purple
-        undcyn='\e[4;36m' # Cyan
-        undwht='\e[4;37m' # White
+            txtblk='\e[0;30m' # Black - Regular
+            txtred='\e[0;31m' # Red
+            txtgrn='\e[0;32m' # Green
+            txtylw='\e[0;33m' # Yellow
+            txtblu='\e[0;34m' # Blue
+            txtpur='\e[0;35m' # Purple
+            txtcyn='\e[0;36m' # Cyan
+            txtwht='\e[0;37m' # White
 
-        bakblk='\e[40m'   # Black - Background
-        bakred='\e[41m'   # Red
-        bakgrn='\e[42m'   # Green
-        bakylw='\e[43m'   # Yellow
-        bakblu='\e[44m'   # Blue
-        bakpur='\e[45m'   # Purple
-        bakcyn='\e[46m'   # Cyan
-        bakwht='\e[47m'   # White
+            bldblk='\e[1;30m' # Black - Bold
+            bldred='\e[1;31m' # Red
+            bldgrn='\e[1;32m' # Green
+            bldylw='\e[1;33m' # Yellow
+            bldblu='\e[1;34m' # Blue
+            bldpur='\e[1;35m' # Purple
+            bldcyn='\e[1;36m' # Cyan
+            bldwht='\e[1;37m' # White
 
-        txtrst='\e[0m'    # Text Reset
+            unkblk='\e[4;30m' # Black - Underline
+            undred='\e[4;31m' # Red
+            undgrn='\e[4;32m' # Green
+            undylw='\e[4;33m' # Yellow
+            undblu='\e[4;34m' # Blue
+            undpur='\e[4;35m' # Purple
+            undcyn='\e[4;36m' # Cyan
+            undwht='\e[4;37m' # White
 
-        ## /etc/issue
+            bakblk='\e[40m'   # Black - Background
+            bakred='\e[41m'   # Red
+            bakgrn='\e[42m'   # Green
+            bakylw='\e[43m'   # Yellow
+            bakblu='\e[44m'   # Blue
+            bakpur='\e[45m'   # Purple
+            bakcyn='\e[46m'   # Cyan
+            bakwht='\e[47m'   # White
 
-        issueTemp=~/issue.temp
-        issueFile=/etc/issue
+            txtrst='\e[0m'    # Text Reset
 
-        ## make a safety backup of /etc/issue
-        ttyNestedString "Backing up $issueFile ..." "$MODE_DIM$FG_YELLOW"
-        sleep 1s
+            ## /etc/issue
 
-        sudo cp $issueFile $issueFile.backup_$(date +%d%b%Y%H%S) &>/dev/null
-        sleep 1s
+            issueTemp=~/issue.temp
+            issueFile=/etc/issue
 
-        ## customize issue
-        ttyNestedString "Decorating $issueFile ..." "$MODE_BOLD$FG_GREEN"
-        sleep 1s
+            ## make a safety backup of /etc/issue
+            ttyNestedString "Backing up $issueFile ..." "$MODE_DIM$FG_YELLOW"
+            sleep 1s
 
-        sudo cp $issueFile $issueTemp &>/dev/null
-        sleep 1s
+            sudo cp $issueFile $issueFile.backup_$(date +%d%b%Y%H%S) &>/dev/null
+            sleep 1s
 
-        ## Decorate /etc/issue
-        echo -en "\
-        \n${bakred}${bldwht}# Headless Host                                              ${txtrst}\
-        \n${txtwht}${bakred}- A Debian server respin by mezcel                           ${txtrst}\
-        \n${txtwht}${bakred}- github: https://github.com/mezcel/headless-host.git        ${txtrst}\
-        \n${txtrst}\
-        \n" >> $issueTemp
-        sleep 1s
+            ## customize issue
+            ttyNestedString "Decorating $issueFile ..." "$MODE_BOLD$FG_GREEN"
+            sleep 1s
 
-        sudo mv $issueTemp $issueFile &>/dev/null
-        sleep 1s
+            sudo cp $issueFile $issueTemp &>/dev/null
+            sleep 1s
 
-        ## /etc/motd
-        ttyNestedString "Decorating /etc/issue ..." "$MODE_BOLD$FG_GREEN"
-        sleep 1s
+            ## Decorate /etc/issue
+            echo -en "\
+            \n${bakred}${bldwht}# Headless Host                                              ${txtrst}\
+            \n${txtwht}${bakred}- A Debian server respin by mezcel                           ${txtrst}\
+            \n${txtwht}${bakred}- github: https://github.com/mezcel/headless-host.git        ${txtrst}\
+            \n${txtrst}\
+            \n" >> $issueTemp
+            sleep 1s
 
-        motdTemp=~/motd.temp
-        motdFile=/etc/motd
+            sudo mv $issueTemp $issueFile &>/dev/null
+            sleep 1s
 
-        ## make a safety backup of /etc/motd
-        ttyNestedString "Backing up $motdFile ..." "$MODE_DIM$FG_YELLOW"
-        sleep 1s
+            ## /etc/motd
+            ttyNestedString "Decorating /etc/issue ..." "$MODE_BOLD$FG_GREEN"
+            sleep 1s
 
-        sudo cp $motdFile $motdFile.backup_$(date +%d%b%Y%H%S) &>/dev/null
-        sleep 1s
+            motdTemp=~/motd.temp
+            motdFile=/etc/motd
 
-        ## customize issue
-        ttyNestedString "Decorating $motdFile ..." "$MODE_BOLD$FG_GREEN"
-        sleep 1s
+            ## make a safety backup of /etc/motd
+            ttyNestedString "Backing up $motdFile ..." "$MODE_DIM$FG_YELLOW"
+            sleep 1s
 
-        sudo cp $motdFile $motdTemp &>/dev/null
-        sleep 1s
+            sudo cp $motdFile $motdFile.backup_$(date +%d%b%Y%H%S) &>/dev/null
+            sleep 1s
 
-        ## Clear motd file
-        sudo echo -e "" > $motdTemp &>/dev/null
-        sleep 1
+            ## customize issue
+            ttyNestedString "Decorating $motdFile ..." "$MODE_BOLD$FG_GREEN"
+            sleep 1s
 
-        sudo mv $motdTemp $motdFile &>/dev/null
-        sleep 1s
+            sudo cp $motdFile $motdTemp &>/dev/null
+            sleep 1s
+
+            ## Clear motd file
+            sudo echo -e "" > $motdTemp &>/dev/null
+            sleep 1
+
+            sudo mv $motdTemp $motdFile &>/dev/null
+            sleep 1s
+        fi
     }
 
     function Make_Bashrc_Alias {
-        aliasVar=$1
-        autocompleteString=$2
-        bashFile=$3
-        bashFilePath=$4
-        homeBash=~/$bashFile
-        sleep 1s
 
-        ttyCenteredHeader "Adding the \"hh\" alias to ~/.bashrc" "░" "$FG_GREEN"
+        uname -v | grep "Debian" &>/dev/null
+        isDebian=$?
 
-        ## make executable bash in home dir
-        cp $bashFilePath $homeBash
-        sudo chmod +x $homeBash
+        if [ $isDebian -eq 0 ]; then
+            aliasVar=$1
+            autocompleteString=$2
+            bashFile=$3
+            bashFilePath=$4
+            homeBash=~/$bashFile
+            sleep 1s
 
-        origianlBashrc=~/.bashrc
-        backupBashrc=$origianlBashrc.backup_$(date +%d%b%Y%H%S)
-        tempBashrc=$origianlBashrc.temp
+            ttyCenteredHeader "Adding the \"hh\" alias to ~/.bashrc" "░" "$FG_GREEN"
 
-        ## make a safety backup of ~/.bashrc
-        ttyNestedString "Backing up $origianlBashrc ..." "$MODE_DIM$FG_YELLOW"
-        cp $origianlBashrc $backupBashrc
-        cp $origianlBashrc $tempBashrc
+            ## make executable bash in home dir
+            cp $bashFilePath $homeBash
+            sudo chmod +x $homeBash
 
-        ## Make a temporary .bashrc file to edit
-        ## Delete previous line reference to bash file
-        sed -i "/$bashFile/d" $tempBashrc
-        sleep 1s
+            origianlBashrc=~/.bashrc
+            backupBashrc=$origianlBashrc.backup_$(date +%d%b%Y%H%S)
+            tempBashrc=$origianlBashrc.temp
 
-        ## Delete previous line reference to bash file autocomplete
-        sed -i "/$autocompleteString/d" $tempBashrc
-        sleep 1s
+            ## make a safety backup of ~/.bashrc
+            ttyNestedString "Backing up $origianlBashrc ..." "$MODE_DIM$FG_YELLOW"
+            cp $origianlBashrc $backupBashrc
+            cp $origianlBashrc $tempBashrc
 
-        aliasautoString="\
-        \n## Alias for $bashFilePath \
-        \nalias $aliasVar=\"bash $homeBash\" \
-        \n## $aliasVar alias autocomplete \
-        \ncomplete -W \"$autocompleteString\" $aliasVar \
-        \n"
+            ## Make a temporary .bashrc file to edit
+            ## Delete previous line reference to bash file
+            sed -i "/$bashFile/d" $tempBashrc
+            sleep 1s
 
-        ## Append ~/.bashrc with alias and it's auto complete argv
-        echo -e "$aliasautoString" >> $tempBashrc
+            ## Delete previous line reference to bash file autocomplete
+            sed -i "/$autocompleteString/d" $tempBashrc
+            sleep 1s
 
-        ## Make the temp file the ~/.bashrc file
-        ttyNestedString "Writing the new $origianlBashrc ..." "$MODE_BOLD$FG_GREEN"
-        sudo mv $tempBashrc $origianlBashrc
-        sleep 1
+            aliasautoString="\
+            \n## Alias for $bashFilePath \
+            \nalias $aliasVar=\"bash $homeBash\" \
+            \n## $aliasVar alias autocomplete \
+            \ncomplete -W \"$autocompleteString\" $aliasVar \
+            \n"
 
-        ## apply the new ~/.bashrc
-        source $origianlBashrc
+            ## Append ~/.bashrc with alias and it's auto complete argv
+            echo -e "$aliasautoString" >> $tempBashrc
+
+            ## Make the temp file the ~/.bashrc file
+            ttyNestedString "Writing the new $origianlBashrc ..." "$MODE_BOLD$FG_GREEN"
+            sudo mv $tempBashrc $origianlBashrc
+            sleep 1
+
+            ## apply the new ~/.bashrc
+            source $origianlBashrc
+        fi
     }
 
     function Optional_Alias {
@@ -404,64 +416,68 @@ function Install_Configurations {
         ## Copy headless-host into the /etc/skel directory
         ## Newly created users will have a copy of the installer scripts and configuration options.
         ## Manually add headless host to any preexisting users created before the /etc/skel recieve headless-host
+        uname -v | grep "Debian" &>/dev/null
+        isDebian=$?
 
-        me=$(whoami)
+        if [ $isDebian -eq 0 ]; then
+            me=$(whoami)
 
-        if [ $me == "root" ]; then
-            ttyCenteredHeader "Shared Resources" "-" "$FG_Cyan"
+            if [ $me == "root" ]; then
+                ttyCenteredHeader "Shared Resources" "-" "$FG_Cyan"
 
-            skellDir=/etc/skel/headless-host
+                skellDir=/etc/skel/headless-host
 
-            mkdir -p $skellDir
+                mkdir -p $skellDir
 
-            cp -rf --no-preserve=mode . $skellDir
-            sleep 1
-            chmod -R 777 $skellDir
+                cp -rf --no-preserve=mode . $skellDir
+                sleep 1
+                chmod -R 777 $skellDir
 
-            ## make a headless-hot skel
-            ttyNestedString "A fresh headless-host directory was placed in /etc/skel." "$FG_YELLOW"
+                ## make a headless-hot skel
+                ttyNestedString "A fresh headless-host directory was placed in /etc/skel." "$FG_YELLOW"
 
-            ## prompt to manually add headless-host to a preexisting user
-            echo ""
-            promptSting="Add the headless-host repo to an existing user's ~/ ? [ y/N ]: "
-            ttyPromptInput "/etc/skel file:" "$promptSting" "yes" "$FG_GREEN" "$BG_GREEN"
+                ## prompt to manually add headless-host to a preexisting user
+                echo ""
+                promptSting="Add the headless-host repo to an existing user's ~/ ? [ y/N ]: "
+                ttyPromptInput "/etc/skel file:" "$promptSting" "yes" "$FG_GREEN" "$BG_GREEN"
 
-            case $readInput in
-                [Yy]* )
-                    ttyNestedString "Preexisting users:" "$FG_MAGENTA"
-                    #demoUser=mezcel
-                    demoUser=$(ls /home)
-                    echo $demoUser
-                    readInput=$(echo $demoUser | awk '{print $1}')
-                    sleep 1s
+                case $readInput in
+                    [Yy]* )
+                        ttyNestedString "Preexisting users:" "$FG_MAGENTA"
+                        #demoUser=mezcel
+                        demoUser=$(ls /home)
+                        echo $demoUser
+                        readInput=$(echo $demoUser | awk '{print $1}')
+                        sleep 1s
 
-                    promptSting="Enter the name of a desired preexisting user? [ $readInput ]: "
-                    ttyPromptInput "Copy headless-host repo to user:" "$promptSting" "$readInput" "$FG_GREEN" "$BG_GREEN"
+                        promptSting="Enter the name of a desired preexisting user? [ $readInput ]: "
+                        ttyPromptInput "Copy headless-host repo to user:" "$promptSting" "$readInput" "$FG_GREEN" "$BG_GREEN"
 
-                    if [ -d /home/$readInput ]; then
-                        ## check if the user already has headless-host
-                        find /home/$readInput -name "headless-host*" | grep "headless-host" &>/dev/null
-                        isUserHH=$?
+                        if [ -d /home/$readInput ]; then
+                            ## check if the user already has headless-host
+                            find /home/$readInput -name "headless-host*" | grep "headless-host" &>/dev/null
+                            isUserHH=$?
 
-                        if [ $isUserHH -ne 0 ]; then
-                            cp -rf --no-preserve=mode $skellDir /home/$readInput/headless-host
-                            sleep 1
-                            sudo chmod -R 777 /home/$readInput/headless-host
-                            ttyNestedString "/home/$readInput/headless-host was created." "$FG_YELLOW"
+                            if [ $isUserHH -ne 0 ]; then
+                                cp -rf --no-preserve=mode $skellDir /home/$readInput/headless-host
+                                sleep 1
+                                sudo chmod -R 777 /home/$readInput/headless-host
+                                ttyNestedString "/home/$readInput/headless-host was created." "$FG_YELLOW"
+                            else
+                                ttyNestedString "\t\"headless-host\" appears to exist somewhere in the \"$readInput\" account." "$MODE_DIM$FG_YELLOW"
+                                ttyNestedString "\tNothing new was added to /home/$readInput " "$MODE_DIM$FG_YELLOW"
+                            fi
+
                         else
-                            ttyNestedString "\t\"headless-host\" appears to exist somewhere in the \"$readInput\" account." "$MODE_DIM$FG_YELLOW"
-                            ttyNestedString "\tNothing new was added to /home/$readInput " "$MODE_DIM$FG_YELLOW"
+                            ttyNestedString "/home/$demoUser does not exist." "$FG_RED"
                         fi
-
-                    else
-                        ttyNestedString "/home/$demoUser does not exist." "$FG_RED"
-                    fi
-                    ;;
-            esac
-        else
-            ttyCenteredHeader "Skel directory was not edited" "." "$FG_RED"
-            ttyNestedString "This script will only edit the /etc/skel directory if this script is ran from the \"root\" account." "$FG_RED"
-            sleep 2s
+                        ;;
+                esac
+            else
+                ttyCenteredHeader "Skel directory was not edited" "." "$FG_RED"
+                ttyNestedString "This script will only edit the /etc/skel directory if this script is ran from the \"root\" account." "$FG_RED"
+                sleep 2s
+            fi
         fi
     }
 }

@@ -253,9 +253,21 @@ function Configure_Desktop_Environment {
         fi
 
         ## xinit
-        echo -e "bash ~/.fehbg && xrdb ~/.Xresources &\nexec ~/suckless/dwm/dwm" > ~/.xinitrc_dwm
-        echo "exec openbox-session" > ~/.xinitrc_openbox
-        cp ~/.xinitrc_dwm ~/.xinitrc
+        echo -e "xsetroot -name \" headless-host 🗿 $(whoami) \"\n" > ~/.xintrc
+        echo -e "bash ~/.fehbg  &" >> ~/.xintrc
+        echo -e "xrdb ~/.Xresources &\n" >> ~/.xintrc
+
+        echo -e "command -v dwm &>/dev/null" >> ~/.xintrc
+        echo -e "isDWM=$?\n" >> ~/.xintrc
+
+        echo -e "command -v dwm &>/dev/null" >> ~/.xintrc
+        echo -e "isOpenbox=$?\n" >> ~/.xintrc
+
+        echo -e "if [ $isDWM -eq 0 ]; then" >> ~/.xintrc
+        echo -e "    exec ~/suckless/dwm/dwm" >> ~/.xintrc
+        echo -e "elif [ $isOpenbox -eq 0 ]; then" >> ~/.xintrc
+        echo -e "    exec openbox-session" >> ~/.xintrc
+        echo -e "fi" >> ~/.xintrc
 
     }
 

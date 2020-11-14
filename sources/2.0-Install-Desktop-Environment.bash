@@ -260,10 +260,10 @@ function Configure_Desktop_Environment {
         echo -e "xrdb ~/.Xresources &\n" >> ~/.xinitrc
 
         echo -e "command -v dwm &>/dev/null" >> ~/.xinitrc
-        echo -e "isDWM=\$?\n" >> ~/.xintrc
+        echo -e "isDWM=$?\n" >> ~/.xinitrc
 
         echo -e "command -v dwm &>/dev/null" >> ~/.xinitrc
-        echo -e "isOpenbox=\$?\n" >> ~/.xintrc
+        echo -e "isOpenbox=\$?\n" >> ~/.xinitrc
 
         echo -e "if [ \$isDWM -eq 0 ]; then" >> ~/.xinitrc
         echo -e "    exec ~/suckless/dwm/dwm" >> ~/.xinitrc

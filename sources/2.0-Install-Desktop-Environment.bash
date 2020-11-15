@@ -255,7 +255,7 @@ function Configure_Desktop_Environment {
         ## xinit
         ttyNestedString "Writing ~/.xinitrc ..." "$MODE_BOLD$FG_GREEN"
 
-        echo -e "xsetroot -name \" headless-host ▷ $(whoami) \"\n" > ~/.xinitrc
+        echo -e "xsetroot -name \" headless-host ▷ \$(whoami) \"\n" > ~/.xinitrc
         echo -e "bash ~/.fehbg  &" >> ~/.xinitrc
         echo -e "xrdb ~/.Xresources &\n" >> ~/.xinitrc
 
@@ -266,9 +266,13 @@ function Configure_Desktop_Environment {
         echo -e "isOpenbox=\$?\n" >> ~/.xinitrc
 
         echo -e "if [ \$isDWM -eq 0 ]; then" >> ~/.xinitrc
-        echo -e "    exec ~/suckless/dwm/dwm" >> ~/.xinitrc
-        echo -e "elif [ $isOpenbox -eq 0 ]; then" >> ~/.xinitrc
-        echo -e "    exec openbox-session" >> ~/.xinitrc
+        echo -e "\tif [ -f ~/suckless/dwm/dwm ]; then" >> ~/.xinitrc
+        echo -e "\t\texec ~/suckless/dwm/dwm" >> ~/.xinitrc
+        echo -e "\telse" >> ~/.xinitrc
+        echo -e "\t\texec dwm" >> ~/.xinitrc
+        echo -e "\tfi" >> ~/.xinitrc
+        echo -e "elif [ \$isOpenbox -eq 0 ]; then" >> ~/.xinitrc
+        echo -e "\texec openbox-session" >> ~/.xinitrc
         echo -e "fi" >> ~/.xinitrc
 
         sleep 2s

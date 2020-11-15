@@ -674,6 +674,8 @@ echo -e "\ndone."
     ' > $laucherSriptName
     sleep 2s
 
+	chmod +x $laucherSriptName
+
     MY_WLAN=$myInterface
     MY_SSID=$ssidName
     sleep 1s

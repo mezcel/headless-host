@@ -302,9 +302,14 @@ isDebian=$?
 
 if [ $isDebian -eq 0 ]; then
 
-    networking_applications
-    Ask4NetworkManager
+    ## skip redundant installations if this script launched from the main installer
+    if [ ! -z $HH_Installer_Flag ]; then
+        networking_applications
+        Ask4NetworkManager
+    fi
+
     Set_WpaSupplicant
+
 else
     ## Cancel
     echo ""

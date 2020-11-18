@@ -616,10 +616,6 @@ function main {
 }
 
 ## RUN
-unset HH_Installer_Flag
-sleep .5
-HH_Installer_Flag=1
-sleep .5
 
 main
 echo -e "\nDone"

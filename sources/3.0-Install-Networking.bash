@@ -199,7 +199,14 @@ function Get_Networking_Applications {
 
         sudo apt install -y firmware-linux-free
         sudo apt install -y firmware-linux-nonfree
-        sudo apt install -y firmware-iwlwifi
+
+        lspci | grep "Intel" &>/dev/null
+        isIntel=$?
+        sleep 1s
+
+        if [ $isIntel -eq 0 ]; then
+            sudo apt install -y firmware-iwlwifi
+        fi
 
         ## Detect and/or Display the wireless driver Chipset
 

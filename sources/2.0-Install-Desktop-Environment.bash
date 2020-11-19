@@ -306,6 +306,7 @@ function Configure_Desktop_Environment {
         sudo apt install -y geany-plugins
         sudo apt install -y mousepad
         sudo apt install -y zathura
+        sudo apt install -y mupdf
 
         sudo apt install -y pcmanfm
         sudo apt install -y libfm-tools

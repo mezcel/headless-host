@@ -31,17 +31,29 @@ This project package will install and configure the following:
   4. Run the ```bash install.sh``` and follow the prompts.
       * Each time the script is ran, menu prompts will change depending on what software, files, or hardware is present.
   5. When the installation is finished, the alias ```hh``` will be appended to ```~/.bashrc```.
-      * ```hh``` is just an alias to launch another helper script I made.
+      * Typing ```hh``` in the ```bash``` terminal will launch a script which serves as an easy access quick launcher for common terminal tasks.
       * ```hh``` use case example:
         ```sh
-        ## Use wpa_supplicant to activate a wireless network interface
+        ## Type "hh" to view a list of predefined "hh" options.
+        ## Example: Use wpa_supplicant to activate a wireless network interface
         ##  and connect to a known ssid access point.
 
-        hh up
+        hh up               ## or "hh u"
+
+        ## a few other alias usecase examples:
+        # hh ping           ## or "hh p"
+        # hh umount         ## or "hh u"
+        # hh alsamixer      ## or "hh a"
         ```
     6. The full/max intallation with take well over +15 minutes.
        * The minimal installation will take < 15 minutes.
 * Alternately, one could just individually run one of the source scripts contained within ```./sources/``` and the ```my_iwconfig``` file.
+
+## Bashrc alias
+
+There is an option to install a ```bash``` alias: "hh"
+
+Typing ```hh``` in the ```bash``` terminal will launch a script which serves as an easy access quick launcher for common terminal tasks.
 
 ---
 

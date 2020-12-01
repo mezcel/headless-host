@@ -512,19 +512,29 @@ function Install_Home {
     }
 
     function Home_Menu_Prompt {
+        uname -v | grep "Debian" &>/dev/null
+        isDebian=$?
+
+        if [ $isDebian -eq 0 ]; then
+            readInput=3
+            higlightedOption="\n  ${FG_MAGENTA}${MODE_BOLD}2.${STYLES_OFF} ${FG_MAGENTA}Install a TTY environment ${MODE_BOLD} \n  ${FG_MAGENTA}${MODE_BOLD}3. ${FG_MAGENTA}Install a TTY environment with a minimally themed Desktop environment. ${STYLES_OFF}$FG_MAGENTA"
+        else
+            readInput=2
+            higlightedOption="\n  ${FG_MAGENTA}${MODE_BOLD}2. ${FG_MAGENTA}Install a TTY environment ${MODE_BOLD} \n  ${FG_MAGENTA}${MODE_BOLD}3.${STYLES_OFF} ${FG_MAGENTA}Install a TTY environment with a minimally themed Desktop environment. ${STYLES_OFF}$FG_MAGENTA"
+        fi
+
         ttyCenteredHeader "Installer Menu" "-" "$FG_MAGENTA"
         echo -e "${MODE_BOLD}${FG_MAGENTA}${MODE_BEGIN_UNDERLINE}Select a menu item number:${MODE_EXIT_UNDERLINE} \
         \n ${STYLES_OFF}\
         \n  ${FG_MAGENTA}${MODE_BOLD}1.${STYLES_OFF} ${FG_MAGENTA}Import a personally curated Apt repository of Deb's \
-        \n  ${FG_MAGENTA}${MODE_BOLD}2.${STYLES_OFF} ${FG_MAGENTA}Install a TTY environment ${MODE_BOLD} \
-        \n  ${FG_MAGENTA}${MODE_BOLD}3. ${FG_MAGENTA}Install a TTY environment with a minimally themed Desktop environment. ${STYLES_OFF}$FG_MAGENTA \
+        $higlightedOption \
         \n  ${FG_MAGENTA}${MODE_BOLD}4.${STYLES_OFF} ${FG_MAGENTA}Install a TTY with configured SSH server and Ad-hoc wifi. \
         \n     ${FG_RED}WARNING: My networking configurations may break existing connectivity.$FG_MAGENTA \
         \n  ${FG_MAGENTA}${MODE_BOLD}5.${STYLES_OFF} ${FG_MAGENTA}Perform 1, 2, & 4  ( TUI with Networking Ad-hoc Sshd ) \
         \n  ${FG_MAGENTA}${MODE_BOLD}6.${STYLES_OFF} ${FG_MAGENTA}Perform All \
         \n  ${FG_MAGENTA}${MODE_BOLD}q.${STYLES_OFF} ${FG_MAGENTA}Quit.\n $STYLES_OFF"
 
-        ttyPromptInput "Installer Scripts:" "Select a menu number? [ 1-6 ]: " "3" "$FG_GREEN" "$BG_GREEN"
+        ttyPromptInput "Installer Scripts:" "Select a menu number? [ 1-6 ]: " "$readInput" "$FG_GREEN" "$BG_GREEN"
 
         case $readInput in
             1 ) ## 1. Import a personally curated Apt repository of Deb's

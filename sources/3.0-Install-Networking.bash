@@ -292,6 +292,48 @@ function Get_Networking_Applications {
     }
 }
 
+function Enable_Ethernet_Hotplug {
+
+    ## ethernet interface name
+    myeth=$(ls /sys/class/net | grep -E "eth")
+
+    if [ -z $myeth ]; then
+        myeth=$(ls /sys/class/net | grep -E "enp")
+
+        if [ -z $myeth ]; then
+            myeth=$(ls /sys/class/net | grep -E "en")
+        fi
+    fi
+
+    if [ -z $myeth ]; then
+        myeth=eth0
+    fi
+
+    ## ethernet interface name
+    if [ ! -z $myeth ]; then
+        if [ -f /etc/network/interfaces.d/setup ]; then
+            ## copy interface file
+            sudo cp /etc/network/interfaces.d/setup /etc/network/interfaces.d/setup.backup.$(date +%d%b%Y_%H%M%S)
+
+            tempFile=~/setup.temp
+
+            echo -e "## /etc/network/interfaces.d/setup \
+            \n\n#source /etc/network/interfaces.d/* \
+            \n\n# The loopback network interface \
+            \nauto lo \
+            \niface lo inet loopback \
+            \n\nauto $myeth \
+            \nallow-hotplug $myeth \
+            \niface $myeth inet dhcp " > $tempFile
+
+            sleep 1s
+            sudo mv $tempFile /etc/network/interfaces.d/setup
+        fi
+    fi
+
+}
+
+
 ## Initialize
 
 Decorative_Formatting
@@ -313,7 +355,7 @@ if [ $isDebian -eq 0 ]; then
     Ask4NetworkManager
 
     Set_WpaSupplicant
-
+    Enable_Ethernet_Hotplug
 else
     ## Cancel
     echo ""

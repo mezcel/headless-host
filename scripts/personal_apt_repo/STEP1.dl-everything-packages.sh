@@ -1,6 +1,6 @@
 #!/bin/bash
 
-## ############################################################################# 
+## #############################################################################
 ##
 ## ABOUT:
 ##
@@ -42,6 +42,7 @@ sudo apt install -y aspell
 #sudo apt install -y audacity
 sudo apt install -y bash
 sudo apt install -y bc
+sudo apt install -y dia
 sudo apt install -y bridge-utils
 sudo apt install -y build-essential
 sudo apt install -y cfdisk
@@ -59,7 +60,7 @@ sudo apt install -y dosfstools
 sudo apt install -y dpkg-dev
 sudo apt install -y dwm
 sudo apt install -y eject
-#sudo apt install -y elinks
+sudo apt install -y elinks
 sudo apt install -y emacs
 sudo apt install -y exfat-utils
 sudo apt install -y fdisk
@@ -157,7 +158,8 @@ sudo apt install -y resolvconf
 sudo apt install -y shellinabox
 sudo apt install -y simplescreenrecorder
 sudo apt install -y suckless-tools
-# sudo apt install -y texlive-full
+sudo apt install -y texlive-full
+sudo apt install -y texstudio-full
 sudo apt install -y thunar
 sudo apt install -y thunar-archive-plugin
 sudo apt install -y thunar-media-tags-plugin

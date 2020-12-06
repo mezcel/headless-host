@@ -177,7 +177,7 @@ function Install_Configurations {
     function Set_Sudo_User {
         me=$(whoami)
 
-        if [ $me = "root" ]; then
+        if [ $me == "root" ]; then
             adduser mezcel sudo
             usermod -aG sudo mezcel
 
@@ -538,8 +538,17 @@ function Install_Home {
 
         case $readInput in
             1 ) ## 1. Import a personally curated Apt repository of Deb's
-                source ./sources/0.0-Apt-Repository.bash
-                Optional_Alias
+                me=$(whoami)
+                if [ $me == "root" ]; then
+                    source ./sources/0.0-Apt-Repository.bash
+                    Optional_Alias
+                else
+                    echo ""
+                    ttyCenteredHeader "Canceled making custom APT mirror." "░" "$FG_YELLOW"
+                    ttyNestedString "Since APT repositories effect the system as a whole, special sudo permission must be considered. Bear in mind that though some packages are install-able offline, they are designed to be install online." "$FG_RED"
+                    ttyNestedString "For best results, go offline, log into the \"root\" account, and then run this script." "$FG_RED"
+                fi
+
                 Done_Message
                 ;;
             2 ) ## 2. Install just a Tty environment

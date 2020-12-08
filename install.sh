@@ -545,9 +545,9 @@ function Install_Home {
                 else
                     echo ""
                     ttyCenteredHeader "Canceled making custom APT mirror." "░" "$FG_YELLOW"
-                    ttyNestedString "Since APT repositories effect the system as a whole, special sudo permission must be considered. Bear in mind that though some packages are install-able offline, they are designed to be install online." "$FG_RED"
-                    ttyNestedString "For best results, go offline, log into the \"root\" account, and then run this script." "$FG_RED"
-					echo "\n\n"
+                    ttyNestedString "- Since APT repositories effect the system as a whole, special sudo permission must be considered. Bear in mind that though some packages are install-able offline, they are designed to be install online." "$FG_RED"
+                    ttyNestedString "- For best results, go offline, log into the \"root\" account, and then run this script." "$FG_RED"
+					echo -e "\n"
 					read -p "Press [Enter] to continue ..." enterKey
 
                 fi

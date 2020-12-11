@@ -280,12 +280,21 @@ function Install_Configurations {
             sleep 1s
 
             ## Decorate /etc/issue
+            #echo -en "\
+            #\n${bakred}${bldwht}# Headless Host                                              ${txtrst}\
+            #\n${txtwht}${bakred}- A Debian server respin by mezcel                           ${txtrst}\
+            #\n${txtwht}${bakred}- github: https://github.com/mezcel/headless-host.git        ${txtrst}\
+            #\n${txtrst}\
+            #\n" >> $issueTemp
+
+            ## Decorate /etc/issue
             echo -en "\
-            \n${bakred}${bldwht}# Headless Host                                              ${txtrst}\
-            \n${txtwht}${bakred}- A Debian server respin by mezcel                           ${txtrst}\
-            \n${txtwht}${bakred}- github: https://github.com/mezcel/headless-host.git        ${txtrst}\
+            \n${bakred}${bldwht}# Headless Host                                            $txtblk░$txtred░$txtgrn░$txtylw░$txtblu░$txtpur░$txtcyn░$txtwht░${bakred}    ${txtrst}\
+            \n${txtwht}${bakred}- A Debian server respin by mezcel                         $bldblk░$bldred░$bldgrn░$bldylw░$bldblu░$bldpur░$bldcyn░$bldwht░${bakred}    ${txtrst}\
+            \n${txtwht}${bakred}- github: https://github.com/mezcel/headless-host.git      $bakblk░$bakred░$bakgrn░$bakylw░$bakblu░$bakpur░$bakcyn░$bakwht░${bakred}    ${txtrst}\
             \n${txtrst}\
             \n" >> $issueTemp
+
             sleep 1s
 
             sudo mv $issueTemp $issueFile &>/dev/null
@@ -547,8 +556,8 @@ function Install_Home {
                     ttyCenteredHeader "Canceled making custom APT mirror." "░" "$FG_YELLOW"
                     ttyNestedString "- Since APT repositories effect the system as a whole, special sudo permission must be considered. Bear in mind that though some packages are install-able offline, they are designed to be install online." "$FG_RED"
                     ttyNestedString "- For best results, go offline, log into the \"root\" account, and then run this script." "$FG_RED"
-					echo -e "\n"
-					read -p "Press [Enter] to continue ..." enterKey
+                    echo -e "\n"
+                    read -p "Press [Enter] to continue ..." enterKey
 
                 fi
 

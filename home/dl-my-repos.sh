@@ -49,12 +49,12 @@ function Make_Directories {
     fi
 
     githubDirectory=~/github/$existingUser
-	promptString="${FG_GREEN}Where should Github directories be stored? [ ${FG_CYAN}$githubDirectory${FG_GREEN} ]: ${STYLES_OFF}"
+    promptString="${FG_GREEN}Where should Github directories be stored? [ ${FG_CYAN}$githubDirectory${FG_GREEN} ]: ${STYLES_OFF}"
 
     read -e -p "$promptString" -i "$githubDirectory" githubDirectory
 
     gistDirectory=~/gist.github/$existingUser
-	promptString="${FG_GREEN}Where should Gist directories be stored? [ ${FG_CYAN}$gistDirectory${FG_GREEN} ]: ${STYLES_OFF}"
+    promptString="${FG_GREEN}Where should Gist directories be stored? [ ${FG_CYAN}$gistDirectory${FG_GREEN} ]: ${STYLES_OFF}"
 
     read -e -p "$promptString" -i "$gistDirectory" gistDirectory
 
@@ -140,7 +140,8 @@ function Clone_Repos {
     git clone https://gist.github.com/82b46eb373ab49815bf5a516c43a85b7.git ~/gist.github/mezcel/notepadpp-notes.gist
     git clone https://gist.github.com/4de4493be820be7529efe75d89bf9176.git ~/gist.github/mezcel/99-cents.gist
     git clone https://gist.github.com/b4ce7f783597fb0ee97dfe66a9239175.git ~/gist.github/mezcel/terminal-profile-extras.gist
-	git clone https://gist.github.com/508c384d9200933761fa8ecbc4f4698c.git ~/gist.github/mezcel/cache-todo.gist
+    git clone https://gist.github.com/508c384d9200933761fa8ecbc4f4698c.git ~/gist.github/mezcel/cache-todo.gist
+    git clone https://gist.github.com/da976fcc71ce8cfeda778238aec9e2fd.git ~/gist.github/mezcel/lmms-notes.gist
 }
 
 function Set_Git_User {
@@ -171,13 +172,13 @@ function Set_Git_User {
 }
 
 function Greeter {
-	echo ""
-	echo -e "## ################################################################"
-	echo -e "## Clone repositories hosted on Github."
-	echo -e "##\thttps://github.com/mezcel"
-	echo -e "##\thttps://gist.github.com/mezcel"
-	echo -e "## ################################################################"
-	echo ""
+    echo ""
+    echo -e "## ################################################################"
+    echo -e "## Clone repositories hosted on Github."
+    echo -e "##\thttps://github.com/mezcel"
+    echo -e "##\thttps://gist.github.com/mezcel"
+    echo -e "## ################################################################"
+    echo ""
 }
 
 function Main {

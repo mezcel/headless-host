@@ -78,6 +78,7 @@ sudo apt install -y glade
 sudo apt install -y gnome-power-manager
 sudo apt install -y golang
 sudo apt install -y gparted
+sudo apt install -y groff
 sudo apt install -y gtk+2.0
 sudo apt install -y gtk+3.0
 sudo apt install -y gtk3-dev
@@ -158,8 +159,17 @@ sudo apt install -y resolvconf
 sudo apt install -y shellinabox
 sudo apt install -y simplescreenrecorder
 sudo apt install -y suckless-tools
+sudo apt install -y texlive-base
 sudo apt install -y texlive-full
-sudo apt install -y texstudio-full
+sudo apt install -y texlive-games
+sudo apt install -y texlive-humanities
+sudo apt install -y texlive-math-extra
+sudo apt install -y texlive-music
+sudo apt install -y texlive-pictures
+sudo apt install -y texlive-publishers
+sudo apt install -y texlive-science
+sudo apt install -y texlive-xetex
+sudo apt install -y texstudio
 sudo apt install -y thunar
 sudo apt install -y thunar-archive-plugin
 sudo apt install -y thunar-media-tags-plugin

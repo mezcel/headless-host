@@ -110,7 +110,7 @@ function Package_List {
 			mkdir -p $PackageDownloads
 
 			## prevent warning: "Download is performed unsandboxed as root"
-			sudo chown -R _apt:root $PackageDownloads
+			#sudo chown -R _apt:root $PackageDownloads
 
 			sleep 1
 			
@@ -140,7 +140,7 @@ function Download_Debs {
 			mkdir -p $PackageDownloads
 
 			## prevent warning: "Download is performed unsandboxed as root"
-			sudo chown -R _apt:root $PackageDownloads
+			#sudo chown -R _apt:root $PackageDownloads
 
 			sleep 1
 			cd $PackageDownloads

@@ -46,11 +46,11 @@ function About {
 	echo -e "$FG_YELLOW
 ## #####################################################################################################################
 ##
-## ABOUT:
+## ${MODE_BOLD}ABOUT: ${STYLES_OFF}${FG_YELLOW}
 ##
 ##  This script is used in preparing a personally curated Debian repository based on existing installed packages.
 ##
-## BACKGROUND:
+## ${MODE_BOLD}BACKGROUND: ${STYLES_OFF}${FG_YELLOW}
 ##
 ## This is generally a 2 step process.
 ##
@@ -61,7 +61,7 @@ function About {
 ##  * STEP 2: Download individual *.deb packages.
 ##            Many *.deb packages require additional dependencies, and dependents have dependents.
 ##
-## SCRIPT FUNCTION:
+## ${MODE_BOLD}SCRIPT FUNCTION: ${STYLES_OFF}${FG_YELLOW}
 ##
 ## The user will be prompted 2 questions:
 ##
@@ -72,7 +72,7 @@ function About {
 ##      - This will commence downloading the individual *.deb packages from the download script.
 ##      - A text file will be generated to list the contents of downloaded *.deb files in the downloaded directory.
 ##
-## Generated Resources:
+## ${MODE_BEGIN_UNDERLINE}Generated Resources: ${MODE_EXIT_UNDERLINE}
 ##
 ##  * Offline repository:            $PackageDownloads
 ##  * List of pre-existing packages: $Dpkg_List
@@ -108,6 +108,10 @@ function Package_List {
 	case $yn in
 		[Yy]* )	
 			mkdir -p $PackageDownloads
+
+			## prevent warning: "Download is performed unsandboxed as root"
+			sudo chown _apt:root $PackageDownloads
+
 			sleep 1
 			
 			## list installed package names and remove any occurrence of ":amd64"
@@ -134,6 +138,10 @@ function Download_Debs {
 	case $yn in
 		[Yy]* )	
 			mkdir -p $PackageDownloads
+
+			## prevent warning: "Download is performed unsandboxed as root"
+			sudo chown _apt:root $PackageDownloads
+
 			sleep 1
 			cd $PackageDownloads
 			

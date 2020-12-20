@@ -246,3 +246,17 @@ autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isT
 
 "set statusline=%f%m%r%h%w\ [%Y]\ [0x%02.2B]%<\ %F\ %=(col:%4v,\ row:%4l/%4L)\ %3p%%\ 
 "set statusline=%{StatuslineGit()}\ %f%m%r%h%w\ [%Y]\ [0x%02.2B]%<\ %F\ %=(col:%4v,\ row:%4l/%4L)\ %3p%%\ 
+
+"""" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""" Notes and reminders
+"""" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+"" VIM Search and replace syntax
+"" :%s/Search/Replace/CommandFlag
+"" :%s/Search-Word/Replace-Word/g
+"" :%s/Search-Word/Replace-Word/g
+"" :%s/Search-Word/Replace-Word/gc
+"" ## Search and replace in the current line only ##
+"" :s/Find-Word/Replace-Word/gc
+"" ## Change each 'Unix' to 'Linux' for all lines from line 36 to line 42 ##
+"" :36,42s/Unix/Linux/g

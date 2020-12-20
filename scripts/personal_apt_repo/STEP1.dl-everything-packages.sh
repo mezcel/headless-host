@@ -115,6 +115,8 @@ sudo apt install -y libheif1
 sudo apt install -y libimlib2
 sudo apt install -y libjson-c3
 sudo apt install -y libjson-c-dev
+sudo apt install -y libncurses5-dev
+sudo apt install -y libncursesw5-dev
 sudo apt install -y libobrender32v5
 sudo apt install -y libreoffice
 sudo apt install -y libunwind8

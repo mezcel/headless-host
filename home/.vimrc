@@ -251,9 +251,9 @@ autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isT
 """" Notes and reminders
 """" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-"" VIM Search and replace syntax
+"""" VIM Search and replace syntax
 "" :%s/Search/Replace/CommandFlag
-"" :%s/Search-Word/Replace-Word/g
+"" ## Whole Document ##
 "" :%s/Search-Word/Replace-Word/g
 "" :%s/Search-Word/Replace-Word/gc
 "" ## Search and replace in the current line only ##

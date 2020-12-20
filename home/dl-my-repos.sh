@@ -88,11 +88,11 @@ function Pull_Repos {
 
 function Clone_Repos {
 
-    ## #########################################################################
+    ## ######################################################
     ## Github Repositories ( https://github.com/mezcel )
-    ##
+    ## ######################################################
 
-    echo -e "${MODE_BOLD}${BG_MAGENTA}${FG_WHITE}\nClone Github repos\n $STYLES_OFF"
+    echo -e "${MODE_BOLD}${BG_MAGENTA}${FG_WHITE}\nClone Github repos:\n $STYLES_OFF"
 
     git clone https://github.com/mezcel/electron-container.git ~/github/mezcel/electron-container.git
     git clone https://github.com/mezcel/printf-time.git ~/github/mezcel/printf-time.git
@@ -114,11 +114,11 @@ function Clone_Repos {
     #git clone https://github.com/mezcel/scrapy-spider.git ~/github/mezcel/scrapy-spider
     #git clone https://github.com/mezcel/adeptus-mechanicus-stc.git ~/github/mezcel/drone-rpg
 
-    ## #########################################################################
+    ## ######################################################
     ## Gist Repositories ( https://gist.github.com/mezcel )
-    ##
+    ## ######################################################
 
-    echo -e "${MODE_BOLD}${BG_MAGENTA}${FG_WHITE}\nClone Gist repos\n $STYLES_OFF"
+    echo -e "${MODE_BOLD}${BG_MAGENTA}${FG_WHITE}\nClone Gist repos:\n $STYLES_OFF"
 
     git clone https://gist.github.com/eab7764d1f9e67d051fd59ec7ce3e066.git ~/gist.github/mezcel/git-notes.gist
     #git clone https://gist.github.com/64db9afd5419e557c0ee53ed935d516e.git ~/gist.github/mezcel/my-screen-gama
@@ -151,15 +151,17 @@ function Set_Git_User {
 
         echo -e "$BG_CYAN${FG_BLACK}\nConfigure Git for Github: \n$STYLES_OFF${FG_CYAN}"
 
-        githubusername=$(whoami)
-        promptString="${STYLES_OFF}${FG_CYAN}Enter your github user.name [ ${FG_GREEN}$githubusername${FG_CYAN} ]: ${STYLES_OFF}"
+        githubusername="$(whoami)"
+        promptString="Enter your github user.name [ ${FG_GREEN}$githubusername${FG_CYAN} ]: ${STYLES_OFF}"
 
-        read -e -p "$promptString" -i "$githubusername" githubusername
+        echo "${STYLES_OFF}${FG_CYAN}"
+        read -e -p "$promptString" -i "$githubusername" "githubusername"
 
-        githubuseremail=$githubusername@hotmail.com
-        promptString="${STYLES_OFF}${FG_CYAN}Enter github user.email [ ${FG_GREEN}$githubuseremail${FG_CYAN} ]: ${STYLES_OFF}"
+        githubuseremail="$githubusername@hotmail.com"
+        promptString="Enter github user.email [ ${FG_GREEN}$githubuseremail${FG_CYAN} ]: ${STYLES_OFF}"
 
-        read -e -p "$promptString" -i "$githubuseremail" githubuseremail
+        echo "${STYLES_OFF}${FG_CYAN}"
+        read -e -p "$promptString" -i "$githubuseremail" "githubuseremail"
 
         git config --global user.name $githubusername
         git config --global user.email $githubuseremail
@@ -168,17 +170,20 @@ function Set_Git_User {
         githubuseremail=$(cat ~/.gitconfig | grep "email" | awk '{print $3}')
 
         echo -e "${FG_MAGENTA}Existing Git User:\n\tgit config --global user.name ${FG_CYAN}$githubusername\n\t${FG_MAGENTA}git config --global user.email ${FG_CYAN}$githubuseremail $STYLES_OFF\n"
+
+        sleep 2s
     fi
 }
 
 function Greeter {
     echo ""
-    echo -e "## ################################################################"
+    echo -e "## ####################################"
     echo -e "## Clone repositories hosted on Github."
-    echo -e "##\thttps://github.com/mezcel"
-    echo -e "##\thttps://gist.github.com/mezcel"
-    echo -e "## ################################################################"
+    echo -e "##   https://github.com/mezcel"
+    echo -e "##   https://gist.github.com/mezcel"
+    echo -e "## ####################################"
     echo ""
+    sleep 1s
 }
 
 function Main {

@@ -42,7 +42,6 @@ sudo apt install -y aspell
 #sudo apt install -y audacity
 sudo apt install -y bash
 sudo apt install -y bc
-sudo apt install -y dia
 sudo apt install -y bridge-utils
 sudo apt install -y build-essential
 sudo apt install -y cfdisk
@@ -52,6 +51,7 @@ sudo apt install -y dbus-x11
 sudo apt install -y debianutils
 sudo apt install -y dhcpcd5
 sudo apt install -y dhcpcd-dbus
+sudo apt install -y dia
 sudo apt install -y dialog
 sudo apt install -y dnsmasq
 sudo apt install -y dnscrypt-proxy
@@ -69,6 +69,7 @@ sudo apt install -y ffmpegthumbnailer
 sudo apt install -y firefox-esr
 sudo apt install -y fonts-inconsolata
 sudo apt install -y fonts-ubuntu-console
+sudo apt install -y gawk
 sudo apt install -y gdb
 sudo apt install -y geany-plugins
 sudo apt install -y geany

@@ -80,5 +80,6 @@ remove_file /etc/issue.backup*
 remove_file /etc/motd.backup*
 remove_file /etc/network/interface.backup*
 remove_file /etc/apt/sources.list.backup*
+remove_file /etc/network/interfaces.d/setup.backup*
 
 echo -e "done.\n"

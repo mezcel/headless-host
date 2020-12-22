@@ -569,9 +569,10 @@ function Conn_Controlls {
 
         echo -e "$FG_BLUE $MODE_DIM"
         ping -c3 google.com
+        pingPass=$?
         echo -e "$STYLES_OFF"
 
-        if [ $? -ne 0 ]; then
+        if [ $pingPass -ne 0 ]; then
             ttyCenteredHeader "No Internet connection is available." "░" "$FG_GREEN"
         else
             ttyCenteredHeader "You are now connected to (MY_SSID) wifi." "░" "$FG_GREEN"
@@ -674,7 +675,7 @@ echo -e "\ndone."
     ' > $laucherSriptName
     sleep 2s
 
-	chmod +x $laucherSriptName
+    chmod +x $laucherSriptName
 
     MY_WLAN=$myInterface
     MY_SSID=$ssidName

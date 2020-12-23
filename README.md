@@ -73,8 +73,11 @@ Typing ```hh``` in the ```bash``` terminal will launch a script which serves as 
 
 ---
 
-## Unrelated Plugins
+## Extras
 
-Not included in this project:
+Theme packs not directly included in this project:
 
 * [adeverteuil/console-solarized.git](https://github.com/adeverteuil/console-solarized.git)
+* [morhetz/gruvbox-contrib.git](https://github.com/morhetz/gruvbox-contrib.git)
+* [arcticicestudio/nord.git](https://github.com/arcticicestudio/nord)
+* [solarized](https://ethanschoonover.com/solarized)

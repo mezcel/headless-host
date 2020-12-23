@@ -21,7 +21,7 @@ if [ "$TERM" = "linux" ]; then
     #*color0:  #fdf4c1
     define_color 0 fdf4c1
     #*color8:  #928374
-    define_color 8 928374
+    define_color 8 000000
 
     #! DarkRed + Red
     #*color1:  #cc241d

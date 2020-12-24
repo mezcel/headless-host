@@ -578,6 +578,7 @@ function Configure_Tty_Environment {
             sudo cp -rf --no-preserve=mode ./home/terminalsexy ~/
             sleep 1s
             sudo chmod 777 -R ~/terminalsexy
+            sleep 1s
         fi
 
         ## oh-my-bash
@@ -591,6 +592,21 @@ function Configure_Tty_Environment {
             sleep 1s
             sudo chmod -R 777 ~/.oh-my-bash
             sudo cp ~/.oh-my-bash/templates/bashrc.osh-template ~/.bashrc
+            sleep 1s
+        fi
+
+        ## Debian TTY color scheme
+        uname -v | grep "Debian" &>/dev/null
+        isDebian=$?
+
+        ttyColorScheme=~/terminalsexy/Linux_Console/myGruvbox-dark.sh
+
+        if [ $isDebian -eq 0 ]; then
+            if [ -f $ttyColorScheme ]; then
+                ttyNestedString "Setting the OS Linux TTY color scheme ..." "$MODE_BOLD$FG_GREEN"
+                echo -e "\n## TTY Color scheme\nsource $ttyColorScheme \n" >> ~/.bashrc
+                sleep 1s
+            fi
         fi
 
         ## Home Directories

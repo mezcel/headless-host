@@ -648,12 +648,12 @@ function Wsl_Terminal {
     sudo apt install -y dialog
     sudo apt install -y highlight
 
-    sudo apt install -y groff 
-	sudo apt install -y pandoc
-	
+    sudo apt install -y man-db
+    sudo apt install -y groff
+    sudo apt install -y pandoc
 
     ## Home Directories
-	ttyNestedString "Populating home Directory Configs." "$MODE_BOLD$FG_GREEN"
+    ttyNestedString "Populating home Directory Configs." "$MODE_BOLD$FG_GREEN"
     mkdir -p ~/Downloads
 
     ## Vim cache
@@ -662,24 +662,24 @@ function Wsl_Terminal {
     mkdir -p ~/.undo/
 
     ttyNestedString "Finished Populating home Directory Configs." "$MODE_BOLD$FG_YELLOW"
-	
-	## WSL ssh server
-	#ttyNestedString "Enable WSL Server to SSH with VS2019" "$MODE_BOLD$FG_GREEN"
-	
-	
-	## Use VS2019 UI on WLS Hosted Files
-	## Note: Tools > Options > Cross Platform > Connection Manager
-	#sudo apt install -y openssh-server
-	#sudo apt install -y gdbserver
-	
-	#echo -e "\nPasswordAuthentication yes\n" >> /etc/ssh/sshd_config
-	
-	## generate SSH keys
-	#sudo ssh-keygen -A
-	
-	#sudo service ssh start
-	
-	#ttyNestedString "Enable WSL Server to SSH with VS2019" "$MODE_BOLD$FG_GREEN"
+
+    ## WSL ssh server
+    #ttyNestedString "Enable WSL Server to SSH with VS2019" "$MODE_BOLD$FG_GREEN"
+
+
+    ## Use VS2019 UI on WLS Hosted Files
+    ## Note: Tools > Options > Cross Platform > Connection Manager
+    #sudo apt install -y openssh-server
+    #sudo apt install -y gdbserver
+
+    #echo -e "\nPasswordAuthentication yes\n" >> /etc/ssh/sshd_config
+
+    ## generate SSH keys
+    #sudo ssh-keygen -A
+
+    #sudo service ssh start
+
+    #ttyNestedString "Enable WSL Server to SSH with VS2019" "$MODE_BOLD$FG_GREEN"
 }
 
 ## #############################################################################

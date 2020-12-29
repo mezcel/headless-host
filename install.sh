@@ -181,7 +181,8 @@ function Install_Configurations {
             adduser mezcel sudo
             usermod -aG sudo mezcel
 
-            ttyPromptInput "Super User Permission:" "Edit the sudoers configuration file? [ Y/n ]: " "yes" "$FG_RED" "$BG_RED"
+            readInput=yes
+            ttyPromptInput "Super User Permission:" "Edit the sudoers configuration file? [ Y/n ]: " "$readInput" "$FG_RED" "$BG_RED"
 
             case $readInput in
                 [Yy]* )
@@ -503,6 +504,59 @@ function Install_Home {
         #ttyHR "░" "$FG_CYAN"
     }
 
+    function Clean_Backups {
+        ## Remove residual backups created by this installer
+
+        oldBackups=~/Downloads/hh_backups/
+
+        ttyCenteredHeader "Move Backup Files and Directories" "░" "$FG_YELLOW"
+        ttyNestedString "A number of backup files were created by this installer." "$FG_YELLOW"
+        ttyNestedString "Backups were renamed  using it's original name with the following suffix \".backup.TIME_STAMP\" in the same directory location as it's origin. I recommend cleaning out these backups." "$FG_YELLOW"
+        ttyNestedString "If you so choose this script will move them into a \"$oldBackups\" directory for convenience." "$FG_YELLOW"
+
+        readInput=yes
+        ttyPromptInput "Clean out backup files:" "Move backup files? [ Y/n ]: " "$readInput" "$FG_YELLOW" "$BG_YELLOW"
+
+        case $readInput in
+            [Yy]* )
+                ## dim warning messages
+                echo -e "$MODE_DIM$FG_RED"
+
+                ## create a temp dir
+                mkdir -p $oldBackups
+                sudo chmod 777 $oldBackups
+                sleep 1s
+
+                ## Move backup Dirs
+
+                sudo mv ~/.vim.backup* $oldBackups
+                sudo mv ~/terminalsexy.backup* $oldBackups
+                sudo mv ~/suckless.backup* $oldBackups
+
+                ## Move backup files
+
+                sudo mv ~/.vimrc.backup* $oldBackups
+                sudo mv ~/.tmux.conf.backup* $oldBackups
+                sudo mv ~/.bashrc.backup* $oldBackups
+                sudo mv ~/.toprc.backup* $oldBackups
+                sudo mv ~/.xinitrc.backup* $oldBackups
+                sudo mv /etc/issue.backup* $oldBackups
+                sudo mv /etc/motd.backup* $oldBackups
+                sudo mv /etc/network.backup* $oldBackups
+                sudo mv /etc/apt/sources.list.backup* $oldBackups
+                sudo mv /etc/network/interfaces.d/setup.backup* $oldBackups
+
+                ttyNestedString "Done moving backup files to $oldBackups." "$FG_GREEN"
+                sleep 1s
+                ;;
+            * )
+                ttyNestedString "Backup files and directories will stay in the directories where they were created." "$FG_GREEN"
+                sleep 2s
+                ;;
+        esac
+
+    }
+
     function Done_Message {
         selectionString=""
         case $1 in
@@ -571,6 +625,7 @@ function Install_Home {
                 Optional_Alias
                 Decorate_MotdIssue
                 Skel_HeadlessHost
+                Clean_Backups
                 Done_Message $installNo
                 ;;
             3 ) ## 3. Install a Tty environment with a minimally themed Desktop environment.
@@ -583,6 +638,7 @@ function Install_Home {
                 Optional_Alias
                 Decorate_MotdIssue
                 Skel_HeadlessHost
+                Clean_Backups
                 Done_Message $installNo
                 ;;
             4 ) ## 4. Install ad-hoc ssh server features.
@@ -593,6 +649,7 @@ function Install_Home {
                 Optional_Alias
                 Decorate_MotdIssue
                 Skel_HeadlessHost
+                Clean_Backups
                 Done_Message $installNo
                 ;;
             5 ) ## 5. Perform 1, 2, & 4  ( My TUI with Ad-hoc sshd )
@@ -604,6 +661,7 @@ function Install_Home {
                 Optional_Alias
                 Decorate_MotdIssue
                 Skel_HeadlessHost
+                Clean_Backups
                 Done_Message $installNo
                 ;;
             6 ) ## 6. Perform All        ( My DE )
@@ -617,6 +675,7 @@ function Install_Home {
                 Optional_Alias
                 Decorate_MotdIssue
                 Skel_HeadlessHost
+                Clean_Backups
                 Done_Message $installNo
                 ;;
             * ) ## Quit installer
@@ -635,12 +694,12 @@ function main {
     Install_Home
 
     Tput_Colors
-    ttyHighlightRow "Login into the headless-host installer ..." "$BG_CYAN"
+    ttyHighlightRow "Logging into the headless-host installer ..." "$BG_CYAN"
 
     sudo clear
     if [ $? -ne 0 ]; then echo "login failed"; exit; fi
 
-    ## Prompts
+    ## Installer Prompts
 
     Welcome_Header
     Home_Menu_Prompt

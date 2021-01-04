@@ -170,7 +170,18 @@ function Decorative_Formatting {
 
         ttyHighlightRow "$promptTitle" "$tputBgColor"
 
-        read -e -p " $tputFgColor$promptString$STYLES_OFF" -i "$defaultAnswer" readInput
+        case $defaultAnswer in
+            [Nn]* )
+                readWait='-t 4'
+                ;;
+            * )
+                readWait=""
+                ;;
+        esac
+
+        read $readWait -e -p " $tputFgColor$promptString$STYLES_OFF" -i "$defaultAnswer" readInput
+        if [ $? -ne 0 ]; then echo ""; fi
+
         printf "$STYLES_OFF\n"
         sleep 1
     }
@@ -182,7 +193,7 @@ function Configure_Tty_Environment {
 
         if [ $me = "root" ]; then
             readInput=yes
-            promptString="Give a user (sudo/sudoer) privilege? [ y/N ]: "
+            promptString="Give a user (sudo/sudoer) privilege? [ Y/n ]: "
             ttyHighlightRow "Edit super user:" "$promptString" "$readInput" "$FG_YELLOW"
 
             case $yn in
@@ -262,8 +273,9 @@ function Configure_Tty_Environment {
                     ttyNestedString "I recommend restarting the computer now." "$FG_RED"
                     ttyNestedString "Note: You will need to run the installer again. On the next pass the option to install brcm80211 will be default to \"no\" for convenience." "$FG_RED"
 
+                    readInput=yes
                     promptString="Restart the computer now? [ Y/n ]: "
-                    ttyPromptInput "Restart:" "$promptString" "yes" "$FG_GREEN" "$BG_GREEN"
+                    ttyPromptInput "Restart:" "$promptString" "$readInput" "$FG_GREEN" "$BG_GREEN"
 
                     case $readInput in
                         [Yy]* )

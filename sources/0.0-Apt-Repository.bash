@@ -171,7 +171,18 @@ function Decorative_Formatting {
 
         ttyHighlightRow "$promptTitle" "$tputBgColor"
 
-        read -e -p " $tputFgColor$promptString$STYLES_OFF" -i "$defaultAnswer" readInput
+        case $defaultAnswer in
+            [Nn]* )
+                readWait='-t 4'
+                ;;
+            * )
+                readWait=""
+                ;;
+        esac
+
+        read $readWait -e -p " $tputFgColor$promptString$STYLES_OFF" -i "$defaultAnswer" readInput
+        if [ $? -ne 0 ]; then echo ""; fi
+
         printf "$STYLES_OFF\n"
         sleep 1
     }
@@ -276,8 +287,9 @@ function Configure_Apt {
         else
             ## Yes Internet
 
+            readInput=yes
             promptString="Overwrite existing sources.list with a USA Debian mirror? [ Y/n ]: "
-            ttyPromptInput "Mirror link source:" "$promptString" "yes" "$FG_YELLOW" "$BG_YELLOW"
+            ttyPromptInput "Mirror link source:" "$promptString" "$readInput" "$FG_YELLOW" "$BG_YELLOW"
 
             case $readInput in
                 [Yy]* )
@@ -300,8 +312,9 @@ function Configure_Apt {
             esac
 
             echo -e ""
+            readInput=no
             promptString="Manually edit sources.list in Vi? [ y/N ]: "
-            ttyPromptInput "Mirror link source:" "$promptString" "no" "$FG_YELLOW" "$BG_YELLOW"
+            ttyPromptInput "Mirror link source:" "$promptString" "$readInput" "$FG_YELLOW" "$BG_YELLOW"
 
             case $readInput in
                 [Yy]* )

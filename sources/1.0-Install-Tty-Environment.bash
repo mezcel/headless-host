@@ -172,7 +172,7 @@ function Decorative_Formatting {
 
         case $defaultAnswer in
             [Nn]* )
-                readWait='-t 4'
+                readWait='-t 10'
                 ;;
             * )
                 readWait=""

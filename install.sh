@@ -412,8 +412,9 @@ function Install_Configurations {
             ttyNestedString "I made a bash script to quickly launch common process from the terminal." "$FG_YELLOW"
             ttyNestedString "If you want, I will put the \"headless-host-alias.bash\" file into ~/ and make an \"hh\" alias in the ~/.bashrc" "$FG_YELLOW"
 
+            readInput=yes
             promptString="Add the \"hh\" alias ? [ Y/n ]: "
-            ttyPromptInput "Bash alias:" "$promptString" "yes" "$FG_GREEN" "$BG_GREEN"
+            ttyPromptInput "Bash alias:" "$promptString" "$readInput" "$FG_GREEN" "$BG_GREEN"
 
             case $readInput in
                 [Yy]* )
@@ -458,8 +459,9 @@ function Install_Configurations {
 
                 ## prompt to manually add headless-host to a preexisting user
                 echo ""
-                promptSting="Add the headless-host repo to an existing user's ~/ ? [ y/N ]: "
-                ttyPromptInput "/etc/skel file:" "$promptSting" "yes" "$FG_GREEN" "$BG_GREEN"
+                readInput=yes
+                promptSting="Add the headless-host repo to an existing user's ~/ ? [ Y/n ]: "
+                ttyPromptInput "/etc/skel file:" "$promptSting" "$readInput" "$FG_GREEN" "$BG_GREEN"
 
                 case $readInput in
                     [Yy]* )
@@ -666,6 +668,7 @@ function Install_Home {
                 Set_Sudo_User
                 source ./sources/0.0-Apt-Repository.bash
                 source ./sources/1.0-Install-Tty-Environment.bash
+                source ./sources/3.0-Install-Networking.bash
                 source ./sources/3.1-Install-Wifi-Adhoc.bash
 
                 Optional_Alias

@@ -258,7 +258,7 @@ function Configure_Router {
 
         ttyNestedString "You can update grub to recognize Wifi and Ethernet interfaces as \"wlan0\" and \"eth0\", instead of however else the kernel decided to name them by default. The computer will need to reboot after any GRUB alterations." "$FG_YELLOW"
 
-        promptString="Update the /etc/default/grub file? [ n/Y ]: "
+        promptString="Update the /etc/default/grub file? [ y/N ]: "
         readInput=no
         ttyPromptInput "GRUB network interface names" "$promptString" "$readInput" "$FG_RED" "$BG_RED"
         sleep 2s

@@ -204,7 +204,7 @@ function turn_on_wifi {
     myInterface=$(sudo iw dev | grep Interface | awk '{print $2}')
 
     echo -e "\n${FG_CYAN}(step 1 of 4)${FG_NoColor}\tDetect Wifi Hardware Interface:\t\t${MODE_BOLD}$myInterface${FG_NoColor}\n"
-    sleep 2s
+    sleep 3s
 
     ## turn on wifi hardware
     echo -e "${FG_CYAN}(step 2 of 4)${FG_NoColor}\tSwitch ON the Wifi hardware ...\t\t${FG_GREEN}processing ...${FG_NoColor}\n"
@@ -224,7 +224,7 @@ function select_ssid {
 
     ssidArr=()
     ssidArr=($(ps -u | sudo iw dev $myInterface scan | grep SSID | awk '{print $2}'))
-    sleep 3s
+    sleep 5s
 
     echo -e "\t\t${MODE_BEGIN_UNDERLINE}List of available SSID's:${MODE_EXIT_UNDERLINE}"
     count=0

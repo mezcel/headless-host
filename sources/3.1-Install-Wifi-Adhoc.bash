@@ -298,12 +298,19 @@ function Configure_Router {
         esac
     }
 
-    function Install_Network_Drivers {
+    function Install_Packages {
+
+        sudo apt update
+        sudo apt --fix-broken install
+        sudo apt update
+
+        ## Install network drivers
+        
         ttyCenteredHeader "Network drivers" "-" "$FG_CYAN"
         sleep 2s
 
-        sudo apt install -y linux-image-$(uname -r)
-        sudo apt install -y linux-headers-$(uname -r)
+        #sudo apt install -y linux-image-$(uname -r)
+        #sudo apt install -y linux-headers-$(uname -r)
 
         sudo apt install -y firmware-linux-free
         sudo apt install -y firmware-linux-nonfree
@@ -354,19 +361,10 @@ function Configure_Router {
             esac
 
         fi
-    }
-
-    function Install_Packages {
+    
         ttyCenteredHeader "Installing applications focused on sshd access point configuration" "-" "$FG_CYAN"
         sleep 2s
-
-        sudo apt update
-        sudo apt --fix-broken install
-        sudo apt update
-
-        ## Install network drivers
-        Install_Network_Drivers
-
+		
         sudo apt install -y resolvconf
 
         sudo apt install -y dnsmasq
@@ -533,7 +531,7 @@ function Configure_Router {
 
                 sudo sed '/DAEMON_CONF=""/c\DAEMON_CONF="/etc/hostapd/hostapd.conf"' /etc/default/hostapd > ~/default_hostapd
 
-                if [ -f ~/init_d_hostapd ]; then
+                if [ -f ~/default_hostapd ]; then
                     sudo mv ~/default_hostapd /etc/default/hostapd
                 fi
                 ;;
@@ -548,11 +546,16 @@ function Configure_Router {
         sudo ip link set $mywlan up
         sudo systemctl stop dnsmasq
         sudo systemctl stop hostapd
+        sleep 2s
+
         sudo systemctl unmask hostapd
         sudo systemctl enable hostapd
         sudo systemctl restart hostapd
+        sleep 2s
+
         sudo systemctl enable dnsmasq
         sudo systemctl restart dnsmasq
+        sleep 2s
     }
 
     function Customize_HostSshd {
@@ -564,7 +567,7 @@ function Configure_Router {
         ttyPromptInput "Customize /etc/ssh/sshd_config" "$promptString" "$readInput" "$FG_GREEN" "$BG_GREEN"
 
         myListenAddresses=$( ip -o -4 addr show | awk '{print $4}' | cut -d/ -f1 | awk '{print "ListenAddress "$1}' )
-        sleep 1s
+        sleep 3s
 
         case $readInput in
             [Yy]* )
@@ -674,6 +677,7 @@ function Configure_Router {
 
         ## ethernet interface name
         myeth=$(ls /sys/class/net | grep -E "eth")
+        sleep 2s
 
         if [ -z $myeth ]; then
             myeth=$(ls /sys/class/net | grep -E "enp")
@@ -694,6 +698,7 @@ function Configure_Router {
 
         ## wireless interface name
         mywlan=$(ls /sys/class/net | grep -E "wl")
+        sleep 2s
 
         if [ -z $mywlan ]; then
             mywlan=wlan0

@@ -23,6 +23,20 @@
 * Configs for my headless pocket computer.
 * It is also likely to work for, or be similar to a "Raspbian Pi" configuration. IDK. *I have not tested it on a Pi.*
 
+```sh
+## Debian Dependencies:
+
+sudo apt install -y firmware-linux-free
+sudo apt install -y firmware-linux-nonfree
+sudo apt install -y firmware-iwlwifi
+sudo apt install -y resolvconf
+sudo apt install -y dnsmasq 
+sudo apt install -y iptables 
+sudo apt install -y hostapd
+sudo apt install -y ifplugd
+sudo apt install -y openssh-server
+```
+
 ##### 2.1.1 /etc/network/interfaces
 
 ```conf
@@ -69,7 +83,15 @@ wpa_pairwise=TKIP
 rsn_pairwise=CCMP
 ```
 
-##### 2.1.3 /etc/dnsmasq.conf
+##### 2.1.3 /etc/default/hostapd
+
+```conf
+## /etc/default/hostapd
+
+DAEMON_CONF="/etc/hostapd/hostapd.conf"
+```
+
+##### 2.1.4 /etc/dnsmasq.conf
 
 ```conf
 ## /etc/dnsmasq.conf
@@ -77,6 +99,15 @@ rsn_pairwise=CCMP
 interface=$mywlan
 dhcp-range=10.42.0.0,10.42.0.8,12h
 ```
+
+##### 2.1.5 /etc/default/grub
+
+```conf
+## /etc/default/grub
+
+GRUB_CMDLINE_LINUX_DEFAULT="net.ifnames=0"
+```
+
 ---
 
 ### 2.2 Basic NetworkManager (Alternate Method)

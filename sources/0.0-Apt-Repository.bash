@@ -171,16 +171,7 @@ function Decorative_Formatting {
 
         ttyHighlightRow "$promptTitle" "$tputBgColor"
 
-        case $defaultAnswer in
-            [Nn]* )
-                readWait='-t 10'
-                ;;
-            * )
-                readWait=""
-                ;;
-        esac
-
-        read $readWait -e -p " $tputFgColor$promptString$STYLES_OFF" -i "$defaultAnswer" readInput
+        read -e -p " $tputFgColor$promptString$STYLES_OFF" -i "$defaultAnswer" readInput
         if [ $? -ne 0 ]; then echo ""; fi
 
         printf "$STYLES_OFF\n"

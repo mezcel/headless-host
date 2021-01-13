@@ -552,11 +552,16 @@ function Install_Home {
                 sudo mv ~/.bashrc.backup* $oldBackups
                 sudo mv ~/.toprc.backup* $oldBackups
                 sudo mv ~/.xinitrc.backup* $oldBackups
+
                 sudo mv /etc/issue.backup* $oldBackups
                 sudo mv /etc/motd.backup* $oldBackups
                 sudo mv /etc/network.backup* $oldBackups
+                sudo mv /etc/dnsmasq.conf.backup* $oldBackups
+                sudo mv /etc/hostname.conf.backup* $oldBackups
                 sudo mv /etc/apt/sources.list.backup* $oldBackups
                 sudo mv /etc/network/interfaces.d/setup.backup* $oldBackups
+                sudo mv /etc/default/grub.backup* $oldBackups
+                sudo mv /etc/default/hostapd.backup* $oldBackups
 
                 ttyNestedString "Done moving backup files to $oldBackups." "$FG_GREEN"
                 sleep 1s

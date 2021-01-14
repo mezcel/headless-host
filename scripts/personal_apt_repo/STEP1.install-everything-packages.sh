@@ -33,10 +33,12 @@ sudo apt install -y firmware-iwlwifi
 sudo apt install -y broadcom-sta-dkms
 
 sudo apt install -y acpi
+sudo apt install -y acpid
 sudo apt install -y alsa-base
 sudo apt install -y alsa-utils
 sudo apt install -y alsa-oss
 sudo apt install -y alsamixergui
+sudo apt install -y apmd
 sudo apt install -y arandr
 sudo apt install -y arc-theme
 sudo apt install -y aspell
@@ -47,6 +49,7 @@ sudo apt install -y bridge-utils
 sudo apt install -y build-essential
 sudo apt install -y cfdisk
 sudo apt install -y conky
+sudo apt install -y cpufrequtils
 sudo apt install -y curl
 sudo apt install -y dbus-x11
 sudo apt install -y debianutils
@@ -105,6 +108,7 @@ sudo apt install -y isc-dhcp-client
 sudo apt install -y isc-dhcp-server
 sudo apt install -y iwd
 sudo apt install -y jq
+sudo apt install -y laptop-mode-tools
 sudo apt install -y libasound2
 sudo apt install -y libblockdev-crypto2
 sudo apt install -y libdvd-pkg
@@ -155,6 +159,7 @@ sudo apt install -y pandoc
 sudo apt install -y pavucontrol
 sudo apt install -y pcmanfm
 sudo apt install -y poppler-utils
+sudo apt install -y powertop
 sudo apt install -y ppp
 sudo apt install -y pulseaudio
 sudo apt install -y python2

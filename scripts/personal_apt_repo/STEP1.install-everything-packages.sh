@@ -22,6 +22,7 @@
 
 #sudo apt install -y linux-image-4.19.0-10
 sudo apt install -y linux-image-$(uname -r)
+#sudo apt -t buster-backports install linux-image-$(uname -r)
 #sudo apt install -y linux-headers-4.19.0-10
 sudo apt install -y linux-headers-$(uname -r)
 
@@ -49,6 +50,7 @@ sudo apt install -y conky
 sudo apt install -y curl
 sudo apt install -y dbus-x11
 sudo apt install -y debianutils
+sudo apt install -y dh-autoreconf
 sudo apt install -y dhcpcd5
 sudo apt install -y dhcpcd-dbus
 sudo apt install -y dia
@@ -96,6 +98,7 @@ sudo apt install -y ifplugd
 sudo apt install -y ii
 sudo apt install -y ifupdown
 sudo apt install -y inetutils
+sudo apt install -y inxi
 sudo apt install -y iproute2
 sudo apt install -y iputils-ping
 sudo apt install -y isc-dhcp-client
@@ -119,7 +122,9 @@ sudo apt install -y libjson-c-dev
 sudo apt install -y libncurses5-dev
 sudo apt install -y libncursesw5-dev
 sudo apt install -y libobrender32v5
+sudo apt install -y libpam0g-dev
 sudo apt install -y libreoffice
+sudo apt install -y libssl-dev
 sudo apt install -y libunwind8
 sudo apt install -y libusbmuxd-tools
 sudo apt install -y libvte-dev
@@ -220,3 +225,4 @@ sudo apt install -y xterm
 sudo apt install -y xvkbd
 sudo apt install -y zathura
 sudo apt install -y zip
+sudo apt install -y zlib1g-dev

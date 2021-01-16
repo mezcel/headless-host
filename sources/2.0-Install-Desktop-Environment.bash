@@ -179,6 +179,8 @@ function Decorative_Formatting {
                 ;;
         esac
 
+        echo ""
+        ttyNestedString "(wait time < 10sec) '$defaultAnswer' will automatically be input ..." "$FG_NoColor"
         read $readWait -e -p " $tputFgColor$promptString$STYLES_OFF" -i "$defaultAnswer" readInput
         if [ $? -ne 0 ]; then echo ""; fi
 

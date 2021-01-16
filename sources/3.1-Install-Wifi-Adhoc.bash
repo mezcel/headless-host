@@ -489,8 +489,9 @@ function Write_Configs {
 
 function ShellInABoxD {
     echo ""
-    promptQuestion="Do you want to install shellinabox? [ y/N ]: "
+    promptQuestion="Do you want to install \"shellinabox\"? [ y/N ]: "
     yn=n
+    sleep 1s
     read -e -p "$promptQuestion" -i "$yn" yn
     case $yn in
         [Yy]* )

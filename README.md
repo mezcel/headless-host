@@ -81,3 +81,4 @@ Theme packs not directly included in this project:
 * [morhetz/gruvbox-contrib.git](https://github.com/morhetz/gruvbox-contrib.git)
 * [arcticicestudio/nord.git](https://github.com/arcticicestudio/nord)
 * [solarized](https://ethanschoonover.com/solarized)
+* [shvchk/poly-dark.git](https://github.com/shvchk/poly-dark.git) | Grub theme

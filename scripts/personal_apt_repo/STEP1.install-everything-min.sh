@@ -19,19 +19,28 @@
 ##
 ## #############################################################################
 
-
+## ##################
+## Hardware
+## ##################
 #sudo apt install -y linux-image-4.19.0-10
 sudo apt install -y linux-image-$(uname -r)
 #sudo apt -t buster-backports install linux-image-$(uname -r)
 #sudo apt install -y linux-headers-4.19.0-10
 sudo apt install -y linux-headers-$(uname -r)
+sudo apt install -y grub-efi-amd64
 
+sudo apt install -y firmware-linux
 sudo apt install -y firmware-linux-free
 sudo apt install -y initramfs-tools
 sudo apt install -y firmware-linux-nonfree
 sudo apt install -y firmware-iwlwifi
+sudo apt install -y firmware-realtek
 sudo apt install -y broadcom-sta-dkms
+sudo apt install -y grub
 
+## ##################
+## Software
+## ##################
 sudo apt install -y acpi
 sudo apt install -y acpid
 sudo apt install -y alsa-base
@@ -48,6 +57,7 @@ sudo apt install -y bc
 sudo apt install -y bridge-utils
 sudo apt install -y build-essential
 sudo apt install -y cfdisk
+sudo apt install -y cmatrix
 sudo apt install -y conky
 sudo apt install -y cpufrequtils
 sudo apt install -y curl
@@ -101,12 +111,12 @@ sudo apt install -y ifplugd
 sudo apt install -y ii
 sudo apt install -y ifupdown
 sudo apt install -y inetutils
-sudo apt install -y inxi
+#sudo apt install -y inxi
 sudo apt install -y iproute2
 sudo apt install -y iputils-ping
 sudo apt install -y isc-dhcp-client
 sudo apt install -y isc-dhcp-server
-sudo apt install -y iwd
+#sudo apt install -y iwd
 sudo apt install -y jq
 sudo apt install -y laptop-mode-tools
 sudo apt install -y libasound2
@@ -137,6 +147,8 @@ sudo apt install -y libxext-dev
 sudo apt install -y libxfont2
 sudo apt install -y libxft-dev
 sudo apt install -y libxinerama-dev
+sudo apt install -y lshw
+sudo apt install -y lsusb
 sudo apt install -y lxappearance
 sudo apt install -y mousepad
 sudo apt install -y mplayer
@@ -144,7 +156,7 @@ sudo apt install -y mupdf
 sudo apt install -y net-tools
 #sudo apt install -y network-manager
 #sudo apt install -y network-manager-gnome
-sudo apt install -y nm-tray
+#sudo apt install -y nm-tray
 sudo apt install -y nftables
 sudo apt install -y nfs-utils
 sudo apt install -y ntp
@@ -155,6 +167,7 @@ sudo apt install -y obconf
 sudo apt install -y openbox
 sudo apt install -y openssh
 sudo apt install -y openssh-server
+sudo apt install -y os-prober
 sudo apt install -y pandoc
 sudo apt install -y pavucontrol
 sudo apt install -y pcmanfm

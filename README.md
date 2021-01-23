@@ -1,6 +1,6 @@
 # headless-host
-
-<a href="https://www.debian.org" target="_blank"><img src="https://www.debian.org/logos/openlogo-100.png" height="80"></a>
+![hh-white.png](home/Images/hh-white.png)
+<!--<a href="https://www.debian.org" target="_blank"><img src="https://www.debian.org/logos/openlogo-100.png" height="80"></a>-->
 
 ## About
 

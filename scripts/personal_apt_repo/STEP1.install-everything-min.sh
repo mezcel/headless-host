@@ -31,8 +31,8 @@ sudo apt install -y grub-efi-amd64
 
 sudo apt install -y firmware-linux
 sudo apt install -y firmware-linux-free
-sudo apt install -y initramfs-tools
 sudo apt install -y firmware-linux-nonfree
+sudo apt install -y initramfs-tools
 sudo apt install -y firmware-iwlwifi
 sudo apt install -y firmware-realtek
 sudo apt install -y broadcom-sta-dkms
@@ -88,6 +88,7 @@ sudo apt install -y gawk
 sudo apt install -y gdb
 sudo apt install -y geany-plugins
 sudo apt install -y geany
+sudo apt install -y genisoimage
 sudo apt install -y gimp
 sudo apt install -y git
 sudo apt install -y glade
@@ -184,6 +185,7 @@ sudo apt install -y ranger
 sudo apt install -y resolvconf
 sudo apt install -y shellinabox
 sudo apt install -y simplescreenrecorder
+sudo apt install -y squashfs-tools
 sudo apt install -y suckless-tools
 #sudo apt install -y texlive-base
 #sudo apt install -y texlive-full

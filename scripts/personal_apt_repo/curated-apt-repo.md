@@ -66,7 +66,10 @@ Overview:
         ## Example:
         sudo mount /dev/sdb1 /mnt
 
-        echo "deb [trusted=yes] file:///mnt MyIndividualDebs/" >> /etc/apt/sources.list.d/myRepo.list
+        #echo "deb [trusted=yes] file:///mnt MyIndividualDebs/" >> /etc/apt/sources.list.d/myRepo.list
+
+        ## Apt mittor in Live usb
+        echo "deb [trusted=yes] file:///usr/lib/live/mount/medium downloaded-debs/" >> /etc/apt/sources.list.d/myRepoMirror.list
         ```
 ### Update Apt
 

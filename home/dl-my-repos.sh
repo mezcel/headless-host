@@ -50,12 +50,13 @@ function Make_Directories {
 
     githubDirectory=~/github/$existingUser
     promptString="${FG_GREEN}Where should Github directories be stored? [ ${FG_CYAN}$githubDirectory${FG_GREEN} ]: ${STYLES_OFF}"
-
+    echo -e "\n"
     read -e -p "$promptString" -i "$githubDirectory" githubDirectory
 
     gistDirectory=~/gist.github/$existingUser
     promptString="${FG_GREEN}Where should Gist directories be stored? [ ${FG_CYAN}$gistDirectory${FG_GREEN} ]: ${STYLES_OFF}"
 
+    echo -e "\n"
     read -e -p "$promptString" -i "$gistDirectory" gistDirectory
 
     mkdir -p  $githubDirectory
@@ -154,13 +155,13 @@ function Set_Git_User {
         githubusername="$(whoami)"
         promptString="Enter your github user.name [ ${FG_GREEN}$githubusername${FG_CYAN} ]: ${STYLES_OFF}"
 
-        echo -e "${STYLES_OFF}${FG_CYAN}\n"
+        echo -e "${STYLES_OFF}${FG_CYAN}"
         read -e -p "$promptString" -i "$githubusername" "githubusername"
 
         githubuseremail="$githubusername@hotmail.com"
         promptString="Enter github user.email [ ${FG_GREEN}$githubuseremail${FG_CYAN} ]: ${STYLES_OFF}"
 
-        echo -e "${STYLES_OFF}${FG_CYAN}\n"
+        echo -e "${STYLES_OFF}${FG_CYAN}"
         read -e -p "$promptString" -i "$githubuseremail" "githubuseremail"
 
         git config --global user.name $githubusername

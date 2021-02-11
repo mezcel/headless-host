@@ -154,13 +154,13 @@ function Set_Git_User {
         githubusername="$(whoami)"
         promptString="Enter your github user.name [ ${FG_GREEN}$githubusername${FG_CYAN} ]: ${STYLES_OFF}"
 
-        echo "${STYLES_OFF}${FG_CYAN}"
+        echo -e "${STYLES_OFF}${FG_CYAN}\n"
         read -e -p "$promptString" -i "$githubusername" "githubusername"
 
         githubuseremail="$githubusername@hotmail.com"
         promptString="Enter github user.email [ ${FG_GREEN}$githubuseremail${FG_CYAN} ]: ${STYLES_OFF}"
 
-        echo "${STYLES_OFF}${FG_CYAN}"
+        echo -e "${STYLES_OFF}${FG_CYAN}\n"
         read -e -p "$promptString" -i "$githubuseremail" "githubuseremail"
 
         git config --global user.name $githubusername
@@ -175,6 +175,14 @@ function Set_Git_User {
     fi
 }
 
+function Clone_Nerdtree {
+    git clone https://github.com/preservim/nerdtree.git ~/.vim/pack/vendor/start/nerdtree
+}
+
+function Clone_OhMyBash {
+    bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
+}
+
 function Greeter {
     echo ""
     echo -e "## ####################################"
@@ -187,20 +195,13 @@ function Greeter {
 }
 
 function Main {
-    ## Primary function
+    Set_Git_User
+    Make_Directories
+    Pull_Repos
+    Clone_Repos
 
-    command -v git &>/dev/null
-
-    if [ $? -eq 0 ]; then
-        Set_Git_User
-        Make_Directories
-        Pull_Repos
-        Clone_Repos
-
-        echo -e "$FG_GREEN${MODE_BOLD}\nDone. $STYLES_OFF"
-    else
-        echo -e "${MODE_BOLD}${BG_YELLOW}${FG_RED} \nScript exited.\n\tGit is not installed. $STYLES_OFF"
-    fi
+    Clone_Nerdtree
+    Clone_OhMyBash
 }
 
 ## #############################################################################

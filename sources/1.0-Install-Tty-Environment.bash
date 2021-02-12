@@ -467,6 +467,11 @@ function Configure_Tty_Environment {
         fi
     }
 
+    function Clean_Apt_Cache {
+        sudo apt clean
+        sudo rm -rvf /var/cache/apt/archives/*.deb
+    }
+
     function Home_Directory {
         ## Home Directory Configs
         ## This function assumes the script is running as source when launched from the headless-host root directory.
@@ -712,6 +717,7 @@ if [ $isDebian -eq 0 ]; then
 
     Set_Nerdtree
     Home_Directory
+    Clean_Apt_Cache
 else
     uname -v | grep "Microsoft" --color
     isMicrosoft=$?

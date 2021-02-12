@@ -348,6 +348,11 @@ function Configure_Desktop_Environment {
         sudo apt install -y gimp
     }
 
+    function Clean_Apt_Cache {
+        sudo apt clean
+        sudo rm -rvf /var/cache/apt/archives/*.deb
+    }
+
     function Home_Directory {
         ## Home Directory Configs
         ## This function assumes the script is running as source when launched from the headless-host root directory.
@@ -475,6 +480,7 @@ if [ $isDebian -eq 0 ]; then
     Install_DWM
 
     Home_Directory
+    Clean_Apt_Cache
 else
     ## Cancel
     echo ""

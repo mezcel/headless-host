@@ -184,6 +184,18 @@ function Clone_OhMyBash {
     bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
 }
 
+function Gitbash_profile {
+    ## make a profile for mingw bash
+
+    if [ ! -f ~/.profile ]; then
+        echo 'if [ -n "$BASH_VERSION" ]; then' > ~/.profile
+        echo '    if [ -f "$HOME/.bashrc" ]; then' >> ~/.profile
+        echo '        . "$HOME/.bashrc"' >> ~/.profile
+        echo '    fi' >> ~/.profile
+        echo 'fi' >> ~/.profile
+    fi
+}
+
 function Greeter {
     echo ""
     echo -e "## ####################################"
@@ -203,6 +215,7 @@ function Main {
 
     Clone_Nerdtree
     Clone_OhMyBash
+    Gitbash_profile
 }
 
 ## #############################################################################

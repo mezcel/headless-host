@@ -345,6 +345,10 @@ function Enable_Ethernet_Hotplug {
 
 }
 
+function Clean_Apt_Cache {
+    sudo apt clean
+    sudo rm -rvf /var/cache/apt/archives/*.deb
+}
 
 ## Initialize
 
@@ -368,6 +372,7 @@ if [ $isDebian -eq 0 ]; then
 
     Set_WpaSupplicant
     Enable_Ethernet_Hotplug
+    Clean_Apt_Cache
 else
     ## Cancel
     echo ""

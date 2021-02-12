@@ -1,6 +1,7 @@
 #!/bin/bash
 
 ## assumes that there is a directory full of *.deb files named "downloaded-debs"
+## dpkg-scanpackages /downloaded-debs | gzip > /downloaded-debs/Packages.gz
 
 mkdir -p /etc/apt/sources.list.d/
 

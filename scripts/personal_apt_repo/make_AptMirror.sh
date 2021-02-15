@@ -148,7 +148,7 @@ function Make_SourcesMirror_List {
 
     if [ -f $mirrorPath/Packages.gz ]; then
         ## Write file
-        mkdir -p /etc/apt/sources.list.d/
+        sudo mkdir -p /etc/apt/sources.list.d/
 
         ## Live Usb Repo
         echo "deb [trusted=yes] file://$mirrorPath ./" > $mirrorLink

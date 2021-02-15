@@ -151,7 +151,7 @@ function Make_SourcesMirror_List {
 
         ## Live Usb Repo
 		## rm 1st char
-		mirrorPath=${mirrorPath%?}
+		mirrorPath=${mirrorPath#?}
         echo "deb [trusted=yes] file:/// $mirrorPath/" > $mirrorLink
         sleep 2s
 		sudo apt update
@@ -166,7 +166,7 @@ function LazyPrompt {
 	echo -e "\tDownload debs for a new Mirror Repo?"
 	echo -e "\tMake Packages.gz?"
 	echo -e "\tUpdate local sources.list?"
-	echo -e "\n"
+	echo -e "$STYLES_OFF"
 
 	#Mirror_Location
 
@@ -207,7 +207,7 @@ function LazyPrompt {
 	esac
 
 	echo "$FG_GREEN "
-	promptString="Update local sources.list? [ ${FG_CYAN}y/Nn $FG_GREEN]:$STYLES_OFF "
+	promptString="Update local sources.list? [ ${FG_CYAN}y/N $FG_GREEN]:$STYLES_OFF "
 	read -e -p "$promptString" -i "n" yn
 
 	case $yn in

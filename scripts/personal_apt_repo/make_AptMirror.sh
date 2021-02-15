@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 ## Decorative tty colors
 function Tput_Colors {
 	## Foreground Color using ANSI escape provided through tput
@@ -49,7 +48,7 @@ function Mirror_Location {
     liveUsbRepo=/usr/lib/live/mount/medium/downloaded-debs
     liveMxUsb=/home/demo/Live-usb-storage/downloaded-debs
 
-	echo -e "$FG_YELLOW"
+	echo -e "$MODE_BOLD $FG_YELLOW"
     echo -e "\nMy goto repo locations:"
     echo -e " ( 1. Host machine    ) $localUsbRepo"
     echo -e " ( 2. Generic Live    ) $liveUsbRepo"
@@ -58,7 +57,8 @@ function Mirror_Location {
 
 	echo "$FG_GREEN "
 	read -e -p "Where is your local Repo? [ 1, 2, or 3 ]: " -i "3" repoNo
-	echo "$STYLES_OFF "
+	promptString="Where is your local Repo? [ ${FG_CYAN}1, 2, or 3 $FG_GREEN]:$STYLES_OFF "
+	read -e -p "$promptString" -i "3" repoNo
 
 	case $repoNo in
         1 )
@@ -133,6 +133,8 @@ function Make_Packages_Gz {
     fi
 
 	if [ -d $mirrorPath ] ; then
+		echo -e "$FG_YELLOW Making $mirrorPath/Packages.gz ... $STYLES_OFF"
+
 		sudo dpkg-scanpackages $mirrorPath | gzip > $mirrorPath/Packages.gz
 		sleep 2s
 	fi
@@ -157,7 +159,7 @@ function Make_SourcesMirror_List {
 
 function LazyPrompt {
 
-	echo -e "$FG_YELLOW"
+	echo -e "$MODE_BOLD $FG_YELLOW"
 	echo -e "\nThe following qustions will be asked:"
 	echo -e "\tMake a package list of existing packages?"
 	echo -e "\tDownload debs for a new Mirror Repo?"
@@ -168,44 +170,48 @@ function LazyPrompt {
 	#Mirror_Location
 
 	echo "$FG_GREEN "
-	promptString="Make a package list and package dpwnloader? [ ${FG_CYAN}Y/n $FG_GREEN]: "
+	promptString="Make a package list and package downloader? [ ${FG_CYAN}Y/n $FG_GREEN]:$STYLES_OFF "
 	read -e -p "$promptString" -i "y" yn
-	echo "$STYLES_OFF "
+
 	case $yn in
 		[Yy]* )
+			echo -e "$MODE_BOLD ${FG_PURPLE}Makeing a downloader script.$STYLES_OFF \n"
 			Make_Download_Script
 			echo -e "${FG_PURPLE}DONE.$STYLES_OFF \n"
 			;;
 	esac
 
 	echo "$FG_GREEN "
-	promptString="Download debs for a new Mirror Repo? [ ${FG_CYAN}Y/n $FG_GREEN]: "
+	promptString="Download debs for a new Mirror Repo? [ ${FG_CYAN}Y/n $FG_GREEN]:$STYLES_OFF "
 	read -e -p "$promptString" -i "y" yn
-	echo "$STYLES_OFF "
+
 	case $yn in
 		[Yy]* )
+			echo -e "$MODE_BOLD ${FG_PURPLE}Downloading Debs.$STYLES_OFF \n"
 			Download_Debs
 			echo -e "${FG_PURPLE}DONE.$STYLES_OFF \n"
 			;;
 	esac
 
 	echo "$FG_GREEN "
-	promptString="Make Packages.gz? [ ${FG_CYAN}Y/n $FG_GREEN]: "
+	promptString="Make Packages.gz? [ ${FG_CYAN}Y/n $FG_GREEN]:$STYLES_OFF "
 	read -e -p "$promptString" -i "y" yn
-	echo "$STYLES_OFF "
+
 	case $yn in
 		[Yy]* )
+			echo -e "$MODE_BOLD ${FG_PURPLE}Making Packages.gz .$STYLES_OFF \n"
 			Make_Packages_Gz
 			echo -e "${FG_PURPLE}DONE.$STYLES_OFF \n"
 			;;
 	esac
 
 	echo "$FG_GREEN "
-	promptString="Update local sources.list? [ ${FG_CYAN}y/Nn $FG_GREEN]: "
+	promptString="Update local sources.list? [ ${FG_CYAN}y/Nn $FG_GREEN]:$STYLES_OFF "
 	read -e -p "$promptString" -i "n" yn
-	echo "$STYLES_OFF "
+
 	case $yn in
 		[Yy]* )
+			echo -e "$MODE_BOLD ${FG_PURPLE}Updating source mirror.$STYLES_OFF \n"
 			Make_SourcesMirror_List
 			echo -e "${FG_PURPLE}DONE.$STYLES_OFF \n"
 			;;

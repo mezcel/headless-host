@@ -79,6 +79,7 @@ function Make_Packages_Gz {
 
     ## Dependancy:
     ## The dpkg-dev package is required to run dpkg-scanpackages
+	sudo apt install dpkg-dev
 
 	##cd $mirrorPath
 
@@ -167,4 +168,5 @@ function main {
 	LazyPrompt
 }
 
+## Run
 main

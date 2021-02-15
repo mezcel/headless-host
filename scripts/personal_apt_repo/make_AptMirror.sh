@@ -132,7 +132,7 @@ function Make_Packages_Gz {
         sleep 2s
     fi
 
-	if [ ! -d $mirrorPath ] ; then
+	if [ -d $mirrorPath ] ; then
 		sudo dpkg-scanpackages $mirrorPath | gzip > $mirrorPath/Packages.gz
 		sleep 2s
 	fi

@@ -56,7 +56,6 @@ function Mirror_Location {
     echo -e " ( <your custom path> ) Type in a directory path not listed above."
 
 	echo "$FG_GREEN "
-	read -e -p "Where is your local Repo? [ 1, 2, or 3 ]: " -i "3" repoNo
 	promptString="Where is your local Repo? [ ${FG_CYAN}1, 2, or 3 $FG_GREEN]:$STYLES_OFF "
 	read -e -p "$promptString" -i "3" repoNo
 
@@ -151,7 +150,9 @@ function Make_SourcesMirror_List {
         sudo mkdir -p /etc/apt/sources.list.d/
 
         ## Live Usb Repo
-        echo "deb [trusted=yes] file://$mirrorPath ./" > $mirrorLink
+		## rm 1st char
+		mirrorPath=${mirrorPath%?}
+        echo "deb [trusted=yes] file:/// $mirrorPath/" > $mirrorLink
         sleep 2s
 		sudo apt update
     fi

@@ -1,5 +1,8 @@
 #!/bin/bash
 
+## Download the standalone debs for headless-host
+## Make a personal apt miror from these files
+
 sudo apt download acpi
 sudo apt download acpid
 sudo apt download adduser

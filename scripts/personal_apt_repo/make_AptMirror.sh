@@ -121,7 +121,7 @@ function Download_Debs {
 
 function Make_Packages_Gz {
 
-    ## Dependancy:
+    ## Dependency:
     ## The dpkg-dev package is required to run dpkg-scanpackages
 	sudo apt install dpkg-dev
 
@@ -160,7 +160,7 @@ function Make_SourcesMirror_List {
 function LazyPrompt {
 
 	echo -e "$MODE_BOLD $FG_YELLOW"
-	echo -e "\nThe following qustions will be asked:"
+	echo -e "\nThe following questions will be asked:"
 	echo -e "\tMake a package list of existing packages?"
 	echo -e "\tDownload debs for a new Mirror Repo?"
 	echo -e "\tMake Packages.gz?"
@@ -175,7 +175,7 @@ function LazyPrompt {
 
 	case $yn in
 		[Yy]* )
-			echo -e "$MODE_BOLD ${FG_PURPLE}Makeing a downloader script.$STYLES_OFF \n"
+			echo -e "$MODE_BOLD ${FG_PURPLE}Making a downloader script.$STYLES_OFF \n"
 			Make_Download_Script
 			echo -e "${FG_PURPLE}DONE.$STYLES_OFF \n"
 			;;

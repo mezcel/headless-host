@@ -1,11 +1,55 @@
 #!/bin/bash
 
+
+## Decorative tty colors
+function Tput_Colors {
+	## Foreground Color using ANSI escape provided through tput
+
+	FG_BLACK=$(tput setaf 0)
+	FG_RED=$(tput setaf 1)
+	FG_GREEN=$(tput setaf 2)
+	FG_YELLOW=$(tput setaf 3)
+	FG_BLUE=$(tput setaf 4)
+	FG_MAGENTA=$(tput setaf 5)
+	FG_CYAN=$(tput setaf 6)
+	FG_WHITE=$(tput setaf 7)
+	FG_NoColor=$(tput sgr0)
+
+	## Background Color using ANSI escape provided through tput
+
+	BG_BLACK=$(tput setab 0)
+	BG_RED=$(tput setab 1)
+	BG_GREEN=$(tput setab 2)
+	BG_YELLOW=$(tput setab 3)
+	BG_BLUE=$(tput setab 4)
+	BG_MAGENTA=$(tput setab 5)
+	BG_CYAN=$(tput setab 6)
+	BG_WHITE=$(tput setab 7)
+	BG_NoColor=$(tput sgr0)
+
+	## set mode using ANSI escape provided through tput
+
+	MODE_BOLD=$(tput bold)
+	MODE_DIM=$(tput dim)
+	MODE_BEGIN_UNDERLINE=$(tput smul)
+	MODE_EXIT_UNDERLINE=$(tput rmul)
+	MODE_REVERSE=$(tput rev)
+	MODE_ENTER_STANDOUT=$(tput smso)
+	MODE_EXIT_STANDOUT=$(tput rmso)
+
+	# clear styles using ANSI escape provided through tput
+
+	STYLES_OFF=$(tput sgr0)
+	FGBG_NoColor=$(tput sgr0)
+}
+
 function Mirror_Location {
 
-    localUsbRepo=/downloaded-debs/
-    liveUsbRepo=/usr/lib/live/mount/medium/downloaded-debs/
-    liveMxUsb=/home/demo/Live-usb-storage/downloaded-debs/
+    localUsbRepo=/downloaded-debs
+    liveUsbRepo=/usr/lib/live/mount/medium/downloaded-debs
+    liveMxUsb=/home/demo/Live-usb-storage/downloaded-debs
 
+	echo -e "$FG_YELLOW"
     echo -e "\nMy goto repo locations:"
     echo -e " ( 1. Host machine    ) $localUsbRepo"
     echo -e " ( 2. Generic Live    ) $liveUsbRepo"
@@ -67,7 +111,7 @@ function Make_Download_Script {
 function Download_Debs {
 	sudo mkdir -p $mirrorPath
 	cd $mirrorPath
-	if [ -f $mirrorPath ]; then
+	if [ -f $dlScript ]; then
 		bash $dlScript
 	else
 		echo -e "\n\t$dlScript does not exist"
@@ -113,6 +157,7 @@ function Make_SourcesMirror_List {
 
 function LazyPrompt {
 
+	echo -e "$FG_YELLOW"
 	echo -e "\nThe following qustions will be asked:"
 	echo -e "\tMake a package list of existing packages?"
 	echo -e "\tDownload debs for a new Mirror Repo?"
@@ -120,48 +165,61 @@ function LazyPrompt {
 	echo -e "\tUpdate local sources.list?"
 	echo -e "\n"
 
-	Mirror_Location
+	#Mirror_Location
 
 	echo "$FG_GREEN "
-	read -e -p "Make a package list? [ Y/n ]: " -i "y" yn
+	promptString="Make a package list and package dpwnloader? [ ${FG_CYAN}Y/n $FG_GREEN]: "
+	read -e -p "$promptString" -i "y" yn
 	echo "$STYLES_OFF "
 	case $yn in
 		[Yy]* )
 			Make_Download_Script
+			echo -e "${FG_PURPLE}DONE.$STYLES_OFF \n"
 			;;
 	esac
 
 	echo "$FG_GREEN "
-	read -e -p "Download debs for a new Mirror Repo? [ Y/n ]: " -i "y" yn
+	promptString="Download debs for a new Mirror Repo? [ ${FG_CYAN}Y/n $FG_GREEN]: "
+	read -e -p "$promptString" -i "y" yn
 	echo "$STYLES_OFF "
 	case $yn in
 		[Yy]* )
 			Download_Debs
+			echo -e "${FG_PURPLE}DONE.$STYLES_OFF \n"
 			;;
 	esac
 
 	echo "$FG_GREEN "
-	read -e -p "Make Packages.gz? [ Y/n ]: " -i "y" yn
+	promptString="Make Packages.gz? [ ${FG_CYAN}Y/n $FG_GREEN]: "
+	read -e -p "$promptString" -i "y" yn
 	echo "$STYLES_OFF "
 	case $yn in
 		[Yy]* )
 			Make_Packages_Gz
+			echo -e "${FG_PURPLE}DONE.$STYLES_OFF \n"
 			;;
 	esac
 
 	echo "$FG_GREEN "
-	read -e -p "Update local sources.list? [ y/N ]: " -i "n" yn
+	promptString="Update local sources.list? [ ${FG_CYAN}y/Nn $FG_GREEN]: "
+	read -e -p "$promptString" -i "n" yn
 	echo "$STYLES_OFF "
 	case $yn in
 		[Yy]* )
 			Make_SourcesMirror_List
+			echo -e "${FG_PURPLE}DONE.$STYLES_OFF \n"
 			;;
 	esac
 }
 
 function main {
+	Tput_Colors
+
 	clear
+	echo ""
 	lsblk
+	echo ""
+	pwd
 	echo ""
 
 	Mirror_Location

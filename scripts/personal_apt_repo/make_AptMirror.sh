@@ -55,7 +55,7 @@ function Mirror_Location {
     echo -e " ( 2. Generic Live      ) $liveUsbRepo"
     echo -e " ( 3. MX Linux Live     ) $liveMxUsb"
     echo -e " ( 4. Rufus Persistence ) $liveRufus"
-    echo -e " ( <your custom path> ) Type in a directory path not listed above."
+    echo -e " ( <your custom path>   ) Type in a directory path not listed above."
 
 	echo "$FG_GREEN "
 	promptString="Where is your local Repo? [ ${FG_CYAN}1, 2, or 3 $FG_GREEN]:$STYLES_OFF "
@@ -88,7 +88,7 @@ function Mirror_Location {
 
 	## Double check directory
 	if [ ! -d $mirrorPath ]; then
-		echo -e "\nThe $mirrorPath does not exist.\n\tScript exited.\n"
+		echo -e "$MODE_BOLD $FG_RED \nRepo miror directory: \"$mirrorPath\".  does not exist. $STYLES_OFF \nScript exited."
 		exit
 	fi
 
@@ -173,7 +173,7 @@ function LazyPrompt {
 
 	echo "$FG_GREEN "
 	promptString="Pick an option? [ ${FG_CYAN}2 $FG_GREEN]:$STYLES_OFF "
-	read -e -p "$promptString" -i "y" mirrorOption
+	read -e -p "$promptString" -i "2" mirrorOption
 
 	case $mirrorOption in
 		1 )

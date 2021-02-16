@@ -47,12 +47,14 @@ function Mirror_Location {
     localUsbRepo=/downloaded-debs
     liveUsbRepo=/usr/lib/live/mount/medium/downloaded-debs
     liveMxUsb=/home/demo/Live-usb-storage/downloaded-debs
+	liveRufus=/media/user/persistence/downloaded-debs
 
 	echo -e "$MODE_BOLD $FG_YELLOW"
     echo -e "\nMy goto repo locations:"
-    echo -e " ( 1. Host machine    ) $localUsbRepo"
-    echo -e " ( 2. Generic Live    ) $liveUsbRepo"
-    echo -e " ( 3. MX Linux Live   ) $liveMxUsb"
+    echo -e " ( 1. Host machine      ) $localUsbRepo"
+    echo -e " ( 2. Generic Live      ) $liveUsbRepo"
+    echo -e " ( 3. MX Linux Live     ) $liveMxUsb"
+    echo -e " ( 4. Rufus Persistence ) $liveRufus"
     echo -e " ( <your custom path> ) Type in a directory path not listed above."
 
 	echo "$FG_GREEN "
@@ -68,6 +70,9 @@ function Mirror_Location {
             ;;
         3 )
             mirrorPath=$liveMxUsb
+            ;;
+		4 )
+            mirrorPath=$liveRufus
             ;;
         * )
 			mirrorPath=$repoNo
@@ -161,62 +166,70 @@ function Make_SourcesMirror_List {
 function LazyPrompt {
 
 	echo -e "$MODE_BOLD $FG_YELLOW"
-	echo -e "\nThe following questions will be asked:"
-	echo -e "\tMake a package list of existing packages?"
-	echo -e "\tDownload debs for a new Mirror Repo?"
-	echo -e "\tMake Packages.gz?"
-	echo -e "\tUpdate local sources.list?"
+	echo -e "\nOptions:"
+	echo -e "\t( 1. ) Make a new offline mirror from current distro."
+	echo -e "\t( 2. ) Import an offline repo."
 	echo -e "$STYLES_OFF"
 
-	#Mirror_Location
-
 	echo "$FG_GREEN "
-	promptString="Make a package list and package downloader? [ ${FG_CYAN}Y/n $FG_GREEN]:$STYLES_OFF "
-	read -e -p "$promptString" -i "y" yn
+	promptString="Pick an option? [ ${FG_CYAN}2 $FG_GREEN]:$STYLES_OFF "
+	read -e -p "$promptString" -i "y" mirrorOption
 
-	case $yn in
-		[Yy]* )
-			echo -e "$MODE_BOLD ${FG_PURPLE}Making a downloader script.$STYLES_OFF \n"
-			Make_Download_Script
-			echo -e "${FG_PURPLE}DONE.$STYLES_OFF \n"
+	case $mirrorOption in
+		1 )
+			echo "$FG_GREEN "
+			promptString="Make a package list and package downloader? [ ${FG_CYAN}Y/n $FG_GREEN]:$STYLES_OFF "
+			read -e -p "$promptString" -i "y" yn
+
+			case $yn in
+				[Yy]* )
+					echo -e "$MODE_BOLD ${FG_PURPLE}Making a downloader script.$STYLES_OFF \n"
+					Make_Download_Script
+					echo -e "${FG_PURPLE}DONE.$STYLES_OFF \n"
+					;;
+			esac
+
+			echo "$FG_GREEN "
+			promptString="Download debs for a new Mirror Repo? [ ${FG_CYAN}Y/n $FG_GREEN]:$STYLES_OFF "
+			read -e -p "$promptString" -i "y" yn
+
+			case $yn in
+				[Yy]* )
+					echo -e "$MODE_BOLD ${FG_PURPLE}Downloading Debs.$STYLES_OFF \n"
+					Download_Debs
+					echo -e "${FG_PURPLE}DONE.$STYLES_OFF \n"
+					;;
+			esac
+
+			echo "$FG_GREEN "
+			promptString="Make Packages.gz? [ ${FG_CYAN}Y/n $FG_GREEN]:$STYLES_OFF "
+			read -e -p "$promptString" -i "y" yn
+
+			case $yn in
+				[Yy]* )
+					echo -e "$MODE_BOLD ${FG_PURPLE}Making Packages.gz .$STYLES_OFF \n"
+					Make_Packages_Gz
+					echo -e "${FG_PURPLE}DONE.$STYLES_OFF \n"
+					;;
+			esac
+
+			;;
+
+		2 )
+			echo "$FG_GREEN "
+			promptString="Update local sources.list? [ ${FG_CYAN}Y/n $FG_GREEN]:$STYLES_OFF "
+			read -e -p "$promptString" -i "y" yn
+
+			case $yn in
+				[Yy]* )
+					echo -e "$MODE_BOLD ${FG_PURPLE}Updating source mirror.$STYLES_OFF \n"
+					Make_SourcesMirror_List
+					echo -e "${FG_PURPLE}DONE.$STYLES_OFF \n"
+					;;
+			esac
 			;;
 	esac
 
-	echo "$FG_GREEN "
-	promptString="Download debs for a new Mirror Repo? [ ${FG_CYAN}Y/n $FG_GREEN]:$STYLES_OFF "
-	read -e -p "$promptString" -i "y" yn
-
-	case $yn in
-		[Yy]* )
-			echo -e "$MODE_BOLD ${FG_PURPLE}Downloading Debs.$STYLES_OFF \n"
-			Download_Debs
-			echo -e "${FG_PURPLE}DONE.$STYLES_OFF \n"
-			;;
-	esac
-
-	echo "$FG_GREEN "
-	promptString="Make Packages.gz? [ ${FG_CYAN}Y/n $FG_GREEN]:$STYLES_OFF "
-	read -e -p "$promptString" -i "y" yn
-
-	case $yn in
-		[Yy]* )
-			echo -e "$MODE_BOLD ${FG_PURPLE}Making Packages.gz .$STYLES_OFF \n"
-			Make_Packages_Gz
-			echo -e "${FG_PURPLE}DONE.$STYLES_OFF \n"
-			;;
-	esac
-
-	echo "$FG_GREEN "
-	promptString="Update local sources.list? [ ${FG_CYAN}y/N $FG_GREEN]:$STYLES_OFF "
-	read -e -p "$promptString" -i "n" yn
-
-	case $yn in
-		[Yy]* )
-			echo -e "$MODE_BOLD ${FG_PURPLE}Updating source mirror.$STYLES_OFF \n"
-			Make_SourcesMirror_List
-			echo -e "${FG_PURPLE}DONE.$STYLES_OFF \n"
-			;;
-	esac
 }
 
 function main {

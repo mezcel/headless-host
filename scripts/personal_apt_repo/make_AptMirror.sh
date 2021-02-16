@@ -47,14 +47,16 @@ function Mirror_Location {
     localUsbRepo=/downloaded-debs
     liveUsbRepo=/usr/lib/live/mount/medium/downloaded-debs
     liveMxUsb=/home/demo/Live-usb-storage/downloaded-debs
-	liveRufus=/media/user/persistence/downloaded-debs
+	#liveRufus=/media/user/persistence/downloaded-debs
+	liveRufus=/mnt/downloaded-debs
 
 	echo -e "$MODE_BOLD $FG_YELLOW"
     echo -e "\nMy goto repo locations:"
     echo -e " ( 1. Host machine      ) $localUsbRepo"
     echo -e " ( 2. Generic Live      ) $liveUsbRepo"
     echo -e " ( 3. MX Linux Live     ) $liveMxUsb"
-    echo -e " ( 4. Rufus Persistence ) $liveRufus"
+    #echo -e " ( 4. Rufus Persistence ) $liveRufus"
+    echo -e " ( 4. Generic /mnt ) $liveRufus"
     echo -e " ( <your custom path>   ) Type in a directory path not listed above."
 
 	echo "$FG_GREEN "

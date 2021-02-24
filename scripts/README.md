@@ -28,3 +28,7 @@ Notes, guides, and templates
 
 * Implementation of the [https://github.com/yusuphwickama/wickerscripts]( https://github.com/yusuphwickama/wickerscripts ) package.
 * Additional scripts to zip and unzip package dependencies.
+
+#### wsl-files
+
+* Scripts for WSL and Powershell

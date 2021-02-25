@@ -177,11 +177,27 @@ function Set_Git_User {
 }
 
 function Clone_Nerdtree {
-    git clone https://github.com/preservim/nerdtree.git ~/.vim/pack/vendor/start/nerdtree
+    
+	if [ ! -d ~/.vim/pack/vendor/start/nerdtree ]; then
+		mkdir -p ~/.vim/pack/vendor/start
+
+		if [ ! -d ./home/.vim/pack/vendor/start/nerdtree ]; then
+			git clone https://github.com/preservim/nerdtree.git ~/.vim/pack/vendor/start/nerdtree
+		fi
+	fi
+		
+	## install vim nerdtree
+	if [ -d ~/.vim/pack/vendor/start/nerdtree ]; then
+		sleep 4s
+		sudo vim -u NONE -c "helptags ~/.vim/pack/vendor/start/nerdtree/doc" -c q
+		sleep 1s
+	fi
 }
 
 function Clone_OhMyBash {
-    bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
+	if [ ! -d ~/.oh-my-bash ]; then
+		bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
+	fi
 }
 
 function Gitbash_profile {

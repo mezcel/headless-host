@@ -252,6 +252,7 @@ autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isT
 """" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """" VIM Search and replace syntax
+
 "" :%s/Search/Replace/CommandFlag
 "" ## Whole Document ##
 "" :%s/Search-Word/Replace-Word/g
@@ -265,6 +266,7 @@ autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isT
 "" Ctrl+c
 
 """" ## Regex notes
+
 "" ## Search & Replace  :range s[ubstitute]/pattern/string/cgiI
 "" For each line in the range replace a match of the pattern with the string where:
 "" c    Confirm each substitution

@@ -260,3 +260,47 @@ autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isT
 "" :s/Find-Word/Replace-Word/gc
 "" ## Change each 'Unix' to 'Linux' for all lines from line 36 to line 42 ##
 "" :36,42s/Unix/Linux/g
+
+"""" ## Auto complete suggestions
+"" Ctrl+c
+
+"""" ## Regex notes
+"" ## Search & Replace  :range s[ubstitute]/pattern/string/cgiI
+"" For each line in the range replace a match of the pattern with the string where:
+"" c    Confirm each substitution
+"" g    Replace all occurrences in the line (without g - only first).
+"" i    Ignore case for the pattern.
+"" I    Don't ignore case for the pattern.
+"" ## Range of Operation, Line Addressing and Marks
+"" number     an absolute line number
+"" .    the current line
+"" $    the last line in the file
+"" %    the whole file. The same as 1,$
+"" 't   position of mark "t"
+"" /pattern[/]  the next line where text "pattern" matches.
+"" ?pattern[?]  the previous line where text "pattern" matches
+"" \/   the next line where the previously used search pattern matches
+"" \?   the previous line where the previously used search pattern matches
+"" \&   the next line where the previously used substitute pattern matches
+"" ## "Escaped" characters or metacharacters
+"" .    any character except new line 
+"" \s   whitespace character
+"" \S   non-whitespace character
+"" \d   digit
+"" \D   non-digit
+"" \x   hex digit
+"" \X   non-hex digit
+"" \o   octal digit
+"" \O   non-octal digit
+"" \h   head of word character (a,b,c...z,A,B,C...Z and _)
+"" \H   non-head of word character
+"" \p   printable character
+"" \P   like \p, but excluding digits
+"" \w   word character
+"" \W   non-word character
+"" \a   alphabetic character
+"" \A   non-alphabetic character
+"" \l   lowercase character
+"" \L   non-lowercase character
+"" \u   uppercase character
+"" \U   non-uppercase character

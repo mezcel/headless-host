@@ -160,7 +160,8 @@ function Make_SourcesMirror_List {
         ## Live Usb Repo
 		## rm 1st char
 		mirrorPath=${mirrorPath#?}
-        echo "deb [trusted=yes] file:/// $mirrorPath/" > $mirrorLink
+        echo "deb [trusted=yes] file:/// $mirrorPath/" > ~/tmpMirror 
+	sudo mv ~/tmpMirror $mirrorLink
         sleep 2s
 		sudo apt update
     fi
@@ -254,5 +255,42 @@ function main {
 	LazyPrompt
 }
 
+function updatePw {
+	## MXLinux's default live usb password = "demo"
+	## Bunsenlabs Crunchbang's default live usb password = "live"
+	
+	inxi -F | grep "MX" 2> /dev/null
+	isMXLinux=$?
+	if [ $isMXLinux -eq 0 ]; then
+		defaultLivePw=demo
+	else
+		defaultLivePw=live
+	fi
+	
+	echo -e "Password change sould only be done once.\n\tSkip this if this is your +2nd time running this script.\n\tUse \"passwd\" instead or restart the live usb.\n"
+	echo "## MXLinux's default live usb password = \"demo\""
+	echo "## Bunsenlabs Crunchbang's default live usb password = \"live\""
+	echo ""
+	
+	read -e -p "Update passwd? [y]: " -i "y" yn
+	if [ $yn == "y" ]; then 
+		read -e -p "Enter New Password for root and user: " -i "mypassword" mypassword
+		(echo -e "$defaultLivePw"; echo -e "$mypassword"; echo -e "$mypassword";) | passwd
+		(echo -e "$mypassword"; echo -e "$mypassword";) | sudo passwd
+	fi
+	read -p "press enter to continue" pauseEnter
+}
+
 ## Run
+updatePw 
 main
+
+## Crunchbang setup
+sudo apt -y update --fix-missing
+sudo apt -y upgrade
+sudo apt install -y vim vifm tmux git firefox-esr
+
+echo "This is just a file for easy access notes." >> ~/note.txt
+#echo -e "#!/bin/bash\nmkdir -p ~/Downloads\nwget -c \"https://raw.githubusercontent.com/mezcel/headless-host/main/home/dl-my-repos.sh\" -P ~/Downloads" > myRepoScript.sh
+echo -e "#!/bin/bash \nsh -c \"$(curl -fsSL https://raw.githubusercontent.com/mezcel/headless-host/main/home/dl-my-repos.sh)\"" > myRepoScript.sh
+

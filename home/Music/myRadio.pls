@@ -54,4 +54,16 @@ File14=http://ice4.somafm.com/groovesalad-128-aac
 Title14=SomaFM: Groove Salad: A nicely chilled plate of ambient/downtempo beats and grooves.
 Length14=-1
 
+File15=https://feeds.twit.tv/twit.xml
+Title15=twit.tv - This Week In Tech
+Length15=-1
+
+File16=https://feeds.twit.tv/sn.xml
+Title16=twit.tv - Security Now
+Length16=-1
+
+File17=https://feeds.twit.tv/sn.xml
+Title17=twit.tv - The Tech Guy
+Length17=-1
+
 Version=2

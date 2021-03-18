@@ -44,6 +44,10 @@ set backupdir=%APPDATA%\vim\backup\
 set directory=%APPDATA%\vim\swp\
 set undodir=%APPDATA%\vim\undo\
 
+silent !mkdir %APPDATA%\vim\backup\ 
+silent !mkdir %APPDATA%\vim\swp\
+silent !mkdir PPDATA%\vim\undo\
+
 "" prevent automatic backup files
 " set nobackup
 if v:progname =~? "evim"

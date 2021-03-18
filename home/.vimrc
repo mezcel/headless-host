@@ -39,10 +39,14 @@ syntax on
 """" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 """" Set swapfile cache
+
+silent !mkdir ~/.backup/ > /dev/null 2>&1
+silent !mkdir ~/.swp/ > /dev/null 2>&1
+silent !mkdir ~/.undo/ > /dev/null 2>&1
+
 set backupdir=.backup/,~/.backup/,/tmp//
 set directory=.swp/,~/.swp/,/tmp//
 set undodir=.undo/,~/.undo/,/tmp//
-
 """" Prevent automatic backup files
 "set nobackup
 

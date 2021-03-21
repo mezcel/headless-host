@@ -71,10 +71,11 @@ set autoindent
 "" xo   open fold
 
 
-set foldmethod=indent
-set foldmethod=syntax
+"set foldmethod=indent
+"set foldmethod=syntax
 "set foldnestmax=10
 "set foldlevel=2
+set foldmethod=manual
 
 "set nofoldenable
 
@@ -166,15 +167,44 @@ function! WordProcessor()
 endfunction
 com! WP call WordProcessor()
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"" My macros
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""" My macros EXAMPLES
+"""" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-let @h="iHello World!\<CR>bye\<Esc>"
-let @f="\<esc>o\<esc>ifor ( int i = 0; i < 10; i++ ) {\<esc>o    // do stuff\<esc>o}\<esc>o \<esc>"
-let @i="\<esc>o\<esc>iif ( 1 ) {\<esc>o    \<esc>o}\<esc>o \<esc>"
-let @c="\<esc>o\<esc>i/* \<esc>76i*\<esc>o *\<esc>o\<esc>i * \<esc>76i*\<esc>i*/ \<esc>D\<esc>o\<esc>"
+"let @h="iHello World!\<CR>bye\<Esc>"
+"let @f="\<esc>o\<esc>ifor ( int i = 0; i < 10; i++ ) {\<esc>o    // do stuff\<esc>o}\<esc>o \<esc>"
+"let @i="\<esc>o\<esc>iif ( 1 ) {\<esc>o    \<esc>o}\<esc>o \<esc>"
+"let @c="\<esc>o\<esc>i/* \<esc>76i*\<esc>o *\<esc>o\<esc>i * \<esc>76i*\<esc>i*/ \<esc>D\<esc>o\<esc>"
+
+"" fold lines between "{" and "}"
+let @f="\<esc>f{v%zf"
+
+"""" copy line to register variable "q"
+"" useful for copying bash 1-liners to the vim terminal
+let @q="\<esc>0\"qy$"
+
+
+"""" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""" Nerdtree (Win10)
+""""
+"""" Install:
+"""" git clone https://github.com/preservim/nerdtree.git ~/.vim/pack/vendor/start/nerdtree
+"""" vim -u NONE -c "helptags ~/vimfiles/pack/vendor/start/nerdtree/doc" -c q
+"""" """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+"""" Toggle Nerdtree
+"" :NERDTreeToggle
+
+"""" Open a NERDTree automatically when vim starts up
+"autocmd vimenter * NERDTree
+
+"""" open a NERDTree automatically when vim starts up if no files were specified
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+
+"""" Close vim if the only window left open is a NERDTree
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "" Decorative Status Line
@@ -183,5 +213,5 @@ let @c="\<esc>o\<esc>i/* \<esc>76i*\<esc>o *\<esc>o\<esc>i * \<esc>76i*\<esc>i*/
 
 "set ruler
 
-set laststatus=2
-set statusline=%f%m%r%h%w\ [%Y]\ [0x%02.2B]%<\ %F\ %=(col:%4v,\ row:%4l/%4L)\ %3p%%\
+"set laststatus=2
+"set statusline=%f%m%r%h%w\ [%Y]\ [0x%02.2B]%<\ %F\ %=(col:%4v,\ row:%4l/%4L)\ %3p%%\

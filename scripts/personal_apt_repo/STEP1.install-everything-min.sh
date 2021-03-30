@@ -56,6 +56,7 @@ sudo apt install -y bash
 sudo apt install -y bc
 sudo apt install -y bridge-utils
 sudo apt install -y build-essential
+#sudo apt install -y calibre
 sudo apt install -y cfdisk
 sudo apt install -y cmatrix
 sudo apt install -y conky

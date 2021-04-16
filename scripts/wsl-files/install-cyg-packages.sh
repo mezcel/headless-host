@@ -2,10 +2,10 @@
 
 ## https://cygwin.com/packages/
 
-## apt-cyg
-## terminal package manager
-
 function install_apt_cyg {
+	## apt-cyg
+	## terminal package manager
+
 	if [ ! -f ~/apt-cyg ]; then
 		wget -O ~/apt-cyg https://raw.githubusercontent.com/transcode-open/apt-cyg/master/apt-cyg
 	fi
@@ -17,7 +17,7 @@ function install_apt_cyg {
 
 
 function install_packages {
-	## gcc-core
+	apt-cyg install gcc-core
 	apt-cyg install bash 
 	apt-cyg install binutils 
 	apt-cyg install cygwin 
@@ -37,6 +37,9 @@ function install_packages {
 	apt-cyg install w32api-runtime 
 	apt-cyg install windows-default-manifest 
 	apt-cyg install zlib0
+	
+	apt-cyg install cygutils-extra
+	apt-cyg install cygwin-debuginfo
 
 	## apps
 	apt-cyg install dos2unix 
@@ -50,11 +53,31 @@ function install_packages {
 	apt-cyg install python-pip 
 	apt-cyg install python3 
 	apt-cyg install python3-pip
-
+	
+	apt-cyg install mc
+	
+	## vifm depends
+	## https://wiki.vifm.info/index.php/Obtaining_Vifm#Cygwin
+	## There are no prebuild Cygwin packages for Vifm, so one needs to build it from sources.
+	apt-cyg install make
+	apt-cyg install gcc-core
+	apt-cyg install ncurses-devel
+	
+	#mkdir -p ~/Downloads/
+	#wget -O ~/Downloads/vifm-0.11.tar.bz2 http://prdownloads.sourceforge.net/vifm/vifm-0.11.tar.bz2?download
+	
+	#git clone https://github.com/vifm/vifm.git ~/Downloads/vifm.git
+	#rm -rf ~/.config/vifm/colors
+	#git clone https://github.com/vifm/vifm-colors ~/.config/vifm/colors
+	
 	## Misc
 	apt-cyg install libjson-c-devel
 	apt-cyg install libjson-devel
 	apt-cyg install libjson-c2
+	
+	apt-cyg install highlight-common
+	
+	json-c-debuginfo
 }
 
 install_apt_cyg 

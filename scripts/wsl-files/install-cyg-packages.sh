@@ -1,6 +1,8 @@
 #!/bin/bash
 
 ## https://cygwin.com/packages/
+## https://cygwin.com/setup-x86_64.exe
+## https://mirrors.kernel.org
 
 function install_apt_cyg {
 	## apt-cyg
@@ -10,7 +12,7 @@ function install_apt_cyg {
 	
 		command -v wget
 		
-		if [ $? -ne 0 ] then
+		if [ $? -ne 0 ]; then
 			echo -e "\n# wget is not installed to download https://raw.githubusercontent.com/transcode-open/apt-cyg/master/apt-cyg\n"
 			exit
 		else

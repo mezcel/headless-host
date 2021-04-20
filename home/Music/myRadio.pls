@@ -66,4 +66,12 @@ File17=https://feeds.twit.tv/sn.xml
 Title17=twit.tv - The Tech Guy
 Length17=-1
 
+File18=https://nightride.fm/stream/nightride.m4a
+Title18=nightride.fm - Outrun
+Length18=-1
+
+File19=https://stream.nightride.fm/ebsm.m4a
+Title19=nightride.fm - ebsm
+Length19=-1
+
 Version=2

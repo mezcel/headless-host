@@ -293,6 +293,11 @@ function InstallCsharp {
 	  sudo apt-get install -y dotnet-runtime-5.0
 
 	#sudo apt-get install -y aspnetcore-runtime-5.0
+	
+	## Disable telemetry
+	export DOTNET_CLI_TELEMETRY_OPTOUT=1
+	
+	echo -e "\n## Disable telemetry\nexport DOTNET_CLI_TELEMETRY_OPTOUT=1" >> ~/.bashrc
 }
 
 InstallPowershell

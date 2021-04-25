@@ -4,8 +4,12 @@
 ## https://docs.microsoft.com/en-us/dotnet/core/install/linux-debian
 
 ## Microsoft package signing key to your list of trusted keys and add the package repository.
-wget https://packages.microsoft.com/config/debian/10/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
-sudo dpkg -i packages-microsoft-prod.deb
+
+#wget https://packages.microsoft.com/config/debian/10/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+#sudo dpkg -i packages-microsoft-prod.deb
+
+wget https://packages.microsoft.com/config/debian/10/packages-microsoft-prod.deb -P ~/Downloads/packages-microsoft-prod.deb
+sudo dpkg -i ~/Downloads/packages-microsoft-prod.deb
 
 ## Install the SDK
 ## The .NET SDK allows you to develop apps with .NET. If you install the .NET SDK, you don't need to install the corresponding runtime.

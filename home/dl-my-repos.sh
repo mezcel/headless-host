@@ -114,6 +114,7 @@ function Clone_Repos {
 
     #git clone https://github.com/mezcel/scrapy-spider.git ~/github/mezcel/scrapy-spider
     #git clone https://github.com/mezcel/adeptus-mechanicus-stc.git ~/github/mezcel/drone-rpg
+    git clone https://github.com/mezcel/sharp-structs.git ~/github/mezcel/sharp-structs
 
     ## ######################################################
     ## Gist Repositories ( https://gist.github.com/mezcel )

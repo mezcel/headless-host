@@ -62,7 +62,7 @@ function Mirror_Location {
 
 	echo "$FG_GREEN "
 	promptString="Where is your local Repo? [ ${FG_CYAN}1-4 $FG_GREEN]:$STYLES_OFF "
-	read -e -p "$promptString" -i "3" repoNo
+	read -e -p "$promptString" -i "4" repoNo
 
 	case $repoNo in
         1 )
@@ -273,11 +273,16 @@ function updatePw {
 	echo ""
 	
 	read -e -p "Update passwd? [y]: " -i "y" yn
+	
 	if [ $yn == "y" ]; then 
+		mypassword=$defaultLivePw
+		
 		read -e -p "Enter New Password for root and user: " -i "mypassword" mypassword
+		
 		(echo -e "$defaultLivePw"; echo -e "$mypassword"; echo -e "$mypassword";) | passwd
 		(echo -e "$mypassword"; echo -e "$mypassword";) | sudo passwd
 	fi
+	
 	read -p "press enter to continue" pauseEnter
 }
 
@@ -285,10 +290,11 @@ function updatePw {
 updatePw 
 main
 
-## Crunchbang setup
+## Crunchbang post install setup
 sudo apt -y update --fix-missing
 sudo apt -y upgrade
-sudo apt install -y vim vifm tmux git firefox-esr
+sudo apt install -y build-essential vim vifm tmux git firefox-esr
+sudo apt remove -y nano
 
 echo "This is just a file for easy access notes." >> ~/note.txt
 #echo -e "#!/bin/bash\nmkdir -p ~/Downloads\nwget -c \"https://raw.githubusercontent.com/mezcel/headless-host/main/home/dl-my-repos.sh\" -P ~/Downloads" > myRepoScript.sh

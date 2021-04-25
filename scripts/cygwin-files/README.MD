@@ -1,64 +1,31 @@
-# [![Windows_logo_-_2012.svg](https://upload.wikimedia.org/wikipedia/commons/5/5f/Windows_logo_-_2012.svg)](https://docs.microsoft.com/en-us/windows/wsl/about) Windows Subsystem for Linux Documentation 
+# Cygwin files
 
-Enable WLS via Powershell
+homepage [https://www.cygwin.com/](https://www.cygwin.com/)
 
-* must enable "Developer Mode"
-    * Extra: I enable Powershell script here to enable other DIY power-user ```.ps1``` scripts
+Cygwin is a large collection of GNU and Open Source tools which provide functionality similar to a Linux distribution on Windows.
 
-```ps1
-Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux
+Application [installer]( https://www.cygwin.com/setup-x86_64.exe )
 
-## optional 'Virtual Machine Platform'
-## for use with WLS 2
-Enable-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform
+## apt-cyg package manager
 
-## I prefer to use the Official Debian app from the Win10 Store
-```
+apt-cyg is a Cygwin package manager. It includes a command-line installer for Cygwin which cooperates with Cygwin Setup and uses the same repository.
 
-To use GNU Desktop GUI Apps:
+Github: [transcode-open/apt-cyg]( https://github.com/transcode-open/apt-cyg )
 
-* Download X Server on Win10 [xming](https://sourceforge.net/projects/xming/) or [XLaunch vcxsrv](https://sourceforge.net/projects/vcxsrv/)
-* Get a Distro from the Windows Store. I prefer Debian on Win10... despite prefering Arch or Alpine on everything else.
-* Tell Bash you want to run an app through the X Server
-
+Install apt-cyg
 ```sh
-## Manually Launch a standalone window of the Geany text editor
-## In this case X Server was set to 0.0
-
-DISPLAY=:0.0 geany
-
-## or
-DISPLAY=:0.0 dwm
-
-## or
-## automatically launch a DE app
-## within .bashrc add
-export DISPLAY=:0.0
+lynx -source rawgit.com/transcode-open/apt-cyg/master/apt-cyg > apt-cyg
+install apt-cyg /bin
 ```
 
-Access Win10 Dirs from WLS:
+usage example
 ```sh
-## CD into the Win10 Downloads Dir
-
-cd /mnt/c/Users/<a-user-name>/Downloads
+bash apt-cyg install tmux
 ```
 
-Access WLS from Win10:
+## Install my terminal environment
 
-* you have to ssh into it similar to a remote session
-
-### terminal fonts
-
-* [powerline fonts](https://github.com/powerline/fonts)
-
----
-
-# PuTTy
-
-Remote terminal and Remote destop ssh tunneling with a real Linux system
-
-```bat
-REM bat script example
-
-start putty.exe -ssh mezcel@10.42.0.1 22 -pw password1234 -L 5555:localhost:3389 -X
+My script depends on having ```wget``` installed
+```sh
+bash install-cyg-packages.sh
 ```

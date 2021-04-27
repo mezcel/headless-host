@@ -54,9 +54,9 @@ function updatePw {
 		defaultLivePw=live
 	fi
 
-	echo -e "Password change sould only be done once.\n\tSkip this if this is your +2nd time running this script.\n\tUse \"passwd\" instead or restart the live usb.\n"
-	echo "## MXLinux's default live usb password = \"demo\""
-	echo "## Bunsenlabs Crunchbang's default live usb password = \"live\""
+	echo -e "${FG_YELLOW}Password change should only be done once.\n\tSkip this if this is your +2nd time running this script.\n\tUse \"passwd\" instead or restart the live usb.${STYLES_OFF}\n"
+	echo "${FG_MAGENTA}## MXLinux's default live usb password = \"demo\""
+	echo "## Bunsenlabs Crunchbang's default live usb password = \"live\"${STYLES_OFF}"
 	echo ""
 
 	read -e -p "Update passwd? [y]: " -i "y" yn
@@ -68,25 +68,39 @@ function updatePw {
 
 		(echo -e "$defaultLivePw"; echo -e "$mypassword"; echo -e "$mypassword";) | passwd
 		(echo -e "$mypassword"; echo -e "$mypassword";) | sudo passwd
+
+		## update sudoers
+		sudo vi /etc/sudoers +/root\\tALL=\(ALL:ALL\)
 	fi
 
-	sudo vi /etc/sudoers +/root\\tALL=\(ALL:ALL\)
+	prompt="${FG_GREEN}Press ENTER to continue...${STYLES_OFF}"
+	read -p "$prompt" pauseEnter
+}
 
-	read -p "press enter to continue" pauseEnter
+function InstallIDE {
+	## Crunchbang post install setup
+	sudo apt -y update --fix-missing
+	#sudo apt -y upgrade
+	sudo apt install -y build-essential gcc git vim tmux vifm firefox-esr geany geany-plugins
+	sudo apt remove -y nano
+}
+
+function DLRepos {
+	bash -c "$(curl -fsSL https://raw.githubusercontent.com/mezcel/headless-host/main/home/dl-my-repos.sh)"
 }
 
 ## Run
-updatePw
-#main
 
-## Crunchbang post install setup
-sudo apt -y update --fix-missing
-#sudo apt -y upgrade
-sudo apt install -y build-essential gcc git vim tmux vifm firefox-esr geany geany-plugins
-sudo apt remove -y nano
+ping -c3 google.com
+isOnline=$?
 
-echo "This is just a file for easy access notes." >> ~/note.txt
-#echo -e "#!/bin/bash\nmkdir -p ~/Downloads\nwget -c \"https://raw.githubusercontent.com/mezcel/headless-host/main/home/dl-my-repos.sh\" -P ~/Downloads" > myRepoScript.sh
-#echo -e "#!/bin/bash \nsh -c \"$(curl -fsSL https://raw.githubusercontent.com/mezcel/headless-host/main/home/dl-my-repos.sh)\"" > myRepoScript.sh
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/mezcel/headless-host/main/home/dl-my-repos.sh)"
+if [ $isOnline -eq 0 ]; then
+	Tput_Colors
+	updatePw
+	InstallIDE
+	DLRepos
+else
+	echo -e "${BG_YELLOW}Get online and try again.${STYLES_OFF}"
+fi
+
 

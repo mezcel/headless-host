@@ -45,7 +45,7 @@ function Tput_Colors {
 function updatePw {
 	## MXLinux's default live usb password = "demo"
 	## Bunsenlabs Crunchbang's default live usb password = "live"
-	
+
 	inxi -F | grep "MX" 2> /dev/null
 	isMXLinux=$?
 	if [ $isMXLinux -eq 0 ]; then
@@ -53,37 +53,40 @@ function updatePw {
 	else
 		defaultLivePw=live
 	fi
-	
+
 	echo -e "Password change sould only be done once.\n\tSkip this if this is your +2nd time running this script.\n\tUse \"passwd\" instead or restart the live usb.\n"
 	echo "## MXLinux's default live usb password = \"demo\""
 	echo "## Bunsenlabs Crunchbang's default live usb password = \"live\""
 	echo ""
-	
+
 	read -e -p "Update passwd? [y]: " -i "y" yn
-	
-	if [ $yn == "y" ]; then 
+
+	if [ $yn == "y" ]; then
 		mypassword=$defaultLivePw
-		
+
 		read -e -p "Enter New Password for root and user: " -i "mypassword" mypassword
-		
+
 		(echo -e "$defaultLivePw"; echo -e "$mypassword"; echo -e "$mypassword";) | passwd
 		(echo -e "$mypassword"; echo -e "$mypassword";) | sudo passwd
 	fi
-	
+
+	sudo vi /etc/sudoers +/root\\tALL=\(ALL:ALL\)
+
 	read -p "press enter to continue" pauseEnter
 }
 
 ## Run
-updatePw 
+updatePw
 #main
 
 ## Crunchbang post install setup
 sudo apt -y update --fix-missing
 #sudo apt -y upgrade
-sudo apt install -y build-essential vim vifm tmux git firefox-esr
+sudo apt install -y build-essential gcc git vim tmux vifm firefox-esr geany geany-plugins
 sudo apt remove -y nano
 
 echo "This is just a file for easy access notes." >> ~/note.txt
 #echo -e "#!/bin/bash\nmkdir -p ~/Downloads\nwget -c \"https://raw.githubusercontent.com/mezcel/headless-host/main/home/dl-my-repos.sh\" -P ~/Downloads" > myRepoScript.sh
-echo -e "#!/bin/bash \nsh -c \"$(curl -fsSL https://raw.githubusercontent.com/mezcel/headless-host/main/home/dl-my-repos.sh)\"" > myRepoScript.sh
+#echo -e "#!/bin/bash \nsh -c \"$(curl -fsSL https://raw.githubusercontent.com/mezcel/headless-host/main/home/dl-my-repos.sh)\"" > myRepoScript.sh
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/mezcel/headless-host/main/home/dl-my-repos.sh)"
 

@@ -86,7 +86,11 @@ function InstallIDE {
 }
 
 function DLRepos {
-	bash -c "$(curl -fsSL https://raw.githubusercontent.com/mezcel/headless-host/main/home/dl-my-repos.sh)"
+	if [ -f ../../home/dl-my-repos.sh ]; then
+		bash ../../home/dl-my-repos.sh
+	else
+		bash -c "$(curl -fsSL https://raw.githubusercontent.com/mezcel/headless-host/main/home/dl-my-repos.sh)"
+	fi
 }
 
 ## Run

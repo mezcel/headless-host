@@ -102,19 +102,19 @@ function Clone_Repos {
     git clone https://github.com/mezcel/python-curses.git ~/github/mezcel/python-curses.git
     #git clone https://github.com/mezcel/catechism-scrape.git ~/github/mezcel/catechism-scrape.git
     #git clone https://github.com/mezcel/wicked-curse.git ~/github/mezcel/wicked-curse.git
-    git clone https://github.com/mezcel/simple-respin.git ~/github/mezcel/simple-respin.git
+    #git clone https://github.com/mezcel/simple-respin.git ~/github/mezcel/simple-respin.git
     git clone https://github.com/mezcel/terminal-profile.git ~/github/mezcel/terminal-profile.git
     git clone https://github.com/mezcel/keyboard-layout.git ~/github/mezcel/keyboard-layout.git
     git clone https://github.com/mezcel/bookmark-renderer.git ~/github/mezcel/bookmark-renderer.git
     git clone https://github.com/mezcel/struct-fmt.git ~/github/mezcel/struct-fmt.git
     git clone https://github.com/mezcel/fs-path.git  ~/github/mezcel/fs-path.git
     git clone https://github.com/mezcel/headless-host.git  ~/github/mezcel/headless-host.git
+    git clone https://github.com/mezcel/sharp-structs.git ~/github/mezcel/sharp-structs
 
     ## hidden repos
 
     #git clone https://github.com/mezcel/scrapy-spider.git ~/github/mezcel/scrapy-spider
     #git clone https://github.com/mezcel/adeptus-mechanicus-stc.git ~/github/mezcel/drone-rpg
-    git clone https://github.com/mezcel/sharp-structs.git ~/github/mezcel/sharp-structs
 
     ## ######################################################
     ## Gist Repositories ( https://gist.github.com/mezcel )
@@ -191,7 +191,7 @@ function Clone_Nerdtree {
 	## install vim nerdtree
 	if [ -d ~/.vim/pack/vendor/start/nerdtree ]; then
 		sleep 4s
-		sudo vim -u NONE -c "helptags ~/.vim/pack/vendor/start/nerdtree/doc" -c q
+		vim -u NONE -c "helptags ~/.vim/pack/vendor/start/nerdtree/doc" -c q
 		sleep 1s
 	fi
 }
@@ -234,6 +234,12 @@ function Main {
     Clone_Nerdtree
     Clone_OhMyBash
     Gitbash_profile
+	
+	if [ -f .vimrc ]; then
+		if [ ! -f ~/.vimrc ]; then
+			cp .vimrc ~/.vimrc
+		fi
+	fi
 }
 
 ## #############################################################################

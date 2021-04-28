@@ -78,7 +78,7 @@ function About {
 ##  * List of pre-existing packages: $Dpkg_List
 ##  * Download script:               $Download_List
 ##  * Debian packages:               $PackageDownloads/*.deb
-##  * Repository contents:           $Contents_List 
+##  * Repository contents:           $Contents_List
 ##
 ##  Once everything is done, move/copy the $PackageDownloads directory to a USB, CD, or drive partition.
 ##
@@ -93,6 +93,19 @@ function InitDirVariables {
 	## make a directory
 	PackageDownloads=~/Downloads/PackageDownloads_$nowDate
 
+	## change destination directory option
+	echo -e "${$FG_YELLOW}\nThe default *.deb repo download directory is:\n\t$PackageDownloads ${STYLES_OFF}"
+	read -e -p "Change download destination directory? [ y/N ]: " -i "N" yn
+	case $yn in
+		[Yy]* )
+			prompt="Enter new directory name. [ $PackageDownloads ]: "
+			read -e -p "$prompt" -i "$PackageDownloads" PackageDownloads
+			echo -e "\n\tYou entered: $PackageDownloads\n"
+
+			read -e -p "${$FG_YELLOW}Press ENTER to continue, or <Ctrl-C> to abort this script.${STYLES_OFF}"
+			;;
+	esac
+
 	Dpkg_List=$PackageDownloads/Dpkg_List.txt
 	Download_List=$PackageDownloads/Download_List.sh
 
@@ -104,26 +117,26 @@ function Package_List {
 	echo "$FG_GREEN "
 	read -e -p "Make a list of installed Debian packages? [ Y/n ]: " -i "y" yn
 	echo "$STYLES_OFF "
-	
+
 	case $yn in
-		[Yy]* )	
+		[Yy]* )
 			mkdir -p $PackageDownloads
 
 			## prevent warning: "Download is performed unsandboxed as root"
 			#sudo chown -R _apt:root $PackageDownloads
 
 			sleep 1
-			
+
 			## list installed package names and remove any occurrence of ":amd64"
 			echo -e "${FG_CYAN}\tWriting $Dpkg_List ... $STYLES_OFF"
 			dpkg -l | grep ^ii | awk '{print $2}' | cut -d: -f1 > $Dpkg_List
-			
+
 			## prepend "sudo apt download" on every line
 			echo -e "${FG_CYAN}\tWriting $Download_List ... $STYLES_OFF"
 			echo '#!/bin/bash' > $Download_List
 			echo "" >> $Download_List
 			sed 's/^/sudo apt download /g' $Dpkg_List >> $Download_List
-			
+
 			echo -e "\tDone making lists\n"
 			;;
 	esac
@@ -134,9 +147,9 @@ function Download_Debs {
 	echo "$FG_GREEN "
 	read -e -p "Download individual .debs from a generated package list? [ y/N ]: " -i "n" yn
 	echo "$STYLES_OFF "
-	
+
 	case $yn in
-		[Yy]* )	
+		[Yy]* )
 			mkdir -p $PackageDownloads
 
 			## prevent warning: "Download is performed unsandboxed as root"
@@ -144,14 +157,14 @@ function Download_Debs {
 
 			sleep 1
 			cd $PackageDownloads
-			
+
 			sudo apt update
 
 			bash $Download_List
 
 			## render confirmation list
-			ls *.deb > $Contents_List 
-			
+			ls *.deb > $Contents_List
+
 			echo -e "\nDone.\n${FG_CYAN}\tMove/copy the $PackageDownloads directory to a USB, CD, or drive partition.\n $STYLES_OFF"
 			;;
 	esac
@@ -160,7 +173,7 @@ function Download_Debs {
 function MAIN {
 	InitDirVariables
 	About
-	
+
 	Package_List
 	Download_Debs
 }

@@ -103,6 +103,8 @@ if [ $isOnline -eq 0 ]; then
 	updatePw
 	InstallIDE
 	DLRepos
+	
+	sudo timedatectl set-timezone America/New_York
 else
 	echo -e "${BG_YELLOW}Get online and try again.${STYLES_OFF}"
 fi

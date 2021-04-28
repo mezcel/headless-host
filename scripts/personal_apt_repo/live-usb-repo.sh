@@ -253,6 +253,8 @@ function main {
 
 	Mirror_Location
 	LazyPrompt
+	
+	sudo timedatectl set-timezone America/New_York
 }
 
 function updatePw {

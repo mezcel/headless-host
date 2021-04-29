@@ -44,6 +44,10 @@ function InstallCsharp {
 }
 
 function InstallVSCodium {
+	currentDir=$(PWD)
+	mkdir -p ~/Downloads
+	cd ~/Downlaods
+
 	## https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo
 
 	read -e -p "Install vscodium texteditor? [y/N]: " -i "N" yn
@@ -61,6 +65,8 @@ function InstallVSCodium {
 			sudo apt install codium
 			;;
 	esac
+
+	cd $currentDir
 }
 
 function InstallPowershell {
@@ -92,6 +98,14 @@ function InstallDotNet {
 	InstallVSCodium
 }
 
+function DLGithubRepos {
+	if [ -f ../../home/dl-my-repos.sh ]; then
+		bash ../../home/dl-my-repos.sh
+	else
+		bash -c "$(curl -fsSL https://raw.githubusercontent.com/mezcel/headless-host/main/home/dl-my-repos.sh)"
+	fi
+}
+
 function AddSoftware {
     sudo apt update
     sudo apt update -y --fix-missing
@@ -111,6 +125,10 @@ function AddSoftware {
     #sudo apt -y upgrade
 }
 
+function Set_Timezone {
+	sudo timedatectl set-timezone America/New_York
+}
+
 function CrunchbangStuff {
 	sudo apt update
 
@@ -119,8 +137,9 @@ function CrunchbangStuff {
 
 	## My DotNet IDE
 	AddSoftware
-
-    DLGithubRepos
 }
 
+Set_Timezone
 CrunchbangStuff
+
+DLGithubRepos

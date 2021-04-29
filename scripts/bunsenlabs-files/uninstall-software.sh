@@ -1,17 +1,25 @@
 #!/bin/bash
 
-## Nano
-sudo apt remove -y nano
-sudo apt -y autoremove
-sudo apt -y autoclean
+function RemovePurge {
+	packageName=$1
 
-## LibreOffice
-sudo apt-get remove -y --purge libreoffice*
-sudo apt-get -y clean
-sudo apt-get -y autoremove
+	sudo apt -y remove $packageName
+	sudo apt -y purge $packageName
+	sudo apt -y clean
+	sudo apt -y autoremove
+	sudo apt -y autoclean
+}
 
-## synaptic
-sudo apt-get -y remove synaptic*
-sudo apt-get -y purge synaptic*
-sudo apt-get -y autoremove
-sudo apt-get -y autoclean
+function RemoveSoftware {
+	RemovePurge 'nano'
+	RemovePurge 'libreoffice*'
+	RemovePurge 'synaptic*'
+	RemovePurge 'ligtdm'
+	RemovePurge 'xfburn'
+	RemovePurge 'compton'
+	RemovePurge 'filezilla'
+	RemovePurge 'hexchat'
+	RemovePurge 'gimp'
+}
+
+RemoveSoftware

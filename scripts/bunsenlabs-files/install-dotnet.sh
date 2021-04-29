@@ -151,6 +151,11 @@ function RemoveSoftware {
 	RemovePurge 'gimp'
 }
 
+function ReportDiskSpace {
+	echo -e "\n # File system disk space usage \n"
+	df -h
+}
+
 function CrunchbangStuff {
 	sudo apt update
 
@@ -165,3 +170,5 @@ Set_Timezone
 CrunchbangStuff
 
 DLGithubRepos
+
+ReportDiskSpace

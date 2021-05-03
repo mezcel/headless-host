@@ -179,7 +179,7 @@ function Set_Git_User {
 }
 
 function Clone_Nerdtree {
-    
+
 	if [ ! -d ~/.vim/pack/vendor/start/nerdtree ]; then
 		mkdir -p ~/.vim/pack/vendor/start
 
@@ -187,7 +187,7 @@ function Clone_Nerdtree {
 			git clone https://github.com/preservim/nerdtree.git ~/.vim/pack/vendor/start/nerdtree
 		fi
 	fi
-		
+
 	## install vim nerdtree
 	if [ -d ~/.vim/pack/vendor/start/nerdtree ]; then
 		sleep 4s
@@ -234,10 +234,12 @@ function Main {
     Clone_Nerdtree
     Clone_OhMyBash
     Gitbash_profile
-	
-	if [ -f .vimrc ]; then
-		if [ ! -f ~/.vimrc ]; then
+
+	if [ ! -f ~/.vimrc ]; then
+		if [ ! -f .vimrc ]; then
 			cp .vimrc ~/.vimrc
+        else
+		    wget -O ~/.vimrc https://raw.githubusercontent.com/mezcel/headless-host/main/home/.vimrc
 		fi
 	fi
 }

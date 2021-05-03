@@ -236,7 +236,7 @@ function Main {
     Gitbash_profile
 
 	if [ ! -f ~/.vimrc ]; then
-		if [ ! -f .vimrc ]; then
+		if [ -f .vimrc ]; then
 			cp .vimrc ~/.vimrc
         else
 		    wget -O ~/.vimrc https://raw.githubusercontent.com/mezcel/headless-host/main/home/.vimrc

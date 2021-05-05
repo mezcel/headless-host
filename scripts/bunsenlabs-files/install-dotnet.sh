@@ -111,6 +111,7 @@ function AddSoftware {
     sudo apt update -y --fix-missing
 
     sudo apt install -y build-essential
+    sudo apt install -y gdb
 	sudo apt install -y vim
 	sudo apt install -y vifm
 	sudo apt install -y tmux
@@ -120,8 +121,14 @@ function AddSoftware {
 	sudo apt install -y bc
 	sudo apt install -y aspell
 
-	InstallDotNet
+	read -e -p "Install .NET? [Y/n]: " -i "Y" yn
 
+	case $yn in
+		[Yy]* )
+			InstallDotNet
+			;;
+	esac
+	
     #sudo apt -y upgrade
 }
 

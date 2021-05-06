@@ -145,6 +145,7 @@ function Clone_Repos {
     git clone https://gist.github.com/508c384d9200933761fa8ecbc4f4698c.git ~/gist.github/mezcel/cache-todo.gist
     git clone https://gist.github.com/da976fcc71ce8cfeda778238aec9e2fd.git ~/gist.github/mezcel/lmms-notes.gist
     git clone https://gist.github.com/41a2e751c97eb0f6842e4fafe6e9ad63.git ~/gist.github/mezcel/csharp-notes.gist
+	git clone https://gist.github.com/922015df1109edb1b55adc544ec29de9.git ~/gist.github/mezcel/csv-and-structs.git
 }
 
 function Set_Git_User {
